@@ -1,0 +1,17 @@
+# Logs
+logs
+*.log
+
+# NPM
+node_modules/
+
+# Build Ouput
+dist
+coverage
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
