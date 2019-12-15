@@ -1,0 +1,36 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Program",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron-webpack",
+      "env": {
+        "ELECTRON_ARGS": "[\"--inspect-brk=9229\"]"
+      },
+      "args": [
+        "dev"
+      ],
+      "port": 9229,
+      "timeout": 60000,
+      "sourceMaps": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Program with Std",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron-webpack",
+      "env": {
+        "ELECTRON_ARGS": "[\"--inspect-brk=9229\"]"
+      },
+      "args": [
+        "dev"
+      ],
+      "port": 9229,
+      "timeout": 60000,
+      "sourceMaps": true,
+      "outputCapture": "std"
+    }
+  ]
+}
