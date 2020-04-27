@@ -1,0 +1,17 @@
+/*
+ * This file is generated from licenses.ts.template, changes should be done there instead.
+ */
+
+export interface LicenseInfo {
+  name: string;
+  version: string;
+  author?: string;
+  repository: string | null;
+  source: string;
+  license: string;
+  licenseText: string;
+}
+
+const LICENSES: LicenseInfo[] = __LICENSE_CONTENT_HERE__;
+
+export default LICENSES;

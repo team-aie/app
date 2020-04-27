@@ -15,8 +15,8 @@ const AppLoadFallback: FC = () => {
   const localeToLoad = detectLanguage();
 
   return (
-    // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/explicit-function-return-type
-    <LocaleContext.Provider value={{ locale: localeToLoad, setLocale: () => {} }}>
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    <LocaleContext.Provider value={{ locale: localeToLoad, setLocale: (): void => {} }}>
       <ThemedRoot>{textTranslations[localeToLoad]}</ThemedRoot>
     </LocaleContext.Provider>
   );

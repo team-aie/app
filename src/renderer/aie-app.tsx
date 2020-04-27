@@ -4,6 +4,7 @@ import { useLocalStorage } from 'react-use';
 import { Grid } from 'semantic-ui-react';
 
 import CreateProject from './components/create-project';
+import LicenseDisclosure from './components/license-disclosure';
 import LoadRecordingList from './components/load-recording-list';
 import LocaleSelector from './components/locale-selector';
 import RecordingStudio from './components/recording-studio';
@@ -73,9 +74,12 @@ const AieApp: FC = () => {
         <div style={{ padding: '2vh' }}>
           <Grid>
             <Grid.Row>
-              <Grid.Column width={12} />
-              <Grid.Column width={4}>
+              <Grid.Column width={8} />
+              <Grid.Column width={3}>
                 <LocaleSelector />
+              </Grid.Column>
+              <Grid.Column width={5}>
+                <LicenseDisclosure />
               </Grid.Column>
             </Grid.Row>
             <Grid.Row>
