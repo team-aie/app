@@ -5,8 +5,10 @@
   "private": true,
   "scripts": {
     "start": "electron-webpack dev",
+    "postinstall": "npm run generate-licenses-ts",
     "clean": "rm -rf dist coverage",
     "compile": "electron-webpack",
+    "generate-licenses-ts": "webpack --config webpack.license.config.js",
     "dist": "electron-builder -mwl",
     "dist:macos": "electron-builder -m",
     "dist:win": "electron-builder -w",
@@ -93,6 +95,7 @@
     "stylelint-prettier": "^1.1.2",
     "ts-jest": "^25.3.1",
     "typescript": "^3.8.3",
-    "webpack": "^4.42.1"
+    "webpack": "^4.42.1",
+    "webpack-license-plugin": "^4.1.1"
   }
 }
