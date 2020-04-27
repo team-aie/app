@@ -1,3 +1,5 @@
+import 'node-source-han-sans/otf.css';
+import 'node-source-han-sans-sc/otf.css';
 import 'semantic-ui-css/semantic.min.css';
 import './index.scss';
 

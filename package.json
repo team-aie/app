@@ -44,6 +44,8 @@
     "audiobuffer-to-wav": "^1.0.0",
     "electron-log": "^4.1.1",
     "electron-updater": "^4.2.5",
+    "node-source-han-sans": "^1.0.0-2.001R",
+    "node-source-han-sans-sc": "^1.0.0-2.001R",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-use": "^14.1.1",
