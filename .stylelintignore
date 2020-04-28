@@ -1,3 +1,5 @@
 dist/
 coverage/
+src/renderer/licenses.ts.base
 *.snap
+*.json

@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { FC } from 'react';
 
 interface SizedDivProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   width?: number;
   height?: number;
 }
 
-const SizedDiv: React.FunctionComponent<SizedDivProps> = (props) => {
+const SizedDiv: FC<SizedDivProps> = (props) => {
   const { width, height, style = {}, ...restProps } = props;
   if (typeof width === 'number') {
     const widthWithUnit = `${width}vw`;
