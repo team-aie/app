@@ -2,6 +2,7 @@ import * as fs from 'fs';
 
 import { remote } from 'electron';
 import React, { ReactElement, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Grid, Header } from 'semantic-ui-react';
 
 import { Consumer, PageState } from '../../types';
@@ -39,6 +40,7 @@ const CreateProject = ({
   scales,
   setScales,
 }: CreateProjectProps): ReactElement => {
+  const { t } = useTranslation();
   const [userInputtedScale, setUserInputtedScale] = useState('');
 
   /**
@@ -47,8 +49,8 @@ const CreateProject = ({
    */
   const getProjectFolderFromUser = async (): Promise<void> => {
     const { canceled, filePaths } = await remote.dialog.showOpenDialog({
-      title: 'Select Project Output Folder',
-      message: 'Please select a folder to save voice samples.',
+      title: t('Select Project Output Folder'),
+      message: t('Please select a folder to save voice samples.'),
       properties: ['openDirectory', 'showHiddenFiles', 'createDirectory', 'promptToCreate'],
     });
 
@@ -67,7 +69,7 @@ const CreateProject = ({
     <Grid columns={16} divided="vertically">
       <Grid.Row columns={1}>
         <Grid.Column>
-          <Header as={'h3'}>Create a Project</Header>
+          <Header as={'h3'}>{t('Create a Project')}</Header>
           <Button onClick={(): void => setPageState('start')}>Back</Button>
         </Grid.Column>
       </Grid.Row>

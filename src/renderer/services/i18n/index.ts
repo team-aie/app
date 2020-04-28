@@ -1,28 +1,30 @@
-import { I18nConfig, Locale } from '../../types/i18n';
+import i18n from 'i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
+import { initReactI18next } from 'react-i18next';
 
-class I18nRegistry {
-  private configs: I18nConfig = {};
+import { LOCAL_STORAGE_KEY_LOCALE, isDevelopment } from '../../env-and-consts';
 
-  public register(...newConfigs: I18nConfig[]): void {
-    let currentConfigs = {
-      ...this.configs,
-    };
-    newConfigs.forEach((newConfig): void => {
-      currentConfigs = {
-        ...currentConfigs,
-        ...newConfig,
-      };
-    });
-    this.configs = currentConfigs;
-  }
+import WebpackImportBackend from './webpack-import-backend';
 
-  public getTranslation(i18nKey: string, locale: Locale): string {
-    const result = this.configs[i18nKey][locale];
-    if (!result) {
-      throw new Error(`Cannot find translation for ${i18nKey}!`);
-    }
-    return result;
-  }
-}
-
-export const i18n = new I18nRegistry();
+i18n
+  .use(WebpackImportBackend)
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    fallbackLng: 'en-US',
+    debug: true,
+    // We don't use separators yet, so just need something that should not common appear in strings.
+    keySeparator: '$',
+    ...(isDevelopment ? { saveMissing: true, saveMissingTo: 'all' } : {}),
+    backend: {
+      saveMissingAllHierarchy: false,
+    },
+    detection: {
+      order: ['localStorage', 'navigator'],
+      lookupLocalStorage: LOCAL_STORAGE_KEY_LOCALE,
+      caches: ['localStorage'],
+    },
+    interpolation: {
+      escapeValue: false, // not needed for react as it escapes by default
+    },
+  });

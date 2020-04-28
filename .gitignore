@@ -15,3 +15,6 @@ coverage
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# Missed Translations during Development
+*.missing.json
