@@ -1,5 +1,3 @@
-import { Locale } from './i18n';
-
 export type PageState = 'create-project' | 'recording-studio' | 'start';
 
 export interface RecordingItem {
@@ -13,10 +11,6 @@ export interface RecordedVoiceItem extends RecordingItem {
 
 export type Consumer<T> = (t: T) => void;
 
-export interface Environment {
-  locale: Locale;
-}
-
 export interface RecordingListParser {
   parse(content: string): Promise<RecordingItem[]>;
 }
@@ -28,3 +22,14 @@ export interface RecordingListParser {
 export interface ChromeHTMLAudioElement extends HTMLAudioElement {
   setSinkId(sinkId: string): Promise<void>;
 }
+
+export const enum SupportedLocale {
+  ZH_CN = 'zh-CN',
+  EN_US = 'en-US',
+  JA_JP = 'ja-JP',
+}
+export const SUPPORTED_LOCALES: ReadonlySet<string> = new Set([
+  SupportedLocale.ZH_CN,
+  SupportedLocale.EN_US,
+  SupportedLocale.JA_JP,
+]);
