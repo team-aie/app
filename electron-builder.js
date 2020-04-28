@@ -3,11 +3,15 @@
 const isCi = process.env.CI === 'true';
 const isFastPackaging = process.env.FAST_PACKAGING === 'true';
 
+const compression = isFastPackaging || !isCi ? 'store' : 'maximum';
+// eslint-disable-next-line no-console
+console.info(`Compression level: ${compression}`);
+
 module.exports = {
   appId: 'com.team-aie.app',
   copyright: 'Copyright © 2020 ${author}',
   asar: true,
-  compression: isFastPackaging || !isCi ? 'store' : 'maximum',
+  compression,
   dmg: {
     format: 'ULFO',
   },
