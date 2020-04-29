@@ -14,6 +14,7 @@ module.exports = {
   },
   rules: {
     'no-console': isCi ? 'error' : 'warn',
+    'no-debugger': isCi ? 'error' : 'warn',
     'object-shorthand': ['error', 'always'],
     'one-var': ['error', 'never'],
     'sort-imports': [
