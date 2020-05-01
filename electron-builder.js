@@ -12,9 +12,13 @@ module.exports = {
   copyright: 'Copyright © 2020 ${author}',
   asar: true,
   compression,
-  dmg: {
-    format: 'ULFO',
-  },
+  files: [
+    '**/*',
+    // According to doc, some default ignored files are automatically added, so we only need to add our ignores
+    '!node_modules/node-source-han-sans',
+    '!node_modules/node-source-han-sans-sc',
+    '!node_modules/semantic-ui-css',
+  ],
   mac: {
     identity: null,
     target: [
@@ -28,6 +32,9 @@ module.exports = {
       },
     ],
   },
+  dmg: {
+    format: 'ULFO',
+  },
   win: {
     target: [
       {
@@ -39,6 +46,17 @@ module.exports = {
         arch: 'x64',
       },
     ],
+  },
+  nsis: {
+    artifactName: '${productName}-setup-${version}.${ext}',
+    uninstallDisplayName: '${productName}',
+    menuCategory: true,
+    oneClick: false,
+    perMachine: true,
+    packElevateHelper: true,
+    allowElevation: true,
+    allowToChangeInstallationDirectory: true,
+    deleteAppDataOnUninstall: true,
   },
   linux: {
     target: [
@@ -52,17 +70,6 @@ module.exports = {
       },
     ],
     category: 'Audio',
-  },
-  nsis: {
-    artifactName: '${productName}-setup-${version}.${ext}',
-    uninstallDisplayName: '${productName}',
-    menuCategory: true,
-    oneClick: false,
-    perMachine: true,
-    packElevateHelper: true,
-    allowElevation: true,
-    allowToChangeInstallationDirectory: true,
-    deleteAppDataOnUninstall: true,
   },
   appImage: {
     artifactName: '${productName}.${ext}',
