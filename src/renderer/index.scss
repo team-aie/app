@@ -1,4 +1,14 @@
+// Fonts
+@import '~node-source-han-sans/SourceHanSans-Regular-otf.css';
+@import '~node-source-han-sans/SourceHanSans-ExtraLight-otf.css';
+@import '~node-source-han-sans-sc/SourceHanSansSC-Regular-otf.css';
+@import '~node-source-han-sans-sc/SourceHanSansSC-ExtraLight-otf.css';
+
+// Other Modules
 @import './components/themed';
+
+// Semantic UI Default Theme
+@import '~semantic-ui-css/semantic.min.css';
 
 div#app {
   width: 100vw;
