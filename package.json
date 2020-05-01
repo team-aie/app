@@ -1,6 +1,6 @@
 {
   "name": "aie",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A cross-platform audio recorder designed for recording using recording lists (a.k.a. reclists).",
   "private": true,
   "scripts": {
