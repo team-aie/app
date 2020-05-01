@@ -7,6 +7,8 @@ const path = require('path');
 const LicensePlugin = require('webpack-license-plugin');
 const { exec } = require('child_process');
 
+const WAIT_FOR_OTHERS_SECONDS = 5;
+
 /**
  * This config aims to allow webpack-license-plugin to load all licenses and save to {@code src/renderer/licenses.ts}.
  */
@@ -44,7 +46,9 @@ module.exports = async (env) => {
          * We found that due to multiple entry points, the plugin generates the file multiple times at the same file location,
          * overwriting previous entries' results. Therefore, we use it as a hook and are collecting the metadata manually.
          */
-        _hook: async (packages) => {
+        _hook: (packages) => {
+          // eslint-disable-next-line no-console
+          console.info(`[LicensePlugin] Custom hook called to add ${packages.length} package license meta`);
           packages.map((x) => JSON.stringify(x)).forEach((x) => licenseInfos.add(x));
           // We do not need to actually populate this file
           return '';
@@ -98,8 +102,14 @@ module.exports = async (env) => {
           ]);
         });
 
-        compiler.hooks.afterEmit.tapPromise('CopyLicenseTsPlugin', async () => {
-          return writeLicenseTsFile([...licenseInfos].map(JSON.parse).sort((a, b) => (a.name > b.name ? 1 : -1)));
+        compiler.hooks.afterEmit.tap('CopyLicenseTsPlugin', () => {
+          // eslint-disable-next-line no-console
+          console.info(`Waiting ${WAIT_FOR_OTHERS_SECONDS} seconds to ensure all plugins have run`);
+          setTimeout(() => {
+            // eslint-disable-next-line no-console
+            console.info('Writing package license meta to file');
+            writeLicenseTsFile([...licenseInfos].map(JSON.parse).sort((a, b) => (a.name > b.name ? 1 : -1)));
+          }, WAIT_FOR_OTHERS_SECONDS * 1000);
         });
       },
     },
