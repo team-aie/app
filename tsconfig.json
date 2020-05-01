@@ -5,5 +5,8 @@
     "jsx": "react",
     "esModuleInterop": true,
     "resolveJsonModule": true
-  }
+  },
+  "exclude": [
+    "dist"
+  ]
 }
