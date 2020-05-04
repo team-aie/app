@@ -3,7 +3,7 @@ import React, { FC } from 'react';
 import { LocaleContext } from '../../contexts';
 import detectLanguage from '../../services/i18n/simple-language-detector';
 import { SupportedLocale } from '../../types';
-import ThemedRoot from '../themed/themed-root';
+import StyleSwitcher from '../style-switcher';
 
 const textTranslations = {
   [SupportedLocale.ZH_CN]: '载入中...',
@@ -17,7 +17,8 @@ const AppLoadFallback: FC = () => {
   return (
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     <LocaleContext.Provider value={{ locale: localeToLoad, setLocale: (): void => {} }}>
-      <ThemedRoot>{textTranslations[localeToLoad]}</ThemedRoot>
+      <StyleSwitcher />
+      {textTranslations[localeToLoad]}
     </LocaleContext.Provider>
   );
 };

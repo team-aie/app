@@ -2,7 +2,7 @@ import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
 
-import { LOCAL_STORAGE_KEY_LOCALE, isDevelopment } from '../../env-and-consts';
+import { KEY_SEPARATOR, LOCAL_STORAGE_KEY_LOCALE, isDevelopment } from '../../env-and-consts';
 
 import WebpackImportBackend from './webpack-import-backend';
 
@@ -14,7 +14,7 @@ i18n
     fallbackLng: 'en-US',
     debug: true,
     // We don't use separators yet, so just need something that should not common appear in strings.
-    keySeparator: '$',
+    keySeparator: KEY_SEPARATOR,
     ...(isDevelopment ? { saveMissing: true, saveMissingTo: 'all' } : {}),
     backend: {
       saveMissingAllHierarchy: false,

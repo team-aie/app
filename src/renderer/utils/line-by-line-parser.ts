@@ -1,6 +1,6 @@
 import sanitize from 'sanitize-filename';
 
-import { RecordingItem, RecordingListParser } from '../../types';
+import { RecordingItem, RecordingListParser } from '../types';
 
 class LineByLineParser implements RecordingListParser {
   public async parse(content: string): Promise<RecordingItem[]> {
@@ -52,5 +52,4 @@ class LineByLineParser implements RecordingListParser {
   }
 }
 
-const lineByLineParser = new LineByLineParser();
-export default lineByLineParser;
+export const lineByLineParser = new LineByLineParser();

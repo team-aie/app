@@ -21,14 +21,21 @@ async function loadLanguageFile(
     case 'zh-CN': {
       switch (namespace) {
         case 'translation':
-          return import('./locales/zh-CN/translation.json');
+          return import('../../../locales/zh-CN/translation.json');
       }
       break;
     }
     case 'en-US': {
       switch (namespace) {
         case 'translation':
-          return import('./locales/en-US/translation.json');
+          return import('../../../locales/en-US/translation.json');
+      }
+      break;
+    }
+    case 'ja-JP': {
+      switch (namespace) {
+        case 'translation':
+          return import('../../../locales/ja-JP/translation.json');
       }
       break;
     }
@@ -37,7 +44,7 @@ async function loadLanguageFile(
   throw new Error(`Translation file not found for language: ${language}; namespace: ${namespace}`);
 }
 
-const saveLoadPathPattern = './locales/{{lng}}/{{ns}}.{{ext}}';
+const saveLoadPathPattern = '../../../locales/{{lng}}/{{ns}}.{{ext}}';
 
 export default class WebpackImportBackend implements BackendModule<WebpackImportBackendOptions> {
   // Need this extra static variable to so the constructor has the field as well

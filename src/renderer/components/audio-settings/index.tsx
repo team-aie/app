@@ -1,10 +1,12 @@
 import * as log from 'electron-log';
 import React, { EffectCallback, Fragment, MutableRefObject, ReactElement, createRef, useEffect, useState } from 'react';
-import { Button, Checkbox, Grid, Input, Label } from 'semantic-ui-react';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
 
 import { ChromeHTMLAudioElement, Consumer } from '../../types';
 import { StudioState } from '../recording-studio';
-import SizedDiv from '../sized-div';
 
 const checkDeviceInfoListEqual = (l1: MediaDeviceInfo[], l2: MediaDeviceInfo[]): boolean => {
   if (l1 === l2) {
@@ -195,63 +197,61 @@ const AudioSettings = ({
 
   return (
     <Fragment>
-      <Grid.Row columns={3}>
-        <Grid.Column>
-          <SizedDiv height={15}>
-            {audioInputDevices.map(
-              (audioInputDevice): ReactElement => {
-                return (
-                  <Grid.Row key={audioInputDevice.deviceId}>
-                    <div onClick={(): void => setInputDeviceId(audioInputDevice.deviceId)}>
-                      <Checkbox
-                        checked={audioInputDevice.deviceId === inputDeviceId}
-                        disabled={audioInputDevice.deviceId === inputDeviceId}
-                      />
-                      <span>{audioInputDevice.label}</span>
-                    </div>
-                  </Grid.Row>
-                );
-              },
-            )}
-          </SizedDiv>
-        </Grid.Column>
-        <Grid.Column>
-          <SizedDiv height={15}>
-            {audioOutputDevices.map(
-              (audioOutputDevice): ReactElement => {
-                return (
-                  <Grid.Row key={audioOutputDevice.deviceId}>
-                    <div onClick={(): void => setOutputDeviceId(audioOutputDevice.deviceId)}>
-                      <Checkbox
-                        checked={audioOutputDevice.deviceId === outputDeviceId}
-                        disabled={audioOutputDevice.deviceId === outputDeviceId}
-                      />
-                      <span>{audioOutputDevice.label}</span>
-                    </div>
-                  </Grid.Row>
-                );
-              },
-            )}
-          </SizedDiv>
-        </Grid.Column>
-        <Grid.Column>
-          <SizedDiv height={15}>
-            <Button>Apply (Do Nothing)</Button>
-            <Button onClick={(): void => setMuted(!muted)}>{muted ? 'Unmute' : 'Mute'}</Button>
-            <Button onClick={refreshAudioDevices}>Refresh</Button>
-            <Input
-              name={'volume'}
-              type={'range'}
-              min={0}
-              max={100}
-              value={volume}
-              onChange={(e): void => setVolume(Number(e.target.value))}
-            />
-            <Label htmlFor={'volume'}>Volume: {volume}</Label>
-          </SizedDiv>
-        </Grid.Column>
+      <Row>
+        <Col>
+          {audioInputDevices.map(
+            (audioInputDevice): ReactElement => {
+              return (
+                <Row key={audioInputDevice.deviceId}>
+                  <div onClick={(): void => setInputDeviceId(audioInputDevice.deviceId)}>
+                    <Form.Check
+                      inline
+                      checked={audioInputDevice.deviceId === inputDeviceId}
+                      disabled={audioInputDevice.deviceId === inputDeviceId}
+                      readOnly={true}
+                    />
+                    <span>{audioInputDevice.label}</span>
+                  </div>
+                </Row>
+              );
+            },
+          )}
+        </Col>
+        <Col>
+          {audioOutputDevices.map(
+            (audioOutputDevice): ReactElement => {
+              return (
+                <Row key={audioOutputDevice.deviceId}>
+                  <div onClick={(): void => setOutputDeviceId(audioOutputDevice.deviceId)}>
+                    <Form.Check
+                      inline
+                      checked={audioOutputDevice.deviceId === outputDeviceId}
+                      disabled={audioOutputDevice.deviceId === outputDeviceId}
+                      readOnly={true}
+                    />
+                    <span>{audioOutputDevice.label}</span>
+                  </div>
+                </Row>
+              );
+            },
+          )}
+        </Col>
+        <Col>
+          <Button>Apply (Do Nothing)</Button>
+          <Button onClick={(): void => setMuted(!muted)}>{muted ? 'Unmute' : 'Mute'}</Button>
+          <Button onClick={refreshAudioDevices}>Refresh</Button>
+          <Form.Control
+            name={'volume'}
+            type={'range'}
+            min={0}
+            max={100}
+            value={volume}
+            onChange={(e): void => setVolume(Number(e.target.value))}
+          />
+          <Form.Label htmlFor={'volume'}>Volume: {volume}</Form.Label>
+        </Col>
         <audio ref={audioElementRef} autoPlay={true} muted={muted} />
-      </Grid.Row>
+      </Row>
     </Fragment>
   );
 };

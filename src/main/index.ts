@@ -88,6 +88,8 @@ if (!isFirstInstance) {
     mainWindow = new BrowserWindow({
       width: 800,
       height: 600,
+      minWidth: 400,
+      minHeight: 300,
       webPreferences: {
         nodeIntegration: true,
         nodeIntegrationInWorker: true,
@@ -127,11 +129,20 @@ if (!isFirstInstance) {
   // Electron 9 default
   app.allowRendererProcessReuse = true;
 
+  app.on('session-created', (session) => {
+    if (!isDevelopment) {
+      log.info('Cleaning local storage on session creation');
+      session.clearStorageData({ storages: ['localstorage'] }).catch(log.error);
+    }
+  });
+
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   app.on('ready', () => {
+    log.info('App ready');
     createWindow();
+
     if (!isDevelopment) {
       autoUpdater.beginUpdate();
     }
@@ -139,16 +150,14 @@ if (!isFirstInstance) {
 
   // Quit when all windows are closed.
   app.on('window-all-closed', () => {
-    // On OS X it is common for applications and their menu bar
-    // to stay active until the user quits explicitly with Cmd + Q
+    // On OS X it is common for applications and their menu bar to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== 'darwin') {
       app.quit();
     }
   });
 
   app.on('activate', () => {
-    // On OS X it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
+    // On OS X it's common to re-create a window in the app when the dock startButton is clicked and there are no other windows open.
     if (mainWindow === null) {
       createWindow();
     }
