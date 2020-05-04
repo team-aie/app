@@ -1,16 +1,22 @@
-// Fonts
-@import '~node-source-han-sans/SourceHanSans-Regular-otf.css';
-@import '~node-source-han-sans/SourceHanSans-ExtraLight-otf.css';
-@import '~node-source-han-sans-sc/SourceHanSansSC-Regular-otf.css';
-@import '~node-source-han-sans-sc/SourceHanSansSC-ExtraLight-otf.css';
-
-// Other Modules
-@import './components/themed';
-
-// Semantic UI Default Theme
-@import '~semantic-ui-css/semantic.min.css';
-
+// Global styles
 div#app {
   width: 100vw;
   height: 100vh;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}
+
+// Unless specified otherwise, all images are not draggable and not selectable
+* {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+// https://stackoverflow.com/a/42225797
+td:empty::after,
+.list-group-item:empty::after {
+  content: '\00a0';
 }

@@ -44,6 +44,8 @@
   "homepage": "https://github.com/team-aie/app#readme",
   "dependencies": {
     "audiobuffer-to-wav": "^1.0.0",
+    "bootstrap": "^4.4.1",
+    "dexie": "^3.0.0",
     "electron-log": "^4.1.1",
     "electron-updater": "^4.2.5",
     "i18next": "^19.4.4",
@@ -52,12 +54,11 @@
     "node-source-han-sans": "^1.1.0-2.001R",
     "node-source-han-sans-sc": "^1.1.0-2.001R",
     "react": "^16.13.1",
+    "react-bootstrap": "^1.0.1",
     "react-dom": "^16.13.1",
     "react-i18next": "^11.4.0",
     "react-use": "^14.1.1",
     "sanitize-filename": "^1.6.3",
-    "semantic-ui-css": "^2.4.1",
-    "semantic-ui-react": "^0.88.2",
     "source-map-support": "^0.5.16"
   },
   "devDependencies": {
