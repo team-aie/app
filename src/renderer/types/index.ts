@@ -1,4 +1,31 @@
-export type PageState = 'create-project' | 'recording-studio' | 'start';
+export type PageState = 'welcome' | 'open-project' | 'configure-recording-set' | 'recording-studio';
+
+export type ScaleKey = 'C' | 'D' | 'E' | 'F' | 'G' | 'A' | 'B';
+export type SupportedOctave = 2 | 3 | 4 | 5;
+
+export interface RecordingProject {
+  readonly name: string;
+  readonly rootPath: string;
+  lastAccessTime?: Date;
+}
+
+export interface RecordingSet {
+  name: string;
+  scale: {
+    key: ScaleKey;
+    octave: SupportedOctave;
+  };
+  recordingList:
+    | {
+        type: 'built-in';
+        name: string;
+      }
+    | {
+        type: 'custom-file';
+        filePath: string;
+      };
+  items?: RecordingItem[];
+}
 
 export interface RecordingItem {
   readonly displayText: string;
@@ -28,8 +55,3 @@ export const enum SupportedLocale {
   EN_US = 'en-US',
   JA_JP = 'ja-JP',
 }
-export const SUPPORTED_LOCALES: ReadonlySet<string> = new Set([
-  SupportedLocale.ZH_CN,
-  SupportedLocale.EN_US,
-  SupportedLocale.JA_JP,
-]);

@@ -4,8 +4,12 @@ import * as path from 'path';
 import toWav from 'audiobuffer-to-wav';
 import * as log from 'electron-log';
 import React, { Fragment, ReactElement, RefObject, useEffect, useRef, useState } from 'react';
-import { useLocalStorage } from 'react-use';
-import { Button, Checkbox, Grid, Header } from 'semantic-ui-react';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
+import useLocalStorage from 'react-use/lib/useLocalStorage';
 
 import {
   addGlobalKeyDownHandler,
@@ -15,7 +19,6 @@ import {
 } from '../../services/key-event-handler-registry';
 import { ChromeHTMLAudioElement, Consumer, PageState, RecordedVoiceItem, RecordingItem } from '../../types';
 import AudioSettings from '../audio-settings';
-import SizedDiv from '../sized-div';
 
 import NoteFrequencyMap from './note-to-frequency';
 
@@ -94,7 +97,7 @@ export const enum StudioState {
 
 const ScaleSelector = ({ scales, scaleIndex, setScaleIndex, studioState }: ScaleSelectorProps): ReactElement => {
   return (
-    <Grid.Column>
+    <Col>
       {scales.map(
         (scale, i): ReactElement => {
           return (
@@ -107,7 +110,7 @@ const ScaleSelector = ({ scales, scaleIndex, setScaleIndex, studioState }: Scale
           );
         },
       )}
-    </Grid.Column>
+    </Col>
   );
 };
 
@@ -426,15 +429,17 @@ const RecordingStudio = ({
 
   log.debug(studioState);
   return (
-    <Grid columns={16} divided={true}>
-      <Grid.Row columns={1}>
-        <Grid.Column>
-          <Header as={'h4'}>Audio Settings</Header>
-          <Button disabled={studioState !== StudioState.IDLE} onClick={(): void => setPageState('create-project')}>
+    <Container>
+      <Row>
+        <Col>
+          <h4>Audio Settings</h4>
+          <Button
+            disabled={studioState !== StudioState.IDLE}
+            onClick={(): void => setPageState('configure-recording-set')}>
             Back
           </Button>
-        </Grid.Column>
-      </Grid.Row>
+        </Col>
+      </Row>
       <AudioSettings
         recording={studioState}
         recordedChunks={recordedChunks}
@@ -447,139 +452,134 @@ const RecordingStudio = ({
         setVolume={setVolume}
         lastUpdatedTime={lastUpdatedTime}
       />
-      <Grid.Row divided={false}>
-        <Grid.Column width={5}>
-          <SizedDiv height={40}>
-            <VoiceItemSelector
-              recordingList={recordingList}
-              recordingItemIndex={recordingItemIndex}
-              setVoiceItemIndex={setVoiceItemIndex}
-              currentVoiceItemRef={currentVoiceItemRef}
-              recordingFileExistList={
-                recordingFileState[scales[scaleIndex]]
-                  ? recordingFileState[scales[scaleIndex]].map((x) => x.audioExists || false)
-                  : []
-              }
-            />
-          </SizedDiv>
-        </Grid.Column>
-        <Grid.Column width={11}>
-          <Grid columns={16}>
-            <Grid.Row divided={true}>
-              <Grid.Column width={5}>
-                <Grid.Row>
-                  <ScaleSelector
-                    scales={scales}
-                    scaleIndex={scaleIndex}
-                    setScaleIndex={setScaleIndex}
-                    studioState={studioState}
-                  />
-                </Grid.Row>
-              </Grid.Column>
-              <Grid.Column width={11}>
-                <Grid.Row>
-                  <Button
-                    onClick={(): void => {
-                      setStudioState(studioState === StudioState.RECORDING ? StudioState.IDLE : StudioState.RECORDING);
-                    }}
-                    secondary={studioState === StudioState.RECORDING}
-                    disabled={!new Set([StudioState.IDLE, StudioState.RECORDING]).has(studioState)}>
-                    {studioState === StudioState.RECORDING ? `Recording  ("${recordKey}")` : `Record  ("${recordKey}")`}
-                  </Button>
-                  <Button
-                    onClick={(): void => {
-                      setStudioState(studioState === StudioState.PLAYING ? StudioState.IDLE : StudioState.PLAYING);
-                    }}
-                    secondary={studioState === StudioState.PLAYING}
-                    disabled={
-                      !new Set([StudioState.IDLE, StudioState.PLAYING]).has(studioState) ||
-                      !(
-                        recordingFileState[scales[scaleIndex]] &&
-                        recordingFileState[scales[scaleIndex]][recordingItemIndex].audioExists
-                      )
-                    }>
-                    {studioState === StudioState.PLAYING ? `Playing ("${playKey}")` : `Play ("${playKey}")`}
-                  </Button>
-                  <Button
-                    onClick={(): void => {
-                      setStudioState(
-                        studioState === StudioState.PLAYING_SCALE ? StudioState.IDLE : StudioState.PLAYING_SCALE,
-                      );
-                    }}
-                    secondary={studioState === StudioState.PLAYING_SCALE}
-                    disabled={!new Set([StudioState.IDLE, StudioState.PLAYING_SCALE]).has(studioState)}>
-                    {studioState === StudioState.PLAYING_SCALE
-                      ? `Playing Scale ("${playScaleKey}")`
-                      : `Play Scale ("${playScaleKey}")`}
-                  </Button>
-                </Grid.Row>
-                <Grid.Row>
-                  <Checkbox
-                    toggle={true}
-                    disabled={studioState !== StudioState.IDLE}
-                    checked={usePTE}
-                    onChange={(): void => setUsePTE(!usePTE)}
-                    label={'Push to execute (not working)'}
-                  />
-                </Grid.Row>
-                <Grid.Row>
-                  <Checkbox
-                    toggle={true}
-                    disabled={studioState !== StudioState.IDLE}
-                    checked={showSavingAudioFilePrompt}
-                    onChange={(): void => setShowSavingAudioFilePrompt(!showSavingAudioFilePrompt)}
-                    label={'Show prompt of saving audio file'}
-                  />
-                </Grid.Row>
-                <Grid.Row>
-                  <Button
-                    onClick={(): void => {
-                      setVoiceItemIndex((recordingItemIndex - 1 + recordingList.length) % recordingList.length);
-                    }}
-                    disabled={studioState !== StudioState.IDLE}>
-                    Previous Voice
-                  </Button>
-                  <Button
-                    onClick={(): void => {
-                      setVoiceItemIndex((recordingItemIndex + 1) % recordingList.length);
-                    }}
-                    disabled={studioState !== StudioState.IDLE}>
-                    Next Voice
-                  </Button>
-                </Grid.Row>
-                <Grid.Row>
-                  <Button
-                    onClick={(): void => {
-                      setScaleIndex((scaleIndex - 1 + scales.length) % scales.length);
-                    }}
-                    disabled={studioState !== StudioState.IDLE}>
-                    Previous Scale
-                  </Button>
-                  <Button
-                    onClick={(): void => {
-                      setScaleIndex((scaleIndex + 1) % scales.length);
-                    }}
-                    disabled={studioState !== StudioState.IDLE}>
-                    Next Scale
-                  </Button>
-                </Grid.Row>
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-              {studioState === StudioState.RECORDING ? (
-                <Header as={'h3'}>Recording In Progress...</Header>
-              ) : (
-                <pre>
-                  {recordingFileState[scales[scaleIndex]] &&
-                    JSON.stringify(recordingFileState[scales[scaleIndex]][recordingItemIndex], null, 2)}
-                </pre>
-              )}
-              <audio autoPlay={true} muted={false} ref={audioPlayBackRef} />
-            </Grid.Row>
-          </Grid>
-        </Grid.Column>
-      </Grid.Row>
-    </Grid>
+      <Row>
+        <Col xs={4} sm={4} md={4} lg={4} xl={4}>
+          <VoiceItemSelector
+            recordingList={recordingList}
+            recordingItemIndex={recordingItemIndex}
+            setVoiceItemIndex={setVoiceItemIndex}
+            currentVoiceItemRef={currentVoiceItemRef}
+            recordingFileExistList={
+              recordingFileState[scales[scaleIndex]]
+                ? recordingFileState[scales[scaleIndex]].map((x) => x.audioExists || false)
+                : []
+            }
+          />
+        </Col>
+        <Col xs={8} sm={8} md={8} lg={8} xl={8}>
+          <Row>
+            <Col>
+              <Row>
+                <ScaleSelector
+                  scales={scales}
+                  scaleIndex={scaleIndex}
+                  setScaleIndex={setScaleIndex}
+                  studioState={studioState}
+                />
+              </Row>
+            </Col>
+            <Col>
+              <Row>
+                <Button
+                  onClick={(): void => {
+                    setStudioState(studioState === StudioState.RECORDING ? StudioState.IDLE : StudioState.RECORDING);
+                  }}
+                  disabled={!new Set([StudioState.IDLE, StudioState.RECORDING]).has(studioState)}>
+                  {studioState === StudioState.RECORDING ? `Recording  ("${recordKey}")` : `Record  ("${recordKey}")`}
+                </Button>
+                <Button
+                  onClick={(): void => {
+                    setStudioState(studioState === StudioState.PLAYING ? StudioState.IDLE : StudioState.PLAYING);
+                  }}
+                  disabled={
+                    !new Set([StudioState.IDLE, StudioState.PLAYING]).has(studioState) ||
+                    !(
+                      recordingFileState[scales[scaleIndex]] &&
+                      recordingFileState[scales[scaleIndex]][recordingItemIndex].audioExists
+                    )
+                  }>
+                  {studioState === StudioState.PLAYING ? `Playing ("${playKey}")` : `Play ("${playKey}")`}
+                </Button>
+                <Button
+                  onClick={(): void => {
+                    setStudioState(
+                      studioState === StudioState.PLAYING_SCALE ? StudioState.IDLE : StudioState.PLAYING_SCALE,
+                    );
+                  }}
+                  disabled={!new Set([StudioState.IDLE, StudioState.PLAYING_SCALE]).has(studioState)}>
+                  {studioState === StudioState.PLAYING_SCALE
+                    ? `Playing Scale ("${playScaleKey}")`
+                    : `Play Scale ("${playScaleKey}")`}
+                </Button>
+              </Row>
+              <Row>
+                <Form.Check
+                  inline
+                  type={'switch'}
+                  disabled={studioState !== StudioState.IDLE}
+                  checked={usePTE}
+                  onChange={(): void => setUsePTE(!usePTE)}
+                  label={'Push to execute (not working)'}
+                />
+              </Row>
+              <Row>
+                <Form.Check
+                  inline
+                  type={'switch'}
+                  disabled={studioState !== StudioState.IDLE}
+                  checked={showSavingAudioFilePrompt}
+                  onChange={(): void => setShowSavingAudioFilePrompt(!showSavingAudioFilePrompt)}
+                  label={'Show prompt of saving audio file'}
+                />
+              </Row>
+              <Row>
+                <Button
+                  onClick={(): void => {
+                    setVoiceItemIndex((recordingItemIndex - 1 + recordingList.length) % recordingList.length);
+                  }}
+                  disabled={studioState !== StudioState.IDLE}>
+                  Previous Voice
+                </Button>
+                <Button
+                  onClick={(): void => {
+                    setVoiceItemIndex((recordingItemIndex + 1) % recordingList.length);
+                  }}
+                  disabled={studioState !== StudioState.IDLE}>
+                  Next Voice
+                </Button>
+              </Row>
+              <Row>
+                <Button
+                  onClick={(): void => {
+                    setScaleIndex((scaleIndex - 1 + scales.length) % scales.length);
+                  }}
+                  disabled={studioState !== StudioState.IDLE}>
+                  Previous Scale
+                </Button>
+                <Button
+                  onClick={(): void => {
+                    setScaleIndex((scaleIndex + 1) % scales.length);
+                  }}
+                  disabled={studioState !== StudioState.IDLE}>
+                  Next Scale
+                </Button>
+              </Row>
+            </Col>
+          </Row>
+          <Row>
+            {studioState === StudioState.RECORDING ? (
+              <h3>Recording In Progress...</h3>
+            ) : (
+              <pre>
+                {recordingFileState[scales[scaleIndex]] &&
+                  JSON.stringify(recordingFileState[scales[scaleIndex]][recordingItemIndex], null, 2)}
+              </pre>
+            )}
+            <audio autoPlay={true} muted={false} ref={audioPlayBackRef} />
+          </Row>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

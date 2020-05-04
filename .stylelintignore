@@ -3,3 +3,4 @@ coverage/
 src/renderer/licenses.ts.base
 *.snap
 *.json
+*.svg

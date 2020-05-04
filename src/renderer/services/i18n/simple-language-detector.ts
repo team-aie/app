@@ -1,6 +1,6 @@
 import priorityLoadFromLocalStorage from '../../contexts/priority-local-storage-loader';
-import { DEFAULT_LOCALE, LOCAL_STORAGE_KEY_LOCALE } from '../../env-and-consts';
-import { SUPPORTED_LOCALES, SupportedLocale } from '../../types';
+import { DEFAULT_LOCALE, LOCAL_STORAGE_KEY_LOCALE, SUPPORTED_LOCALES } from '../../env-and-consts';
+import { SupportedLocale } from '../../types';
 
 const detectLanguage = (): SupportedLocale => {
   const languageInLocalStorage = priorityLoadFromLocalStorage(LOCAL_STORAGE_KEY_LOCALE, '');
