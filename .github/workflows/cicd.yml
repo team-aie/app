@@ -73,6 +73,7 @@ jobs:
           /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
           brew cask install xquartz wine-stable
       - run: npm ci
+      - run: npm run lint
       - run: npm run compile
       - run: npm run test
       - name: Fast Package App
@@ -127,6 +128,7 @@ jobs:
       - name: Use New Version
         run: npm version --allow-same-version --no-git-tag-version ${{ steps.find-new-version.outputs.new_release_version }}
       - run: npm ci
+      - run: npm run lint
       - run: npm run compile
       - run: npm run test
       - name: Fast Package App
@@ -181,6 +183,7 @@ jobs:
       - name: Use New Version
         run: npm version --allow-same-version --no-git-tag-version ${{ steps.find-new-version.outputs.new_release_version }}
       - run: npm ci
+      - run: npm run lint
       - run: npm run compile
       - run: npm run test
       - name: Fast Package App
