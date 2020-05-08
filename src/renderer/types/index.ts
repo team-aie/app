@@ -1,4 +1,4 @@
-export type PageState = 'welcome' | 'open-project' | 'configure-recording-set' | 'recording-studio';
+export type PageState = 'welcome' | 'open-project' | 'configure-recording-set' | 'settings' | 'recording-studio';
 
 export type ScaleKey = 'C' | 'D' | 'E' | 'F' | 'G' | 'A' | 'B';
 export type SupportedOctave = 2 | 3 | 4 | 5;
@@ -55,3 +55,12 @@ export const enum SupportedLocale {
   EN_US = 'en-US',
   JA_JP = 'ja-JP',
 }
+
+/**
+ * https://stackoverflow.com/a/43001581
+ */
+export type Writeable<T> = { -readonly [P in keyof T]: T[P] };
+/**
+ * https://stackoverflow.com/a/43001581
+ */
+export type DeepWriteable<T> = { -readonly [P in keyof T]: DeepWriteable<T[P]> };

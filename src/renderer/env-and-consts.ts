@@ -9,6 +9,7 @@ export const PAGE_STATES_IN_ORDER: PageState[] = [
   'welcome',
   'open-project',
   'configure-recording-set',
+  'settings',
   'recording-studio',
 ];
 export const SUPPORTED_LOCALES: ReadonlySet<string> = new Set([
@@ -19,3 +20,7 @@ export const SUPPORTED_LOCALES: ReadonlySet<string> = new Set([
 export const SCALE_KEYS_IN_ORDER: ScaleKey[] = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 export const SUPPORTED_OCTAVES_IN_ORDER: SupportedOctave[] = [2, 3, 4, 5];
 export const PROJECT_CONFIG_FILENAME = 'aie.config.json';
+
+export const ACQUIRE_PERMISSION_RETRIES = 3;
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+export const noOp = (): (() => void) => (): void => {};
