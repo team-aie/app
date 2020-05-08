@@ -1,6 +1,8 @@
 import React, { FC, MouseEventHandler } from 'react';
 import Button from 'react-bootstrap/Button';
 
+import { Positional } from '../helper-components';
+
 interface NextButtonProps {
   text?: string;
   onClick: MouseEventHandler<HTMLElement>;
@@ -9,13 +11,11 @@ interface NextButtonProps {
 
 const NextButton: FC<NextButtonProps> = ({ text = 'Next', onClick, disabled }) => {
   return (
-    <Button
-      variant={'outline-secondary'}
-      style={{ position: 'absolute', bottom: '30px', right: '30px', minWidth: '120px' }}
-      onClick={onClick}
-      disabled={disabled}>
-      {text}
-    </Button>
+    <Positional position={'bottom-right'}>
+      <Button variant={'outline-secondary'} style={{ minWidth: '120px' }} onClick={onClick} disabled={disabled}>
+        {text}
+      </Button>
+    </Positional>
   );
 };
 

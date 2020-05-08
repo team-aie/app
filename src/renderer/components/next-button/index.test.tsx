@@ -10,22 +10,29 @@ describe('next button', () => {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     const tree = renderer.create(<NextButton onClick={(): void => {}} disabled />).toJSON();
     expect(tree).toMatchInlineSnapshot(`
-      <button
-        className="btn btn-outline-secondary"
-        disabled={true}
-        onClick={[Function]}
+      <div
+        className="position-absolute p-0 d-flex justify-content-end align-items-center container"
         style={
           Object {
-            "bottom": "30px",
-            "minWidth": "120px",
-            "position": "absolute",
-            "right": "30px",
+            "bottom": "1.5rem",
+            "right": "1.5rem",
           }
         }
-        type="button"
       >
-        Next
-      </button>
+        <button
+          className="btn btn-outline-secondary"
+          disabled={true}
+          onClick={[Function]}
+          style={
+            Object {
+              "minWidth": "120px",
+            }
+          }
+          type="button"
+        >
+          Next
+        </button>
+      </div>
     `);
   });
 });
