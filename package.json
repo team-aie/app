@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "start": "electron-webpack dev",
-    "postinstall": "npm run generate-licenses-ts",
+    "postinstall": "electron-builder install-app-deps && npm run generate-licenses-ts",
     "clean": "rm -rf dist coverage",
     "compile": "electron-webpack",
     "generate-licenses-ts": "webpack --config webpack.license.config.js",
@@ -17,8 +17,8 @@
     "lint:js": "eslint . --ext .js,.ts,.tsx",
     "lint:css": "stylelint src",
     "test": "npm run test:unit:ci",
-    "test:unit": "jest",
-    "test:unit:ci": "jest --ci --collectCoverage"
+    "test:unit": "ELECTRON_RUN_AS_NODE=true electron $(which jest)",
+    "test:unit:ci": "ELECTRON_RUN_AS_NODE=true electron $(which jest) --ci --collectCoverage"
   },
   "repository": {
     "type": "git",
@@ -45,6 +45,8 @@
   "dependencies": {
     "audiobuffer-to-wav": "^1.0.0",
     "bootstrap": "^4.4.1",
+    "chardet": "^1.1.0",
+    "detect-character-encoding": "^0.8.0",
     "dexie": "^3.0.0",
     "electron-log": "^4.1.1",
     "electron-updater": "^4.2.5",
@@ -64,6 +66,7 @@
   "devDependencies": {
     "@semantic-release/git": "^9.0.0",
     "@types/audiobuffer-to-wav": "^1.0.0",
+    "@types/detect-character-encoding": "^0.7.0",
     "@types/dom-mediacapture-record": "^1.0.4",
     "@types/jest": "^25.2.1",
     "@types/node": "^12.12.35",
@@ -94,6 +97,7 @@
     "stylelint": "^13.3.2",
     "stylelint-config-prettier": "^8.0.1",
     "stylelint-prettier": "^1.1.2",
+    "text-decoding": "^1.0.0",
     "ts-jest": "^25.3.1",
     "typescript": "^3.8.3",
     "webpack": "^4.42.1",
