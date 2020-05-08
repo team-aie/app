@@ -126,8 +126,8 @@ if (!isFirstInstance) {
     });
   };
 
-  // Electron 9 default
-  app.allowRendererProcessReuse = true;
+  // Electron 9 default is true, but this will prevent native modules (detect-character-encoding) from running
+  app.allowRendererProcessReuse = false;
 
   app.on('session-created', (session) => {
     if (!isDevelopment) {

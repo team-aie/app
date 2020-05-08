@@ -4,6 +4,9 @@ import path from 'path';
 import { OpenDialogOptions, remote } from 'electron';
 import log from 'electron-log';
 
+import { bestEffortDecode } from './buffer-decoders';
+import { ensureLF } from './string-utils';
+
 // Direct Imports
 export const join = path.join;
 export const relative = path.relative;
@@ -13,11 +16,21 @@ export async function readFile(filePath: string, rawBuffer?: false): Promise<str
 export async function readFile(filePath: string, rawBuffer: true): Promise<Buffer>;
 // Overloaded above
 export async function readFile(filePath: string, rawBuffer?: boolean): Promise<string | Buffer> {
-  const buffer = await fsp.readFile(filePath);
-  if (rawBuffer) {
-    return buffer;
-  } else {
-    return String(buffer);
+  try {
+    const buffer = await fsp.readFile(filePath);
+    if (rawBuffer) {
+      return buffer;
+    } else {
+      let decoded: string = await bestEffortDecode(buffer);
+
+      decoded = ensureLF(decoded);
+
+      return decoded;
+    }
+  } catch (e) {
+    const message = `Failed to read file`;
+    log.error(message, e);
+    throw new Error(`${message} ${filePath}: ${e}`);
   }
 }
 
@@ -33,6 +46,7 @@ export const createFolder = async (filePath: string): Promise<void> => {
 export const parentFolderName = path.dirname;
 export const filename = path.basename;
 
+// New Methods
 export const checkFileExistence = async (filePath: string): Promise<'folder' | 'file' | false> => {
   if (!fs.existsSync(filePath)) {
     return false;
