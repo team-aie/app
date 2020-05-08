@@ -9,18 +9,25 @@ describe('back button', () => {
 
     const tree = renderer.create(<BackButton />).toJSON();
     expect(tree).toMatchInlineSnapshot(`
-      <img
-        className=""
-        src="test-file-stub"
+      <div
+        className="position-absolute p-0 d-flex justify-content-start align-items-center container"
         style={
           Object {
             "left": "1.5rem",
-            "position": "absolute",
             "top": "1.5rem",
-            "width": "1rem",
           }
         }
-      />
+      >
+        <img
+          className=""
+          src="test-file-stub"
+          style={
+            Object {
+              "width": "1rem",
+            }
+          }
+        />
+      </div>
     `);
   });
 });

@@ -6,3 +6,4 @@ export * from './string-utils';
 
 export const getLSKey = (namespace: string, key: string): string => `${namespace}${KEY_SEPARATOR}${key}`;
 export const naiveSerialize = (obj: unknown): string => JSON.stringify(obj);
+export const naiveDeepCopy = <T>(obj: T): T => JSON.parse(JSON.stringify(obj));

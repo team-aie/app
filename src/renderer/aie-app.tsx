@@ -2,32 +2,40 @@ import { remote } from 'electron';
 import * as log from 'electron-log';
 import React, { FC, Fragment, ReactElement, useEffect, useState } from 'react';
 import Col from 'react-bootstrap/Col';
-import Container from 'react-bootstrap/Container';
 import { useTranslation } from 'react-i18next';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 
 import ConfigureRecordingSetPage from './components/configure-recording-set-page';
+import { Positional } from './components/helper-components';
 import LicenseDisclosure from './components/license-disclosure';
 import LocaleSelector from './components/locale-selector';
 import OpenProjectPage from './components/open-project-page';
 import RecordingStudio from './components/recording-studio';
+import { SettingsPage } from './components/settings-page';
 import StyleSwitcher from './components/style-switcher';
 import WelcomePage from './components/welcome-page';
-import { LocaleContext, RecordingProjectContext } from './contexts';
-import { PAGE_STATES_IN_ORDER, isDevelopment } from './env-and-consts';
+import {
+  AudioInputStreamContext,
+  DeviceContext,
+  DeviceStatus,
+  LocaleContext,
+  RecordingProjectContext,
+} from './contexts';
+import { PAGE_STATES_IN_ORDER, isDevelopment, noOp } from './env-and-consts';
 import { RecordingItem, RecordingProject, RecordingSet, SupportedLocale } from './types';
-import { getLSKey, lineByLineParser, readFile } from './utils';
+import { getLSKey, lineByLineParser, naiveDeepCopy, naiveSerialize, readFile } from './utils';
+import { acquireAudioInputStream } from './utils/media-utils';
 const { length: numStates } = PAGE_STATES_IN_ORDER;
 
 const BottomRightDisplay: FC = () => (
-  <Container className={'d-flex justify-content-end position-absolute'} style={{ bottom: '15px', right: '10px' }} fluid>
+  <Positional position={'bottom-right'}>
     <Col xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'}>
       <LocaleSelector fontSize={'75%'} />
     </Col>
     <Col xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'}>
       <LicenseDisclosure triggerStyle={{ fontSize: '75%' }} />
     </Col>
-  </Container>
+  </Positional>
 );
 
 const AieApp: FC = () => {
@@ -120,6 +128,8 @@ const AieApp: FC = () => {
             onSetSelected={adaptToPrototypeRecordingStudio}
           />
         );
+      case 'settings':
+        return <SettingsPage onNext={simpleOnNext} onBack={simpleOnBack} />;
       case 'recording-studio':
         return (
           <RecordingStudio
@@ -137,14 +147,77 @@ const AieApp: FC = () => {
     }
   };
 
+  const [deviceStatus, setDeviceStatus] = useLocalStorage<DeviceStatus>(getLSKey('AieApp', 'deviceStatus'), {
+    audioInputDevices: [],
+    audioOutputDevices: [],
+    audioInputDeviceId: '',
+    audioOutputDeviceId: '',
+  });
+
+  useEffect(() => {
+    const { audioInputDevices, audioOutputDevices, audioInputDeviceId, audioOutputDeviceId } = deviceStatus;
+    const newStatus = naiveDeepCopy(deviceStatus);
+    let changed = false;
+    if (audioInputDevices.length) {
+      if (!audioInputDeviceId || !audioInputDevices.find((x) => x.deviceId === audioInputDeviceId)) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        newStatus.audioInputDeviceId = audioInputDevices.find((x) => x.isDefaultAudioInput)!.deviceId;
+        changed = true;
+      }
+    } else {
+      if (audioInputDeviceId) {
+        newStatus.audioInputDeviceId = '';
+        changed = true;
+      }
+    }
+
+    if (audioOutputDevices.length) {
+      if (!audioOutputDeviceId || !audioOutputDevices.find((x) => x.deviceId === audioOutputDeviceId)) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        newStatus.audioOutputDeviceId = audioOutputDevices.find((x) => x.isDefaultAudioOutput)!.deviceId;
+        changed = true;
+      }
+    } else {
+      if (audioOutputDeviceId) {
+        newStatus.audioOutputDeviceId = '';
+        changed = true;
+      }
+    }
+
+    if (changed) {
+      setDeviceStatus(newStatus);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [naiveSerialize(deviceStatus), setDeviceStatus]);
+  const [audioInputStream, setAudioInputStream] = useState<MediaStream | undefined>(undefined);
+  const { audioInputDeviceId } = deviceStatus;
+  useEffect(() => {
+    if (audioInputDeviceId) {
+      let mounted = true;
+      acquireAudioInputStream(audioInputDeviceId).then((stream) => {
+        if (mounted) {
+          setAudioInputStream(stream);
+        }
+      });
+      return (): void => {
+        mounted = false;
+      };
+    }
+    return noOp();
+  }, [audioInputDeviceId]);
+
   return (
     <LocaleContext.Provider value={{ locale, setLocale }}>
       <RecordingProjectContext.Provider value={{ recordingProject, setRecordingProject }}>
-        <Fragment>
-          <StyleSwitcher />
-          {routePageToComponent()}
-          {pageStateIndex === 0 && <BottomRightDisplay />}
-        </Fragment>
+        <DeviceContext.Provider value={{ deviceStatus, setDeviceStatus }}>
+          <AudioInputStreamContext.Provider value={{ audioInputStream, setAudioInputStream }}>
+            <Fragment>
+              <StyleSwitcher />
+              {routePageToComponent()}
+              {pageStateIndex === 0 && <BottomRightDisplay />}
+            </Fragment>
+          </AudioInputStreamContext.Provider>
+        </DeviceContext.Provider>
       </RecordingProjectContext.Provider>
     </LocaleContext.Provider>
   );

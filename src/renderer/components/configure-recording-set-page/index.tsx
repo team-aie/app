@@ -3,6 +3,7 @@ import React, { FC, Fragment, MouseEventHandler, useContext, useEffect, useState
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
+import CSSTransition from 'react-transition-group/CSSTransition';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 
 import { RecordingProjectContext } from '../../contexts';
@@ -19,12 +20,15 @@ import {
   writeFile,
 } from '../../utils';
 import BackButton from '../back-button';
+import { Positional } from '../helper-components';
 import NextButton from '../next-button';
 
 import AddRecordingSetButton from './add-recording-set-button';
 import CreatedRecordingSetList from './created-recording-set-list';
 import SetMetaConfiguration from './set-meta-configuration';
 import SetRecordingListConfiguration from './set-recording-list-configuration';
+
+import './show-details.scss';
 
 interface ProjectFile extends RecordingProject {
   name: string;
@@ -52,6 +56,10 @@ const ConfigureRecordingSetPage: FC<{
   const [recordingSets, setRecordingSets] = useLocalStorage<RecordingSet[]>(
     getLSKey('ConfigureRecordingSetPage', 'recordingSets'),
     [],
+  );
+  const [showingDetails, setShowingDetails] = useLocalStorage(
+    getLSKey('ConfigureRecordingSetPage', 'showingDetails'),
+    false,
   );
   const [canWrite, setCanWrite] = useState(false);
 
@@ -154,6 +162,7 @@ const ConfigureRecordingSetPage: FC<{
     rawSetChosenCustomListPath('');
     setSelectedRecordingSetIndex(-1);
     setProjectFile(DUMMY_PROJECT_FILE);
+    setShowingDetails(false);
     setImmediate(() => onBack(e));
   };
 
@@ -177,9 +186,8 @@ const ConfigureRecordingSetPage: FC<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [naiveSerialize(recordingProject), naiveSerialize(recordingSets)]);
 
-  return (
-    <Fragment>
-      <BackButton onBack={clearTemporaryItemsOnBack} />
+  const ConfigurationPanel: FC = () => {
+    return (
       <Container style={{ height: '100%' }} className={'d-flex justify-content-center align-items-center'}>
         <Col>
           <Row>
@@ -228,7 +236,25 @@ const ConfigureRecordingSetPage: FC<{
           </Row>
         </Col>
       </Container>
+    );
+  };
+
+  return (
+    <Fragment>
+      <BackButton onBack={clearTemporaryItemsOnBack} />
+      <ConfigurationPanel />
       <NextButton text={'Start'} onClick={onNext} disabled={selectedRecordingSetIndex < 0} />
+      <CSSTransition in={showingDetails} timeout={200} classNames={'move-up-in-down-out'}>
+        <Positional
+          position={'bottom-center'}
+          style={{ bottom: undefined, display: 'none' }}
+          className={`show-details ${
+            showingDetails ? 'move-up-in-down-out-start-in' : 'move-up-in-down-out-start-out'
+          }`}
+          onClick={(): void => setShowingDetails(showingDetails)}>
+          Show Details
+        </Positional>
+      </CSSTransition>
     </Fragment>
   );
 };
