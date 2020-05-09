@@ -1,6 +1,6 @@
 import { analyse } from 'chardet';
 import { Match } from 'chardet/lib/match';
-import detectCharacterEncoding, { Result } from 'detect-character-encoding';
+// import detectCharacterEncoding, { Result } from 'detect-character-encoding';
 import log from 'electron-log';
 
 abstract class BestEffortDecoder<ResultType> {
@@ -51,19 +51,19 @@ class ChardetDecoder extends BestEffortDecoder<Match[]> {
   }
 }
 
-class DetectCharacterEncodingDecoder extends BestEffortDecoder<Result | null> {
-  name: 'detect-character-encoding' = 'detect-character-encoding';
+// class DetectCharacterEncodingDecoder extends BestEffortDecoder<Result | null> {
+//   name: 'detect-character-encoding' = 'detect-character-encoding';
+//
+//   protected async analyze(buffer: Buffer): Promise<Result | null> {
+//     return detectCharacterEncoding(buffer);
+//   }
+//
+//   protected findEncodingToAttempt(result: Result | null): string | null | undefined {
+//     return result && result.encoding;
+//   }
+// }
 
-  protected async analyze(buffer: Buffer): Promise<Result | null> {
-    return detectCharacterEncoding(buffer);
-  }
-
-  protected findEncodingToAttempt(result: Result | null): string | null | undefined {
-    return result && result.encoding;
-  }
-}
-
-const BUFFER_DECODERS_IN_ORDER = [new ChardetDecoder(), new DetectCharacterEncodingDecoder()];
+const BUFFER_DECODERS_IN_ORDER = [new ChardetDecoder() /*, new DetectCharacterEncodingDecoder()*/];
 
 export const bestEffortDecode = async (buffer: Buffer): Promise<string> => {
   for (const decoder of BUFFER_DECODERS_IN_ORDER) {
