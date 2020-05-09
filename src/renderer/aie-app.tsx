@@ -1,4 +1,3 @@
-import { remote } from 'electron';
 import * as log from 'electron-log';
 import React, { FC, Fragment, ReactElement, useEffect, useState } from 'react';
 import Col from 'react-bootstrap/Col';
@@ -21,7 +20,7 @@ import {
   LocaleContext,
   RecordingProjectContext,
 } from './contexts';
-import { PAGE_STATES_IN_ORDER, isDevelopment, noOp } from './env-and-consts';
+import { PAGE_STATES_IN_ORDER, noOp } from './env-and-consts';
 import { RecordingItem, RecordingProject, RecordingSet, ScaleKey, SupportedLocale, SupportedOctave } from './types';
 import {
   acquireAudioInputStream,
@@ -85,21 +84,22 @@ const AieApp: FC = () => {
     }
   }
 
-  if (!isDevelopment) {
-    // This is intentional for debugging purposes
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useEffect(() => {
-      const window = remote.getCurrentWindow();
-      if (pageState === 'recording') {
-        window.setMaximizable(true);
-        window.setResizable(true);
-      } else {
-        window.setMaximizable(false);
-        window.setResizable(false);
-        window.setSize(800, 600);
-      }
-    }, [pageState]);
-  }
+  // TODO: Will decide whether this is a good idea later
+  // if (!isDevelopment) {
+  //   // This is intentional for debugging purposes
+  //   // eslint-disable-next-line react-hooks/rules-of-hooks
+  //   useEffect(() => {
+  //     const window = remote.getCurrentWindow();
+  //     if (pageState === 'recording') {
+  //       window.setMaximizable(true);
+  //       window.setResizable(true);
+  //     } else {
+  //       window.setMaximizable(false);
+  //       window.setResizable(false);
+  //       window.setSize(800, 600);
+  //     }
+  //   }, [pageState]);
+  // }
 
   const [recordingProject, setRecordingProject] = useLocalStorage<RecordingProject>(
     getLSKey('AieApp', 'recordingProject'),
