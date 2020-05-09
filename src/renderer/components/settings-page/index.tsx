@@ -1,4 +1,4 @@
-import React, { FC, Fragment, MouseEventHandler, useContext, useEffect } from 'react';
+import React, { FC, Fragment, MouseEventHandler, useContext } from 'react';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
@@ -6,7 +6,6 @@ import Row from 'react-bootstrap/Row';
 
 import { DeviceContext } from '../../contexts';
 import { naiveSerialize } from '../../utils';
-import { useNormalizedMediaDeviceCategories } from '../../utils/media-utils';
 import BackButton from '../back-button';
 import NextButton from '../next-button';
 
@@ -14,32 +13,10 @@ export const SettingsPage: FC<{
   onNext: MouseEventHandler<HTMLElement>;
   onBack: MouseEventHandler<HTMLElement>;
 }> = ({ onNext, onBack }) => {
-  const { audioInputs, audioOutputs } = useNormalizedMediaDeviceCategories();
   const {
     deviceStatus: { audioInputDevices, audioOutputDevices, audioInputDeviceId, audioOutputDeviceId },
     setDeviceStatus,
   } = useContext(DeviceContext);
-  useEffect(() => {
-    if (
-      naiveSerialize(audioInputs) !== naiveSerialize(audioInputDevices) ||
-      naiveSerialize(audioOutputs) !== naiveSerialize(audioOutputDevices)
-    ) {
-      setDeviceStatus({
-        audioInputDevices: audioInputs,
-        audioOutputDevices: audioOutputs,
-        audioInputDeviceId,
-        audioOutputDeviceId,
-      });
-    }
-  }, [
-    audioInputDeviceId,
-    audioInputDevices,
-    audioInputs,
-    audioOutputDeviceId,
-    audioOutputDevices,
-    audioOutputs,
-    setDeviceStatus,
-  ]);
 
   const setAudioInputDeviceId = (deviceId: string): void => {
     setDeviceStatus({
@@ -63,7 +40,7 @@ export const SettingsPage: FC<{
     <Fragment>
       <BackButton onBack={onBack} />
       <Container>
-        <Row style={{ marginTop: '6rem' }}>
+        <Row style={{ paddingTop: '6rem' }}>
           <Col xs={'auto'} sm={3} md={3} lg={3} xl={3}>
             Input Device
           </Col>

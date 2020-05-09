@@ -10,7 +10,7 @@ export const PAGE_STATES_IN_ORDER: PageState[] = [
   'open-project',
   'configure-recording-set',
   'settings',
-  'recording-studio',
+  'recording',
 ];
 export const SUPPORTED_LOCALES: ReadonlySet<string> = new Set([
   SupportedLocale.ZH_CN,

@@ -17,6 +17,7 @@ div#app {
 
 // https://stackoverflow.com/a/42225797
 td:empty::after,
-.list-group-item:empty::after {
+.list-group-item:empty::after,
+.place-held:empty::after {
   content: '\00a0';
 }
