@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { noOp } from '../env-and-consts';
 import { Consumer } from '../types';
 
 interface AudioInputStreamContextType {
@@ -9,6 +10,5 @@ interface AudioInputStreamContextType {
 
 export const AudioInputStreamContext = React.createContext<AudioInputStreamContextType>({
   audioInputStream: undefined,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  setAudioInputStream: (() => {}) as Consumer<MediaStream>,
+  setAudioInputStream: noOp() as Consumer<MediaStream>,
 });

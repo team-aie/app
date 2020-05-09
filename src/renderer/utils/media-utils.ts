@@ -1,7 +1,11 @@
+import { useContext, useEffect } from 'react';
 import { useMediaDevices } from 'react-use';
 
+import { DeviceContext, DeviceStatus } from '../contexts';
 import { ACQUIRE_PERMISSION_RETRIES } from '../env-and-consts';
-import { Writeable } from '../types';
+import { Consumer, Writeable } from '../types';
+
+import { naiveSerialize } from './index';
 
 export interface NormalizedMediaDeviceInfo {
   readonly deviceId: string;
@@ -114,4 +118,34 @@ export const acquireAudioInputStream = async (deviceId: string): Promise<MediaSt
   }
 
   throw new Error('Failed to obtain microphone stream');
+};
+
+export const useMonitoringDevices = (): [DeviceStatus, Consumer<DeviceStatus>] => {
+  const { audioInputs, audioOutputs } = useNormalizedMediaDeviceCategories();
+  const { deviceStatus, setDeviceStatus } = useContext(DeviceContext);
+  const { audioInputDevices, audioOutputDevices, audioInputDeviceId, audioOutputDeviceId } = deviceStatus;
+
+  useEffect(() => {
+    if (
+      naiveSerialize(audioInputs) !== naiveSerialize(audioInputDevices) ||
+      naiveSerialize(audioOutputs) !== naiveSerialize(audioOutputDevices)
+    ) {
+      setDeviceStatus({
+        audioInputDevices: audioInputs,
+        audioOutputDevices: audioOutputs,
+        audioInputDeviceId,
+        audioOutputDeviceId,
+      });
+    }
+  }, [
+    audioInputDeviceId,
+    audioInputDevices,
+    audioInputs,
+    audioOutputDeviceId,
+    audioOutputDevices,
+    audioOutputs,
+    setDeviceStatus,
+  ]);
+
+  return [deviceStatus, setDeviceStatus];
 };
