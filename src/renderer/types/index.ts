@@ -1,4 +1,4 @@
-export type PageState = 'welcome' | 'open-project' | 'configure-recording-set' | 'settings' | 'recording-studio';
+export type PageState = 'welcome' | 'open-project' | 'configure-recording-set' | 'settings' | 'recording';
 
 export type ScaleKey = 'C' | 'D' | 'E' | 'F' | 'G' | 'A' | 'B';
 export type SupportedOctave = 2 | 3 | 4 | 5;

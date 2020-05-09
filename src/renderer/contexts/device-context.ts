@@ -1,7 +1,8 @@
 import React from 'react';
 
+import { noOp } from '../env-and-consts';
 import { Consumer } from '../types';
-import { NormalizedMediaDeviceInfo } from '../utils/media-utils';
+import { NormalizedMediaDeviceInfo } from '../utils';
 
 export interface DeviceStatus {
   audioInputDevices: NormalizedMediaDeviceInfo[];
@@ -22,6 +23,5 @@ export const DeviceContext = React.createContext<DeviceContextType>({
     audioInputDeviceId: '',
     audioOutputDeviceId: '',
   },
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  setDeviceStatus: (() => {}) as Consumer<DeviceStatus>,
+  setDeviceStatus: noOp as Consumer<DeviceStatus>,
 });

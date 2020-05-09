@@ -10,7 +10,7 @@ import { Positional } from './components/helper-components';
 import LicenseDisclosure from './components/license-disclosure';
 import LocaleSelector from './components/locale-selector';
 import OpenProjectPage from './components/open-project-page';
-import RecordingStudio from './components/recording-studio';
+import { RecordingPage } from './components/recording-page';
 import { SettingsPage } from './components/settings-page';
 import StyleSwitcher from './components/style-switcher';
 import WelcomePage from './components/welcome-page';
@@ -22,9 +22,18 @@ import {
   RecordingProjectContext,
 } from './contexts';
 import { PAGE_STATES_IN_ORDER, isDevelopment, noOp } from './env-and-consts';
-import { RecordingItem, RecordingProject, RecordingSet, SupportedLocale } from './types';
-import { getLSKey, lineByLineParser, naiveDeepCopy, naiveSerialize, readFile } from './utils';
-import { acquireAudioInputStream } from './utils/media-utils';
+import { RecordingItem, RecordingProject, RecordingSet, ScaleKey, SupportedLocale, SupportedOctave } from './types';
+import {
+  acquireAudioInputStream,
+  getLSKey,
+  join,
+  lineByLineParser,
+  naiveDeepCopy,
+  naiveSerialize,
+  readFile,
+  useMonitoringDevices,
+} from './utils';
+
 const { length: numStates } = PAGE_STATES_IN_ORDER;
 
 const BottomRightDisplay: FC = () => (
@@ -37,6 +46,11 @@ const BottomRightDisplay: FC = () => (
     </Col>
   </Positional>
 );
+
+const DeviceContextMonitor: FC = ({ children }) => {
+  useMonitoringDevices();
+  return <Fragment>{children}</Fragment>;
+};
 
 const AieApp: FC = () => {
   const { i18n } = useTranslation();
@@ -76,7 +90,7 @@ const AieApp: FC = () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
       const window = remote.getCurrentWindow();
-      if (pageState === 'recording-studio') {
+      if (pageState === 'recording') {
         window.setMaximizable(true);
         window.setResizable(true);
       } else {
@@ -93,16 +107,24 @@ const AieApp: FC = () => {
 
   const [recordingList, setRecordingList] = useLocalStorage(getLSKey('AieApp', 'recordingList'), [] as RecordingItem[]);
   const [projectFolder, setProjectFolder] = useLocalStorage(getLSKey('AieApp', 'projectFolder'), '');
-  const [scales, setScales] = useLocalStorage(getLSKey('AieApp', 'scales'), [] as string[]);
+  const [recordingSet, setRecordingSet] = useLocalStorage<RecordingSet | undefined>(
+    getLSKey('AieApp', 'recordingSet'),
+    undefined,
+  );
+  const [[key, octave], setKeyOctave] = useLocalStorage<[ScaleKey, SupportedOctave]>(getLSKey('AieApp', 'keyOctave'), [
+    'C',
+    3,
+  ]);
 
   const adaptToPrototypeRecordingStudio = (recordingSet: RecordingSet): void => {
     if (recordingSet) {
+      setRecordingSet(recordingSet);
       setProjectFolder(recordingProject.rootPath);
       const {
-        scale: { key, octave },
+        scale: { key: newKey, octave: newOctave },
         recordingList,
       } = recordingSet;
-      setScales([`${key}${octave}`]);
+      setKeyOctave([newKey, newOctave]);
       if (recordingList.type === 'built-in') {
         lineByLineParser.parse(recordingList.name).then(setRecordingList);
       } else {
@@ -130,13 +152,14 @@ const AieApp: FC = () => {
         );
       case 'settings':
         return <SettingsPage onNext={simpleOnNext} onBack={simpleOnBack} />;
-      case 'recording-studio':
+      case 'recording':
         return (
-          <RecordingStudio
-            recordingList={recordingList}
-            projectFolder={projectFolder}
-            scales={scales}
-            setPageState={(): void => changePage(false)}
+          <RecordingPage
+            onBack={simpleOnBack}
+            recordingItems={recordingList}
+            basePath={join(projectFolder, (recordingSet && recordingSet.name) || '')}
+            scaleKey={key}
+            octave={octave}
           />
         );
       default: {
@@ -210,13 +233,15 @@ const AieApp: FC = () => {
     <LocaleContext.Provider value={{ locale, setLocale }}>
       <RecordingProjectContext.Provider value={{ recordingProject, setRecordingProject }}>
         <DeviceContext.Provider value={{ deviceStatus, setDeviceStatus }}>
-          <AudioInputStreamContext.Provider value={{ audioInputStream, setAudioInputStream }}>
-            <Fragment>
-              <StyleSwitcher />
-              {routePageToComponent()}
-              {pageStateIndex === 0 && <BottomRightDisplay />}
-            </Fragment>
-          </AudioInputStreamContext.Provider>
+          <DeviceContextMonitor>
+            <AudioInputStreamContext.Provider value={{ audioInputStream, setAudioInputStream }}>
+              <Fragment>
+                <StyleSwitcher />
+                {routePageToComponent()}
+                {pageStateIndex === 0 && <BottomRightDisplay />}
+              </Fragment>
+            </AudioInputStreamContext.Provider>
+          </DeviceContextMonitor>
         </DeviceContext.Provider>
       </RecordingProjectContext.Provider>
     </LocaleContext.Provider>
