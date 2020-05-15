@@ -75,6 +75,8 @@
     "@types/react-transition-group": "^4.2.4",
     "@typescript-eslint/eslint-plugin": "^2.31.0",
     "@typescript-eslint/parser": "^2.31.0",
+    "conventional-changelog-angular": "^5.0.10",
+    "conventional-recommended-bump": "^6.0.9",
     "electron": "^8.2.5",
     "electron-builder": "^22.6.0",
     "electron-webpack": "^2.8.2",
