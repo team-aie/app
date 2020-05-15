@@ -186,8 +186,9 @@ const ConfigureRecordingSetPage: FC<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [naiveSerialize(recordingProject), naiveSerialize(recordingSets)]);
 
-  const ConfigurationPanel: FC = () => {
-    return (
+  return (
+    <Fragment>
+      <BackButton onBack={clearTemporaryItemsOnBack} />
       <Container style={{ height: '100%' }} className={'d-flex justify-content-center align-items-center'}>
         <Col>
           <Row>
@@ -236,13 +237,6 @@ const ConfigureRecordingSetPage: FC<{
           </Row>
         </Col>
       </Container>
-    );
-  };
-
-  return (
-    <Fragment>
-      <BackButton onBack={clearTemporaryItemsOnBack} />
-      <ConfigurationPanel />
       <NextButton text={'Start'} onClick={onNext} disabled={selectedRecordingSetIndex < 0} />
       <CSSTransition in={showingDetails} timeout={200} classNames={'move-up-in-down-out'}>
         <div
