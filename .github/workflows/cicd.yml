@@ -9,33 +9,19 @@ jobs:
     name: Find Release Version
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Source Code
-        uses: actions/checkout@v2
+      - name: Legacy Checkout Source Code
+        uses: actions/checkout@v1
+      - run: git tag -l
       - name: Use Node.js 12.16.2
         uses: actions/setup-node@v1
         with:
           node-version: 12.16.2
       - name: Detect New Version
         id: find-new-version
-        # Adapted from https://gist.github.com/DarrenN/8c6a5b969481725a4413
-        # Note that we will only write version to file in one environment
         run: |
-          npx semantic-release --dry-run > semantic-release-dry-run.log
-          cat semantic-release-dry-run.log
-          CURRENT_PACKAGE_VERSION=$(cat package.json \
-            | grep version \
-            | head -1 \
-            | awk -F: '{ print $2 }' \
-            | sed 's/[ ",]//g')
-          NEW_RELEASE_VERSION=$(echo "$(cat semantic-release-dry-run.log)" \
-            | grep 'next release version' \
-            | head -1 \
-            | awk -Fis '{ print $2 }' \
-            | sed 's/[ ",]//g')
-          NEW_RELEASE_VERSION="${NEW_RELEASE_VERSION:-`echo ${CURRENT_PACKAGE_VERSION}`}"
-          echo "${NEW_RELEASE_VERSION}" > NEXT_VERSION
-        env:
-          CALCULATE_VERSION_ONLY: true
+          npm i -D conventional-changelog-angular conventional-recommended-bump
+          npm version --allow-same-version --no-git-tag-version $(npx conventional-recommended-bump -p angular) \
+            | sed 's/[v]//g' > NEXT_VERSION
       - run: cat NEXT_VERSION
       - name: Upload Version Number
         uses: actions/upload-artifact@v1
