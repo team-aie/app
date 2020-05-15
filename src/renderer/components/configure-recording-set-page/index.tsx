@@ -20,7 +20,7 @@ import {
   writeFile,
 } from '../../utils';
 import BackButton from '../back-button';
-import { Positional } from '../helper-components';
+// import { Positional } from '../helper-components';
 import NextButton from '../next-button';
 
 import AddRecordingSetButton from './add-recording-set-button';
@@ -245,15 +245,15 @@ const ConfigureRecordingSetPage: FC<{
       <ConfigurationPanel />
       <NextButton text={'Start'} onClick={onNext} disabled={selectedRecordingSetIndex < 0} />
       <CSSTransition in={showingDetails} timeout={200} classNames={'move-up-in-down-out'}>
-        <Positional
-          position={'bottom-center'}
-          style={{ bottom: undefined, display: 'none' }}
+        <div
+          // position={'bottom-center'}
+          style={{ bottom: undefined, display: 'hidden' }}
           className={`show-details ${
             showingDetails ? 'move-up-in-down-out-start-in' : 'move-up-in-down-out-start-out'
           }`}
           onClick={(): void => setShowingDetails(showingDetails)}>
           Show Details
-        </Positional>
+        </div>
       </CSSTransition>
     </Fragment>
   );
