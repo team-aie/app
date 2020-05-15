@@ -1,7 +1,6 @@
 import React, { FC, Fragment } from 'react';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
-import FormControl from 'react-bootstrap/FormControl';
 
 import { SCALE_KEYS_IN_ORDER, SUPPORTED_OCTAVES_IN_ORDER } from '../../env-and-consts';
 import { Consumer, ScaleKey, SupportedOctave } from '../../types';
@@ -66,7 +65,7 @@ const SetMetaConfiguration: FC<SetMetaConfigurationProps> = ({
         Folder Name
       </Col>
       <Col>
-        <FormControl
+        <Form.Control
           className={'border-top-0 border-right-0 border-bottom border-left-0 rounded-0'}
           value={chosenName}
           onChange={(e): void => setChosenName(e.target.value)}
