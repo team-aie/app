@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import Button from 'react-bootstrap/Button';
+import { useTranslation } from 'react-i18next';
 
 import { Consumer, RecordingSet, ScaleKey, SupportedOctave } from '../../types';
 
@@ -22,6 +23,7 @@ const AddRecordingSetButton: FC<AddRecordingSetButtonProps> = ({
   existingSets,
   addRecordingSet,
 }) => {
+  const { t } = useTranslation();
   const hasSetAllFields = chosenKey && chosenOctave && chosenName && (chosenBuiltInList || chosenCustomListPath);
   const canAdd = hasSetAllFields && !existingSets.find((set) => set.name === chosenName);
 
@@ -50,7 +52,7 @@ const AddRecordingSetButton: FC<AddRecordingSetButtonProps> = ({
 
         addRecordingSet(newSet);
       }}>
-      OK
+      {t('OK')}
     </Button>
   );
 };

@@ -4,13 +4,14 @@ import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
+import { useTranslation } from 'react-i18next';
 
 import { RecordingProjectContext } from '../../contexts';
 import { Consumer, RecordingProject } from '../../types';
 import { ensureFolderExists, filename, openFilePicker } from '../../utils';
 import BackButton from '../back-button';
 
-import knownProjectDb from './known-projects';
+import knownProjects from './known-projects';
 
 interface ProjectRowProps {
   project: RecordingProject | undefined;
@@ -39,11 +40,12 @@ const OpenProjectPage: FC<{ onNext: Consumer<void>; onBack: MouseEventHandler<HT
   onNext,
   onBack,
 }) => {
+  const { t } = useTranslation();
   const [projects, setProjects] = useState<RecordingProject[]>([]);
   {
     // Initialize the project array from stored projects
     useEffect(() => {
-      knownProjectDb.knownProjects.toArray().then(setProjects);
+      knownProjects.toArray().then(setProjects);
     }, []);
   }
 
@@ -62,7 +64,7 @@ const OpenProjectPage: FC<{ onNext: Consumer<void>; onBack: MouseEventHandler<HT
 
   const selectProject = async (project: RecordingProject): Promise<void> => {
     project.lastAccessTime = new Date();
-    await knownProjectDb.knownProjects.put(project);
+    await knownProjects.put(project);
     setRecordingProject(project);
     onNext();
   };
@@ -70,8 +72,8 @@ const OpenProjectPage: FC<{ onNext: Consumer<void>; onBack: MouseEventHandler<HT
   const createOrOpenProject = async (isNew: boolean): Promise<void> => {
     const folderPath = await openFilePicker(
       isNew ? 'new-folder' : 'folder',
-      'Select Recording Project Output Folder',
-      'Please select a folder to save voice samples.',
+      `${t('Select Recording Project Output Folder')}`,
+      `${t('Please select a folder to save voice samples.')}`,
     );
 
     if (!folderPath) {
@@ -102,8 +104,8 @@ const OpenProjectPage: FC<{ onNext: Consumer<void>; onBack: MouseEventHandler<HT
             <Table>
               <thead>
                 <tr>
-                  <th className={'border-top-0'}>Project Name</th>
-                  <th className={'border-top-0 text-right'}>Last Access</th>
+                  <th className={'border-top-0'}>{t('Project Name')}</th>
+                  <th className={'border-top-0 text-right'}>{t('Last Access')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -125,7 +127,7 @@ const OpenProjectPage: FC<{ onNext: Consumer<void>; onBack: MouseEventHandler<HT
                   variant={'outline-secondary'}
                   style={{ width: '100%' }}
                   onClick={(): Promise<void> => createOrOpenProject(true)}>
-                  Create
+                  {t('Create')}
                 </Button>
               </Row>
               <Row style={{ marginTop: '0.75rem' }}>
@@ -133,7 +135,7 @@ const OpenProjectPage: FC<{ onNext: Consumer<void>; onBack: MouseEventHandler<HT
                   variant={'outline-secondary'}
                   style={{ width: '100%' }}
                   onClick={(): Promise<void> => createOrOpenProject(false)}>
-                  Open
+                  {t('Open')}
                 </Button>
               </Row>
             </Col>

@@ -1,6 +1,7 @@
 import React, { FC, Fragment } from 'react';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
+import { useTranslation } from 'react-i18next';
 
 import { SCALE_KEYS_IN_ORDER, SUPPORTED_OCTAVES_IN_ORDER } from '../../env-and-consts';
 import { Consumer, ScaleKey, SupportedOctave } from '../../types';
@@ -22,10 +23,11 @@ const SetMetaConfiguration: FC<SetMetaConfigurationProps> = ({
   chosenName,
   setChosenName,
 }) => {
+  const { t } = useTranslation();
   return (
     <Fragment>
       <Col xs={2} sm={2} md={2} lg={2} xl={2}>
-        Scale
+        {t('Scale')}
       </Col>
       <Col xs={2} sm={2} md={2} lg={2} xl={2}>
         <Form>
@@ -62,7 +64,7 @@ const SetMetaConfiguration: FC<SetMetaConfigurationProps> = ({
         </Form>
       </Col>
       <Col xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'}>
-        Folder Name
+        {t('Folder Name')}
       </Col>
       <Col>
         <Form.Control

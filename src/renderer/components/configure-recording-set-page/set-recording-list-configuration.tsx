@@ -3,6 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
+import { useTranslation } from 'react-i18next';
 
 import { Consumer } from '../../types';
 import { filename, openFilePicker } from '../../utils';
@@ -22,6 +23,7 @@ const SetRecordingListConfiguration: FC<SetRecordingListConfigurationProps> = ({
   chosenCustomListPath,
   setChosenCustomListPath,
 }) => {
+  const { t } = useTranslation();
   return (
     <Fragment>
       <Col xs={'auto'} sm={7} md={7} lg={7} xl={7}>
@@ -54,15 +56,15 @@ const SetRecordingListConfiguration: FC<SetRecordingListConfigurationProps> = ({
           onClick={async (): Promise<void> => {
             const recordingListFilePath = await openFilePicker(
               'file',
-              'Select Custom Recording List',
-              'Please select a custom recording list file.',
+              `${t('Select Custom Recording List')}`,
+              `${t('Please select a custom recording list file.')}`,
             );
             if (!recordingListFilePath) {
               return;
             }
             setChosenCustomListPath(recordingListFilePath);
           }}>
-          {(chosenCustomListPath && filename(chosenCustomListPath)) || 'Custom...'}
+          {(chosenCustomListPath && filename(chosenCustomListPath)) || t('Custom...')}
         </Button>
       </Col>
     </Fragment>
