@@ -17,4 +17,4 @@ class KnownProjectDatabase extends Dexie {
 
 const knownProjectDb = new KnownProjectDatabase();
 
-export default knownProjectDb;
+export default knownProjectDb.knownProjects;

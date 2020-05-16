@@ -3,6 +3,7 @@ import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
+import { useTranslation } from 'react-i18next';
 
 import { DeviceContext } from '../../contexts';
 import { naiveSerialize } from '../../utils';
@@ -13,6 +14,7 @@ export const SettingsPage: FC<{
   onNext: MouseEventHandler<HTMLElement>;
   onBack: MouseEventHandler<HTMLElement>;
 }> = ({ onNext, onBack }) => {
+  const { t } = useTranslation();
   const {
     deviceStatus: { audioInputDevices, audioOutputDevices, audioInputDeviceId, audioOutputDeviceId },
     setDeviceStatus,
@@ -42,7 +44,7 @@ export const SettingsPage: FC<{
       <Container>
         <Row style={{ paddingTop: '6rem' }}>
           <Col xs={'auto'} sm={3} md={3} lg={3} xl={3}>
-            Input Device
+            {t('Input Device')}
           </Col>
           <Col xs={'auto'} sm={7} md={7} lg={7} xl={7}>
             <Form className={'w-100'}>
@@ -55,7 +57,7 @@ export const SettingsPage: FC<{
                   {!!audioInputDeviceId || <option value={''} />}
                   {audioInputDevices.map((inputDevice) => (
                     <option key={naiveSerialize(inputDevice)} value={inputDevice.deviceId}>
-                      {`${inputDevice.name}${inputDevice.isDefaultAudioOutput ? ' (Default)' : ''}`}
+                      {`${inputDevice.name}${inputDevice.isDefaultAudioOutput ? ` ${t('(Default)')}` : ''}`}
                     </option>
                   ))}
                 </Form.Control>
@@ -65,7 +67,7 @@ export const SettingsPage: FC<{
         </Row>
         <Row>
           <Col xs={'auto'} sm={3} md={3} lg={3} xl={3}>
-            Output Device
+            {t('Output Device')}
           </Col>
           <Col xs={'auto'} sm={7} md={7} lg={7} xl={7}>
             <Form className={'w-100'}>
@@ -78,7 +80,7 @@ export const SettingsPage: FC<{
                   {!!audioOutputDeviceId || <option value={''} />}
                   {audioOutputDevices.map((outputDevice) => (
                     <option key={naiveSerialize(outputDevice)} value={outputDevice.deviceId}>
-                      {`${outputDevice.name}${outputDevice.isDefaultAudioOutput ? ' (Default)' : ''}`}
+                      {`${outputDevice.name}${outputDevice.isDefaultAudioOutput ? ` ${t('(Default)')}` : ''}`}
                     </option>
                   ))}
                 </Form.Control>
@@ -87,7 +89,7 @@ export const SettingsPage: FC<{
           </Col>
         </Row>
       </Container>
-      <NextButton text={'Confirm'} onClick={onNext} disabled={false} />
+      <NextButton text={t('Confirm')} onClick={onNext} disabled={false} />
     </Fragment>
   );
 };

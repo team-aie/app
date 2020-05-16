@@ -3,6 +3,7 @@ import React, { FC, Fragment, MouseEventHandler, useContext, useEffect, useState
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
+import { useTranslation } from 'react-i18next';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 
@@ -48,6 +49,7 @@ const ConfigureRecordingSetPage: FC<{
   onBack: MouseEventHandler<HTMLElement>;
   onSetSelected: Consumer<RecordingSet>;
 }> = ({ onNext, onBack, onSetSelected }) => {
+  const { t } = useTranslation();
   const { recordingProject } = useContext(RecordingProjectContext);
   const [projectFile, setProjectFile] = useLocalStorage<ProjectFile>(
     getLSKey('ConfigureRecordingSetPage', 'projectFile'),
@@ -223,7 +225,7 @@ const ConfigureRecordingSetPage: FC<{
           </Row>
           <Row style={{ marginTop: '1rem' }}>
             <Col xs={2} sm={2} md={2} lg={2} xl={2}>
-              Created
+              {t('Created')}
             </Col>
             <Col xs={'auto'} sm={8} md={8} lg={8} xl={8}>
               <CreatedRecordingSetList
@@ -237,7 +239,7 @@ const ConfigureRecordingSetPage: FC<{
           </Row>
         </Col>
       </Container>
-      <NextButton text={'Start'} onClick={onNext} disabled={selectedRecordingSetIndex < 0} />
+      <NextButton text={t('Start')} onClick={onNext} disabled={selectedRecordingSetIndex < 0} />
       <CSSTransition in={showingDetails} timeout={200} classNames={'move-up-in-down-out'}>
         <div
           // position={'bottom-center'}
@@ -246,7 +248,7 @@ const ConfigureRecordingSetPage: FC<{
             showingDetails ? 'move-up-in-down-out-start-in' : 'move-up-in-down-out-start-out'
           }`}
           onClick={(): void => setShowingDetails(showingDetails)}>
-          Show Details
+          {t('Show Details')}
         </div>
       </CSSTransition>
     </Fragment>

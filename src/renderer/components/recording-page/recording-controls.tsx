@@ -2,6 +2,7 @@ import React, { FC, Fragment } from 'react';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
+import { useTranslation } from 'react-i18next';
 
 import { ScaleKey, SupportedOctave } from '../../types';
 
@@ -28,6 +29,7 @@ export const RecordingControls: FC<RecordingControlsProps> = ({
   scaleKey,
   octave,
 }) => {
+  const { t } = useTranslation();
   return (
     <Fragment>
       <Row>
@@ -47,7 +49,7 @@ export const RecordingControls: FC<RecordingControlsProps> = ({
               onClick={(): void => {
                 goToPrevious();
               }}>
-              previous
+              {t('previous')}
             </span>
           </Row>
           <Row>
@@ -64,14 +66,14 @@ export const RecordingControls: FC<RecordingControlsProps> = ({
               onClick={(): void => {
                 goToNext();
               }}>
-              next
+              {t('next')}
             </span>
           </Row>
         </Col>
       </Row>
       <Row className={'d-flex justify-content-center mt-3'}>
-        Scale - {scaleKey}
-        {octave}{' '}
+        {t('Scale')} - {scaleKey}
+        {octave}
         <Image
           src={playScale}
           className={'ml-2'}
