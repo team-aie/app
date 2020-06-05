@@ -37,6 +37,8 @@ module.exports = async (env) => {
         'fast-shallow-equal@1.0.0': 'Unlicense',
         // https://github.com/streamich/nano-css/blob/v5.3.0/LICENSE
         'nano-css@5.3.0': 'Unlicense',
+        // https://github.com/streamich/react-universal-interface/tree/v0.6.2/LICENSE
+        'react-universal-interface@0.6.2': 'Unlicense',
       },
       // This file is ignored because it's not very reliable
       outputFilename: '_oss_licenses.json',

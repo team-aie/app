@@ -74,7 +74,7 @@ const AieApp: FC = () => {
     }, [i18n]);
   }
 
-  const [pageStateIndex, setPageStateIndex] = useLocalStorage(getLSKey('AieApp', 'pageStateIndex'), 0);
+  const [pageStateIndex = 0, setPageStateIndex] = useLocalStorage(getLSKey('AieApp', 'pageStateIndex'), 0);
   const pageState = PAGE_STATES_IN_ORDER[pageStateIndex];
   function changePage(isNext: boolean): void {
     if (isNext) {
@@ -101,20 +101,24 @@ const AieApp: FC = () => {
   //   }, [pageState]);
   // }
 
-  const [recordingProject, setRecordingProject] = useLocalStorage<RecordingProject>(
+  const [recordingProject = { name: '', rootPath: '' }, setRecordingProject] = useLocalStorage<RecordingProject>(
     getLSKey('AieApp', 'recordingProject'),
+    { name: '', rootPath: '' },
   );
 
-  const [recordingList, setRecordingList] = useLocalStorage(getLSKey('AieApp', 'recordingList'), [] as RecordingItem[]);
-  const [projectFolder, setProjectFolder] = useLocalStorage(getLSKey('AieApp', 'projectFolder'), '');
+  const [recordingList = [], setRecordingList] = useLocalStorage(
+    getLSKey('AieApp', 'recordingList'),
+    [] as RecordingItem[],
+  );
+  const [projectFolder = '', setProjectFolder] = useLocalStorage(getLSKey('AieApp', 'projectFolder'), '');
   const [recordingSet, setRecordingSet] = useLocalStorage<RecordingSet | undefined>(
     getLSKey('AieApp', 'recordingSet'),
     undefined,
   );
-  const [[key, octave], setKeyOctave] = useLocalStorage<[ScaleKey, SupportedOctave]>(getLSKey('AieApp', 'keyOctave'), [
-    'C',
-    3,
-  ]);
+  const [[key = 'C', octave = 3] = [], setKeyOctave] = useLocalStorage<[ScaleKey, SupportedOctave]>(
+    getLSKey('AieApp', 'keyOctave'),
+    ['C', 3],
+  );
 
   const adaptToPrototypeRecordingStudio = (recordingSet: RecordingSet): void => {
     if (recordingSet) {
@@ -170,7 +174,15 @@ const AieApp: FC = () => {
     }
   };
 
-  const [deviceStatus, setDeviceStatus] = useLocalStorage<DeviceStatus>(getLSKey('AieApp', 'deviceStatus'), {
+  const [
+    deviceStatus = {
+      audioInputDevices: [],
+      audioOutputDevices: [],
+      audioInputDeviceId: '',
+      audioOutputDeviceId: '',
+    },
+    setDeviceStatus,
+  ] = useLocalStorage<DeviceStatus>(getLSKey('AieApp', 'deviceStatus'), {
     audioInputDevices: [],
     audioOutputDevices: [],
     audioInputDeviceId: '',

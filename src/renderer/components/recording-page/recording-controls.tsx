@@ -11,11 +11,11 @@ import playScale from './play-scale.svg';
 import recordButton from './record-button.svg';
 
 interface RecordingControlsProps {
-  toggleRecord: Function;
-  togglePlay: Function;
-  togglePlayScale: Function;
-  goToPrevious: Function;
-  goToNext: Function;
+  toggleRecord: () => void;
+  togglePlay: () => void;
+  togglePlayScale: () => void;
+  goToPrevious: () => void;
+  goToNext: () => void;
   scaleKey: ScaleKey;
   octave: SupportedOctave;
 }
