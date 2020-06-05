@@ -51,15 +51,15 @@ const ConfigureRecordingSetPage: FC<{
 }> = ({ onNext, onBack, onSetSelected }) => {
   const { t } = useTranslation();
   const { recordingProject } = useContext(RecordingProjectContext);
-  const [projectFile, setProjectFile] = useLocalStorage<ProjectFile>(
+  const [projectFile = DUMMY_PROJECT_FILE, setProjectFile] = useLocalStorage<ProjectFile>(
     getLSKey('ConfigureRecordingSetPage', 'projectFile'),
     DUMMY_PROJECT_FILE,
   );
-  const [recordingSets, setRecordingSets] = useLocalStorage<RecordingSet[]>(
+  const [recordingSets = [], setRecordingSets] = useLocalStorage<RecordingSet[]>(
     getLSKey('ConfigureRecordingSetPage', 'recordingSets'),
     [],
   );
-  const [showingDetails, setShowingDetails] = useLocalStorage(
+  const [showingDetails = false, setShowingDetails] = useLocalStorage(
     getLSKey('ConfigureRecordingSetPage', 'showingDetails'),
     false,
   );
@@ -95,17 +95,20 @@ const ConfigureRecordingSetPage: FC<{
     }
   }, [projectFile, setRecordingSets]);
 
-  const [chosenKey, setChosenKey] = useLocalStorage<ScaleKey>(getLSKey('ConfigureRecordingSetPage', 'chosenKey'), 'C');
-  const [chosenOctave, setChosenOctave] = useLocalStorage<SupportedOctave>(
+  const [chosenKey = 'C', setChosenKey] = useLocalStorage<ScaleKey>(
+    getLSKey('ConfigureRecordingSetPage', 'chosenKey'),
+    'C',
+  );
+  const [chosenOctave = 3, setChosenOctave] = useLocalStorage<SupportedOctave>(
     getLSKey('ConfigureRecordingSetPage', 'chosenOctave'),
     3,
   );
-  const [chosenName, setChosenName] = useLocalStorage(getLSKey('ConfigureRecordingSetPage', 'chosenName'), '');
-  const [chosenBuiltInList, rawSetChosenBuiltInList] = useLocalStorage(
+  const [chosenName = '', setChosenName] = useLocalStorage(getLSKey('ConfigureRecordingSetPage', 'chosenName'), '');
+  const [chosenBuiltInList = '', rawSetChosenBuiltInList] = useLocalStorage(
     getLSKey('ConfigureRecordingSetPage', 'chosenBuiltInList'),
     '',
   );
-  const [chosenCustomListPath, rawSetChosenCustomListPath] = useLocalStorage(
+  const [chosenCustomListPath = '', rawSetChosenCustomListPath] = useLocalStorage(
     getLSKey('ConfigureRecordingSetPage', 'chosenCustomListPath'),
     '',
   );
@@ -130,7 +133,7 @@ const ConfigureRecordingSetPage: FC<{
     }
   };
 
-  const [selectedRecordingSetIndex, setSelectedRecordingSetIndex] = useLocalStorage<number>(
+  const [selectedRecordingSetIndex = -1, setSelectedRecordingSetIndex] = useLocalStorage<number>(
     getLSKey('ConfigureRecordingSetPage', 'selectedRecordingSetIndex'),
     -1,
   );

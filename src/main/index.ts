@@ -94,6 +94,7 @@ if (!isFirstInstance) {
         nodeIntegration: true,
         nodeIntegrationInWorker: true,
         defaultEncoding: 'UTF-8',
+        enableRemoteModule: true,
       },
     });
 
@@ -125,9 +126,6 @@ if (!isFirstInstance) {
       mainWindow = null;
     });
   };
-
-  // Electron 9 default
-  app.allowRendererProcessReuse = true;
 
   app.on('session-created', (session) => {
     if (!isDevelopment) {

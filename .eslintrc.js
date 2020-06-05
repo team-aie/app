@@ -4,10 +4,7 @@ const isCi = process.env.CI === 'true';
 
 module.exports = {
   root: true,
-  extends: [
-    'eslint:recommended',
-    'plugin:prettier/recommended',
-  ],
+  extends: ['eslint:recommended', 'plugin:prettier/recommended'],
   env: {
     node: true,
     es2020: true,

@@ -114,7 +114,7 @@ export async function openFilePicker(
       properties.push('openFile');
       break;
     // Intentional: for new folders we also want to specify opening a directory
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     case 'new-folder':
       properties.push('createDirectory', 'promptToCreate');

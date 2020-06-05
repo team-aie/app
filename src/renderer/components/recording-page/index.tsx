@@ -45,7 +45,7 @@ export const RecordingPage: FC<RecordingPageProps> = ({ onBack, recordingItems, 
   const prevState = usePrevious(state);
   // eslint-disable-next-line no-console
   console.log(`prevState`, prevState, `state`, state);
-  const [index, setIndex] = useLocalStorage(getLSKey('RecordingPage', 'index'), 0);
+  const [index = 0, setIndex] = useLocalStorage(getLSKey('RecordingPage', 'index'), 0);
   const recordingStateRef = useRef<{ [k: string]: boolean }>({});
   const audioPlayBackRef = useRef<ChromeHTMLAudioElement>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
