@@ -40,7 +40,7 @@ export const RecordingControls: FC<RecordingControlsProps> = ({
             onClick={(): void => {
               toggleRecord();
             }}
-            style={{ width: '10rem' }}
+            style={{ width: '6rem' }}
           />
         </Col>
         <Col className={'d-flex flex-column justify-content-center'}>
