@@ -1,6 +1,5 @@
 import { analyse } from 'chardet';
 import { Match } from 'chardet/lib/match';
-// import detectCharacterEncoding, { Result } from 'detect-character-encoding';
 import log from 'electron-log';
 
 abstract class BestEffortDecoder<ResultType> {

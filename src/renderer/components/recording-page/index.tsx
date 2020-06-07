@@ -5,6 +5,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 import usePrevious from 'react-use/lib/usePrevious';
+import useUpdate from 'react-use/lib/useUpdate';
 
 import { AudioInputStreamContext, DeviceContext } from '../../contexts';
 import { noOp } from '../../env-and-consts';
@@ -15,13 +16,15 @@ import {
   removeGlobalKeyUpHandler,
 } from '../../services/key-event-handler-registry';
 import { ChromeHTMLAudioElement, RecordingItem, ScaleKey, SupportedOctave } from '../../types';
-import { checkFileExistence, getLSKey, join, naiveSerialize, readFile, writeFile } from '../../utils';
+import { checkFileExistence, deleteFile, getLSKey, join, readFile, writeFile } from '../../utils';
+import { useInitializerRef } from '../../utils/useInitializerRef';
 import BackButton from '../back-button';
 
 import NoteFrequencyMap from './note-to-frequency';
 import { RecordingControls } from './recording-controls';
 import { RecordingItemIndicator } from './recording-item-indicator';
 import { RecordingVisualization } from './recording-visualization';
+import { State } from './types';
 
 interface RecordingPageProps {
   onBack: MouseEventHandler<HTMLElement>;
@@ -32,8 +35,6 @@ interface RecordingPageProps {
 }
 
 type RecordingState = { [k: string]: boolean };
-
-type State = 'idle' | 'recording' | 'playing' | 'playing-scale';
 
 export const RecordingPage: FC<RecordingPageProps> = ({ onBack, recordingItems, basePath, scaleKey, octave }) => {
   const [[recordKey, playKey, playScaleKey]] = useState(['R', ' ', 'S']);
@@ -46,26 +47,33 @@ export const RecordingPage: FC<RecordingPageProps> = ({ onBack, recordingItems, 
   // eslint-disable-next-line no-console
   console.log(`prevState`, prevState, `state`, state);
   const [index = 0, setIndex] = useLocalStorage(getLSKey('RecordingPage', 'index'), 0);
-  const recordingStateRef = useRef<{ [k: string]: boolean }>({});
+  const recordingStateRef = useRef<RecordingState>({});
   const audioPlayBackRef = useRef<ChromeHTMLAudioElement>(null);
-  const audioCtxRef = useRef<AudioContext | null>(null);
+  const audioCtxRef = useInitializerRef<AudioContext>(() => new AudioContext());
+  const rerender = useUpdate();
 
-  useEffect(() => {
-    log.debug('Update project file status', ...[basePath, naiveSerialize(recordingItems)]);
+  const updateProjectFileStatus = (): Promise<void> => {
+    log.info('Update project file status');
     const previousState = recordingStateRef.current;
     const state: RecordingState = {};
-    recordingItems.forEach(({ fileSystemName }) => {
-      state[fileSystemName] = previousState[fileSystemName];
-      const filePath = join(basePath, `${fileSystemName}.wav`);
-      checkFileExistence(filePath)
-        .then((result) => {
-          state[fileSystemName] = result === 'file';
-        })
-        .catch(log.error);
+    return Promise.all(
+      recordingItems.map(({ fileSystemName }) => {
+        state[fileSystemName] = previousState[fileSystemName];
+        const filePath = join(basePath, `${fileSystemName}.wav`);
+        return checkFileExistence(filePath)
+          .then((result) => {
+            state[fileSystemName] = result === 'file';
+          })
+          .catch(log.error);
+      }),
+    ).then(() => {
+      recordingStateRef.current = state;
     });
-    recordingStateRef.current = state;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [basePath, naiveSerialize(recordingItems)]);
+  };
+
+  useEffect(() => {
+    updateProjectFileStatus().catch(log.error);
+  });
 
   useEffect((): void => {
     log.debug('Update studio output sink ID', ...[audioPlayBackRef, audioOutputDeviceId]);
@@ -83,10 +91,8 @@ export const RecordingPage: FC<RecordingPageProps> = ({ onBack, recordingItems, 
     if (!audioElement) {
       return;
     }
-    let audioCtx = audioCtxRef.current;
-    if (!audioCtx) {
-      audioCtxRef.current = audioCtx = new AudioContext();
-    }
+
+    const audioCtx = audioCtxRef.current;
 
     stopPlayingScaleRef.current = (): void => {
       log.debug('Stop playing scale called');
@@ -143,20 +149,26 @@ export const RecordingPage: FC<RecordingPageProps> = ({ onBack, recordingItems, 
     if (!audioInputStream) {
       return;
     }
-    let audioCtx = audioCtxRef.current;
-    if (!audioCtx) {
-      audioCtxRef.current = audioCtx = new AudioContext();
-    }
+    const audioCtx = audioCtxRef.current;
 
     let cancelled = false;
     const recordedChunks: Blob[] = [];
     const recorder = new MediaRecorder(audioInputStream);
-    setImmediate((): void => {
+    (async (): Promise<void> => {
+      const fileSystemName = recordingItems[index]?.fileSystemName;
+      const filePath = join(basePath, `${fileSystemName}.wav`);
+      log.info(filePath, recordingStateRef.current[fileSystemName]);
+      if (recordingStateRef.current[fileSystemName]) {
+        await deleteFile(filePath);
+        recordingStateRef.current[filePath] = false;
+        rerender();
+      }
       log.debug('Recorder starting');
       if (!cancelled) {
         recorder.start();
       }
-    });
+    })();
+
     recorder.ondataavailable = (e): void => {
       log.debug('New recorded data available');
       recordedChunks.push(e.data);
@@ -189,15 +201,14 @@ export const RecordingPage: FC<RecordingPageProps> = ({ onBack, recordingItems, 
           alert(`Result happens to be string: ${result}`);
           return;
         }
-
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const decodeAudioContext = audioCtx!;
-        decodeAudioContext
+        audioCtx
           .decodeAudioData(result)
-          .then((audioBuffer): ArrayBuffer => toWav(audioBuffer))
-          .then((convertedBuffer): Promise<void> => writeFile(filePath, Buffer.from(convertedBuffer), 'binary'))
+          .then((audioBuffer) => toWav(audioBuffer))
+          .then((convertedBuffer) => writeFile(filePath, Buffer.from(convertedBuffer), 'binary'))
           .then(() => alert(`File written to: ${filePath}`))
-          .then(() => stopRecordingRef.current());
+          .then(() => stopRecordingRef.current())
+          .then(updateProjectFileStatus)
+          .then(rerender);
       };
       reader.readAsArrayBuffer(finalBlob);
     };
@@ -331,6 +342,7 @@ export const RecordingPage: FC<RecordingPageProps> = ({ onBack, recordingItems, 
     };
   }, [playKey, playScaleKey, recordKey, state]);
 
+  log.info(recordingStateRef.current);
   return (
     <Fragment>
       <BackButton onBack={onBack} />
@@ -339,7 +351,15 @@ export const RecordingPage: FC<RecordingPageProps> = ({ onBack, recordingItems, 
           <RecordingItemIndicator recordingItems={recordingItems} currentIndex={index} />
         </Row>
         <Row className={'d-flex justify-content-center mt-3'}>
-          <RecordingVisualization />
+          <RecordingVisualization
+            state={state}
+            audioElement={audioPlayBackRef.current || undefined}
+            filePath={
+              recordingStateRef.current[recordingItems[index]?.fileSystemName]
+                ? join(basePath, `${recordingItems[index].fileSystemName}.wav`)
+                : undefined
+            }
+          />
         </Row>
         <RecordingControls
           toggleRecord={(): void => (state === 'recording' ? setState('idle') : setState('recording'))}

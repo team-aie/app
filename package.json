@@ -61,7 +61,8 @@
     "react-transition-group": "^4.4.1",
     "react-use": "^15.1.1",
     "sanitize-filename": "^1.6.3",
-    "source-map-support": "^0.5.19"
+    "source-map-support": "^0.5.19",
+    "wavesurfer.js": "^3.3.3"
   },
   "devDependencies": {
     "@semantic-release/git": "^9.0.0",
@@ -73,6 +74,7 @@
     "@types/react-dom": "^16.9.8",
     "@types/react-test-renderer": "^16.9.2",
     "@types/react-transition-group": "^4.4.0",
+    "@types/wavesurfer.js": "^3.3.0",
     "@typescript-eslint/eslint-plugin": "^3.1.0",
     "@typescript-eslint/parser": "^3.1.0",
     "conventional-changelog-angular": "^5.0.10",
