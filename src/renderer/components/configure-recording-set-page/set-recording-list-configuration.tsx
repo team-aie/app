@@ -1,12 +1,12 @@
 import React, { FC, Fragment } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import { useTranslation } from 'react-i18next';
 
 import { Consumer } from '../../types';
 import { filename, openFilePicker } from '../../utils';
+import { Select } from '../select';
 
 interface SetRecordingListConfigurationProps {
   builtInLists: string[];
@@ -28,22 +28,18 @@ const SetRecordingListConfiguration: FC<SetRecordingListConfigurationProps> = ({
     <Fragment>
       <Col xs={'auto'} sm={7} md={7} lg={7} xl={7}>
         <Row>
-          <Form className={'w-100'}>
-            <Form.Group style={{ paddingRight: '0.75rem' }}>
-              <Form.Control
-                as={'select'}
-                className={'border-top-0 border-right-0 border-left-0 rounded-0'}
-                value={chosenBuiltInList}
-                onChange={(e): void => setChosenBuiltInList(e.target.value)}>
-                <option value={''} />
-                {builtInLists.map((builtInList) => (
-                  <option key={builtInList} value={builtInList}>
-                    {builtInList}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-          </Form>
+          <Select
+            className={'w-100'}
+            style={{ paddingRight: '0.75rem' }}
+            value={chosenBuiltInList}
+            onChange={(e): void => setChosenBuiltInList(e.target.value)}>
+            <option value={''} />
+            {builtInLists.map((builtInList) => (
+              <option key={builtInList} value={builtInList}>
+                {builtInList}
+              </option>
+            ))}
+          </Select>
         </Row>
       </Col>
       <Col>
