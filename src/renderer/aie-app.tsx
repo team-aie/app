@@ -1,7 +1,6 @@
 import * as log from 'electron-log';
 import React, { FC, Fragment, ReactElement, useEffect, useState } from 'react';
 import Col from 'react-bootstrap/Col';
-import { useTranslation } from 'react-i18next';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 
 import ConfigureRecordingSetPage from './components/configure-recording-set-page';
@@ -21,7 +20,7 @@ import {
   RecordingProjectContext,
 } from './contexts';
 import { PAGE_STATES_IN_ORDER, noOp } from './env-and-consts';
-import { RecordingItem, RecordingProject, RecordingSet, ScaleKey, SupportedLocale, SupportedOctave } from './types';
+import { RecordingItem, RecordingProject, RecordingSet, ScaleKey, SupportedOctave } from './types';
 import {
   acquireAudioInputStream,
   getLSKey,
@@ -30,6 +29,7 @@ import {
   naiveDeepCopy,
   naiveSerialize,
   readFile,
+  useLocale,
   useMonitoringDevices,
 } from './utils';
 
@@ -52,28 +52,7 @@ const DeviceContextMonitor: FC = ({ children }) => {
 };
 
 const AieApp: FC = () => {
-  const { i18n } = useTranslation();
-  const [locale, setLocale] = useState(i18n.language as SupportedLocale);
-  {
-    useEffect(() => {
-      document.documentElement.lang = locale.substr(0, 2).toLocaleLowerCase();
-      document.documentElement.dir = i18n.dir(locale);
-
-      if (locale !== i18n.language) {
-        i18n.changeLanguage(locale).catch(log.error);
-      }
-    }, [locale, i18n]);
-
-    useEffect(() => {
-      const updateLocaleHandler = (lng: SupportedLocale): void => {
-        setLocale(lng);
-      };
-      i18n.on('languageChanged', updateLocaleHandler);
-
-      return (): void => i18n.off('languageChanged', updateLocaleHandler);
-    }, [i18n]);
-  }
-
+  const [locale, setLocale] = useLocale();
   const [pageStateIndex = 0, setPageStateIndex] = useLocalStorage(getLSKey('AieApp', 'pageStateIndex'), 0);
   const pageState = PAGE_STATES_IN_ORDER[pageStateIndex];
   function changePage(isNext: boolean): void {
