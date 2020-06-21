@@ -2,6 +2,7 @@ import { KEY_SEPARATOR } from '../env-and-consts';
 
 export * from './fs-utils';
 export * from './line-by-line-parser';
+export * from './locale-utils';
 export * from './media-utils';
 export * from './string-utils';
 

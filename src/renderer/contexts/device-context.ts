@@ -23,5 +23,5 @@ export const DeviceContext = React.createContext<DeviceContextType>({
     audioInputDeviceId: '',
     audioOutputDeviceId: '',
   },
-  setDeviceStatus: noOp as Consumer<DeviceStatus>,
+  setDeviceStatus: noOp(),
 });
