@@ -1,14 +1,15 @@
 import * as React from 'react';
 import * as renderer from 'react-test-renderer';
 
+import { noOp } from '../../env-and-consts';
+
 import NextButton from '.';
 
 describe('next button', () => {
   it('should render correctly', () => {
     expect.hasAssertions();
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const tree = renderer.create(<NextButton onClick={(): void => {}} disabled />).toJSON();
+    const tree = renderer.create(<NextButton onClick={noOp()} disabled />).toJSON();
     expect(tree).toMatchInlineSnapshot(`
       <div
         className="position-absolute p-0 d-flex justify-content-end align-items-center container"

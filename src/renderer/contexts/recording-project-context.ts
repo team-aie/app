@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { noOp } from '../env-and-consts';
 import { Consumer, RecordingProject } from '../types';
 
 interface RecordingProjectContextType {
@@ -8,6 +9,5 @@ interface RecordingProjectContextType {
 }
 
 export const RecordingProjectContext = React.createContext<RecordingProjectContextType>({
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  setRecordingProject: (() => {}) as Consumer<RecordingProject>,
+  setRecordingProject: noOp(),
 });

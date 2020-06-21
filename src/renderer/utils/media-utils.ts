@@ -1,3 +1,5 @@
+import { remote } from 'electron';
+import log from 'electron-log';
 import { useContext, useEffect } from 'react';
 import { useMediaDevices } from 'react-use';
 
@@ -6,6 +8,37 @@ import { ACQUIRE_PERMISSION_RETRIES } from '../env-and-consts';
 import { Consumer, Writeable } from '../types';
 
 import { naiveSerialize } from './index';
+
+export const acquireAudioInputStream = async (deviceId: string): Promise<MediaStream> => {
+  const constraint: MediaStreamConstraints = {
+    audio: {
+      deviceId,
+      sampleRate: 44100,
+      channelCount: 1,
+    },
+  };
+
+  for (let attemptCount = 0; attemptCount < ACQUIRE_PERMISSION_RETRIES; attemptCount++) {
+    try {
+      const microphoneApproved = await remote.systemPreferences.askForMediaAccess('microphone');
+      if (microphoneApproved) {
+        return await navigator.mediaDevices.getUserMedia(constraint);
+      } else {
+        // noinspection ExceptionCaughtLocallyJS as this was intentional
+        throw new Error('Entire app was not given microphone access');
+      }
+    } catch (e) {
+      log.warn('Microphone access failed to acquire', e);
+      alert(
+        `We need to record audio in order to proceed${
+          attemptCount < ACQUIRE_PERMISSION_RETRIES - 1 ? ", let's try again." : '!'
+        }`,
+      );
+    }
+  }
+
+  throw new Error('Failed to obtain microphone stream');
+};
 
 export interface NormalizedMediaDeviceInfo {
   readonly deviceId: string;
@@ -19,7 +52,7 @@ export interface NormalizedMediaDeviceInfo {
   readonly isDefaultVideoInput: boolean;
 }
 
-export const useNormalizedMediaDevices = (): NormalizedMediaDeviceInfo[] => {
+const useNormalizedMediaDevices = (): NormalizedMediaDeviceInfo[] => {
   const { devices } = useMediaDevices() as { devices?: MediaDeviceInfo[] };
   if (!devices) {
     return [];
@@ -71,7 +104,7 @@ export const useNormalizedMediaDevices = (): NormalizedMediaDeviceInfo[] => {
 
 type DeviceTypes = 'audioInputs' | 'audioOutputs' | 'videoInputs';
 
-export const useNormalizedMediaDeviceCategories = (): {
+const useNormalizedMediaDeviceCategories = (): {
   [k in DeviceTypes]: NormalizedMediaDeviceInfo[];
 } => {
   const devices = useNormalizedMediaDevices();
@@ -94,30 +127,6 @@ export const useNormalizedMediaDeviceCategories = (): {
   });
 
   return result;
-};
-
-export const acquireAudioInputStream = async (deviceId: string): Promise<MediaStream> => {
-  const constraint: MediaStreamConstraints = {
-    audio: {
-      deviceId,
-      sampleRate: 44100,
-      channelCount: 1,
-    },
-  };
-
-  for (let attemptCount = 0; attemptCount < ACQUIRE_PERMISSION_RETRIES; attemptCount++) {
-    try {
-      return await navigator.mediaDevices.getUserMedia(constraint);
-    } catch (e) {
-      alert(
-        `We need to record audio in order to proceed${
-          attemptCount < ACQUIRE_PERMISSION_RETRIES - 1 ? ", let's try again." : '!'
-        }`,
-      );
-    }
-  }
-
-  throw new Error('Failed to obtain microphone stream');
 };
 
 export const useMonitoringDevices = (): [DeviceStatus, Consumer<DeviceStatus>] => {

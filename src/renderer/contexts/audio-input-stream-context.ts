@@ -10,5 +10,5 @@ interface AudioInputStreamContextType {
 
 export const AudioInputStreamContext = React.createContext<AudioInputStreamContextType>({
   audioInputStream: undefined,
-  setAudioInputStream: noOp() as Consumer<MediaStream>,
+  setAudioInputStream: noOp(),
 });

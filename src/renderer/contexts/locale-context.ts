@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { noOp } from '../env-and-consts';
 import { Consumer, SupportedLocale } from '../types';
 
 interface LocaleContextType {
@@ -14,6 +15,5 @@ interface LocaleContextType {
  */
 export const LocaleContext = React.createContext<LocaleContextType>({
   locale: SupportedLocale.EN_US,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  setLocale: (() => {}) as Consumer<SupportedLocale>,
+  setLocale: noOp(),
 });

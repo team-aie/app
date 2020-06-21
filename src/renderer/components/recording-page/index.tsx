@@ -44,8 +44,7 @@ export const RecordingPage: FC<RecordingPageProps> = ({ onBack, recordingItems, 
   const { audioInputStream } = useContext(AudioInputStreamContext);
   const [state, setState] = useState<State>('idle');
   const prevState = usePrevious(state);
-  // eslint-disable-next-line no-console
-  console.log(`prevState`, prevState, `state`, state);
+  log.info(`prevState`, prevState, `state`, state);
   const [index = 0, setIndex] = useLocalStorage(getLSKey('RecordingPage', 'index'), 0);
   const recordingStateRef = useRef<RecordingState>({});
   const audioPlayBackRef = useRef<ChromeHTMLAudioElement>(null);
