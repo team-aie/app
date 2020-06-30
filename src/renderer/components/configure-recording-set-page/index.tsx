@@ -21,13 +21,13 @@ import {
   writeFile,
 } from '../../utils';
 import BackButton from '../back-button';
-// import { Positional } from '../helper-components';
 import NextButton from '../next-button';
 
 import AddRecordingSetButton from './add-recording-set-button';
 import CreatedRecordingSetList from './created-recording-set-list';
 import SetMetaConfiguration from './set-meta-configuration';
 import SetRecordingListConfiguration from './set-recording-list-configuration';
+import { BuiltInRecordingList } from './types';
 
 import './show-details.scss';
 
@@ -42,7 +42,7 @@ const DUMMY_PROJECT_FILE = {
   recordingSets: [],
 };
 
-const DUMMY_BUILT_IN_LISTS = ['Chinese Mandarin - CVVC', 'Chinese Mandarin - VCV'];
+const BUILT_IN_RECLISTS: BuiltInRecordingList[] = ['デルタ式英語リストver5 (Delta English Ver. 5)'];
 
 const ConfigureRecordingSetPage: FC<{
   onNext: MouseEventHandler<HTMLElement>;
@@ -208,7 +208,7 @@ const ConfigureRecordingSetPage: FC<{
           </Row>
           <Row>
             <SetRecordingListConfiguration
-              builtInLists={DUMMY_BUILT_IN_LISTS}
+              builtInLists={BUILT_IN_RECLISTS}
               chosenBuiltInList={chosenBuiltInList}
               setChosenBuiltInList={setChosenBuiltInList}
               chosenCustomListPath={chosenCustomListPath}
