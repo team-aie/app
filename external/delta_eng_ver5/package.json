@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "name": "delta_eng_ver5",
+  "version": "1.0.0",
+  "description": "",
+  "main": "デルタ式engver5_reclist.txt",
+  "repository": {
+    "url": "https://ch.nicovideo.jp/delta_kimigatame/blomaga/ar581614"
+  },
+  "author": "デルタ",
+  "license": "UNLICENSED"
+}

@@ -4,6 +4,7 @@ import Col from 'react-bootstrap/Col';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 
 import ConfigureRecordingSetPage from './components/configure-recording-set-page';
+import { BuiltInRecordingList } from './components/configure-recording-set-page/types';
 import { Positional } from './components/helper-components';
 import LicenseDisclosure from './components/license-disclosure';
 import LocaleSelector from './components/locale-selector';
@@ -109,7 +110,13 @@ const AieApp: FC = () => {
       } = recordingSet;
       setKeyOctave([newKey, newOctave]);
       if (recordingList.type === 'built-in') {
-        lineByLineParser.parse(recordingList.name).then(setRecordingList);
+        const builtInListName = recordingList.name as BuiltInRecordingList;
+        switch (builtInListName) {
+          case 'デルタ式英語リストver5 (Delta English Ver. 5)':
+            import('delta_eng_ver5/デルタ式engver5_reclist.txt')
+              .then((content) => lineByLineParser.parse(content.default))
+              .then(setRecordingList);
+        }
       } else {
         readFile(recordingList.filePath).then(lineByLineParser.parse).then(setRecordingList);
       }

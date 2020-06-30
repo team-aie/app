@@ -65,5 +65,15 @@ module.exports = (config) => {
     hwPlugin.options.chunks = ['renderer'];
   }
 
+  {
+    /**
+     * For raw-loader. See {@link https://webpack.electron.build/modifying-webpack-configurations#configure-raw-loader}.
+     */
+    config.module.rules.push({
+      test: /\.txt$/,
+      use: 'raw-loader',
+    });
+  }
+
   return config;
 };

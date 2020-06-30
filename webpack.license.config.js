@@ -54,6 +54,8 @@ module.exports = async (env) => {
         'nano-css@5.3.0': 'Unlicense',
         // https://github.com/streamich/react-universal-interface/tree/v0.6.2/LICENSE
         'react-universal-interface@0.6.2': 'Unlicense',
+        // FIXME: The package must be assigned a license in order for build to run.
+        'delta_eng_ver5@1.0.0': 'GPL-3.0-only',
       },
       // This file is ignored because it's not very reliable
       outputFilename: '_oss_licenses.json',

@@ -1,4 +1,4 @@
-declare module '*.svg' {
+declare module '*.txt' {
   const value: string;
   export = value;
 }
