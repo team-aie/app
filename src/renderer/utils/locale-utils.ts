@@ -1,4 +1,4 @@
-import * as log from 'electron-log';
+import log from 'electron-log';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 

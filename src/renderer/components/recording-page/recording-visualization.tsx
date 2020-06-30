@@ -1,14 +1,12 @@
 import log from 'electron-log';
-import React, { FC, useContext, useEffect, useRef } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import useInterval from 'react-use/lib/useInterval';
 import WaveSurfer from 'wavesurfer.js';
 import SpectrogramPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.spectrogram';
 
-import { AudioInputStreamContext } from '../../contexts';
 import { noOp } from '../../env-and-consts';
-import { ChromeHTMLAudioElement } from '../../types';
 import { checkFileExistence, join, readFile } from '../../utils';
 
 import { State } from './types';
@@ -16,7 +14,6 @@ import { State } from './types';
 interface RecordingVisualizationProps {
   prevState?: State;
   state: State;
-  audioElement?: ChromeHTMLAudioElement;
   filePath?: string;
 }
 
@@ -24,13 +21,7 @@ const GRAPH_WIDTH = '60%';
 const GRAPH_HEIGHT = 80;
 const EMPTY_IMAGE_URL = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
 
-export const RecordingVisualization: FC<RecordingVisualizationProps> = ({
-  prevState,
-  state,
-  audioElement,
-  filePath,
-}) => {
-  const { audioInputStream } = useContext(AudioInputStreamContext);
+export const RecordingVisualization: FC<RecordingVisualizationProps> = ({ prevState, state, filePath }) => {
   const waveSurferRef = useRef<WaveSurfer>();
   const waveformContainerRef = useRef<HTMLDivElement>(null);
   const waveformImageRef = useRef<HTMLImageElement>(null);
@@ -194,7 +185,7 @@ export const RecordingVisualization: FC<RecordingVisualizationProps> = ({
     return (): void => {
       cancelled = true;
     };
-  }, [audioElement, audioInputStream, filePath, prevState, state]);
+  }, [filePath, prevState, state]);
 
   return (
     <Col>

@@ -1,5 +1,5 @@
 import { Notification, OpenExternalOptions, shell } from 'electron';
-import * as log from 'electron-log';
+import log from 'electron-log';
 import { autoUpdater } from 'electron-updater';
 import { AppUpdater } from 'electron-updater/out/AppUpdater';
 

@@ -1,5 +1,5 @@
-import * as log from 'electron-log';
-import React, { FC, Fragment, ReactElement, useEffect, useState } from 'react';
+import log from 'electron-log';
+import React, { FC, Fragment, ReactElement } from 'react';
 import Col from 'react-bootstrap/Col';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 
@@ -13,26 +13,10 @@ import { RecordingPage } from './components/recording-page';
 import { SettingsPage } from './components/settings-page';
 import StyleSwitcher from './components/style-switcher';
 import WelcomePage from './components/welcome-page';
-import {
-  AudioInputStreamContext,
-  DeviceContext,
-  DeviceStatus,
-  LocaleContext,
-  RecordingProjectContext,
-} from './contexts';
-import { PAGE_STATES_IN_ORDER, noOp } from './env-and-consts';
+import { LocaleContext, RecordingProjectContext } from './contexts';
+import { PAGE_STATES_IN_ORDER } from './env-and-consts';
 import { RecordingItem, RecordingProject, RecordingSet, ScaleKey, SupportedOctave } from './types';
-import {
-  acquireAudioInputStream,
-  getLSKey,
-  join,
-  lineByLineParser,
-  naiveDeepCopy,
-  naiveSerialize,
-  readFile,
-  useLocale,
-  useMonitoringDevices,
-} from './utils';
+import { getLSKey, join, lineByLineParser, readFile, useLocale } from './utils';
 
 const { length: numStates } = PAGE_STATES_IN_ORDER;
 
@@ -46,11 +30,6 @@ const BottomRightDisplay: FC = () => (
     </Col>
   </Positional>
 );
-
-const DeviceContextMonitor: FC = ({ children }) => {
-  useMonitoringDevices();
-  return <Fragment>{children}</Fragment>;
-};
 
 const AieApp: FC = () => {
   const [locale, setLocale] = useLocale();
@@ -160,87 +139,14 @@ const AieApp: FC = () => {
     }
   };
 
-  const [
-    deviceStatus = {
-      audioInputDevices: [],
-      audioOutputDevices: [],
-      audioInputDeviceId: '',
-      audioOutputDeviceId: '',
-    },
-    setDeviceStatus,
-  ] = useLocalStorage<DeviceStatus>(getLSKey('AieApp', 'deviceStatus'), {
-    audioInputDevices: [],
-    audioOutputDevices: [],
-    audioInputDeviceId: '',
-    audioOutputDeviceId: '',
-  });
-
-  useEffect(() => {
-    const { audioInputDevices, audioOutputDevices, audioInputDeviceId, audioOutputDeviceId } = deviceStatus;
-    const newStatus = naiveDeepCopy(deviceStatus);
-    let changed = false;
-    if (audioInputDevices.length) {
-      if (!audioInputDeviceId || !audioInputDevices.find((x) => x.deviceId === audioInputDeviceId)) {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        newStatus.audioInputDeviceId = audioInputDevices.find((x) => x.isDefaultAudioInput)!.deviceId;
-        changed = true;
-      }
-    } else {
-      if (audioInputDeviceId) {
-        newStatus.audioInputDeviceId = '';
-        changed = true;
-      }
-    }
-
-    if (audioOutputDevices.length) {
-      if (!audioOutputDeviceId || !audioOutputDevices.find((x) => x.deviceId === audioOutputDeviceId)) {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        newStatus.audioOutputDeviceId = audioOutputDevices.find((x) => x.isDefaultAudioOutput)!.deviceId;
-        changed = true;
-      }
-    } else {
-      if (audioOutputDeviceId) {
-        newStatus.audioOutputDeviceId = '';
-        changed = true;
-      }
-    }
-
-    if (changed) {
-      setDeviceStatus(newStatus);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [naiveSerialize(deviceStatus), setDeviceStatus]);
-  const [audioInputStream, setAudioInputStream] = useState<MediaStream | undefined>(undefined);
-  const { audioInputDeviceId } = deviceStatus;
-  useEffect(() => {
-    if (audioInputDeviceId) {
-      let mounted = true;
-      acquireAudioInputStream(audioInputDeviceId).then((stream) => {
-        if (mounted) {
-          setAudioInputStream(stream);
-        }
-      });
-      return (): void => {
-        mounted = false;
-      };
-    }
-    return noOp();
-  }, [audioInputDeviceId]);
-
   return (
     <LocaleContext.Provider value={{ locale, setLocale }}>
       <RecordingProjectContext.Provider value={{ recordingProject, setRecordingProject }}>
-        <DeviceContext.Provider value={{ deviceStatus, setDeviceStatus }}>
-          <DeviceContextMonitor>
-            <AudioInputStreamContext.Provider value={{ audioInputStream, setAudioInputStream }}>
-              <Fragment>
-                <StyleSwitcher />
-                {routePageToComponent()}
-                {pageStateIndex === 0 && <BottomRightDisplay />}
-              </Fragment>
-            </AudioInputStreamContext.Provider>
-          </DeviceContextMonitor>
-        </DeviceContext.Provider>
+        <Fragment>
+          <StyleSwitcher />
+          {routePageToComponent()}
+          {pageStateIndex === 0 && <BottomRightDisplay />}
+        </Fragment>
       </RecordingProjectContext.Provider>
     </LocaleContext.Provider>
   );

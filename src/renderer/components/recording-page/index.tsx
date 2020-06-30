@@ -1,13 +1,11 @@
-import toWav from 'audiobuffer-to-wav';
 import log from 'electron-log';
-import React, { FC, Fragment, MouseEventHandler, useContext, useEffect, useRef, useState } from 'react';
+import React, { FC, Fragment, MouseEventHandler, useEffect, useRef, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 import usePrevious from 'react-use/lib/usePrevious';
 import useUpdate from 'react-use/lib/useUpdate';
 
-import { AudioInputStreamContext, DeviceContext } from '../../contexts';
 import { noOp } from '../../env-and-consts';
 import {
   addGlobalKeyDownHandler,
@@ -15,9 +13,9 @@ import {
   removeGlobalKeyDownHandler,
   removeGlobalKeyUpHandler,
 } from '../../services/key-event-handler-registry';
-import { ChromeHTMLAudioElement, RecordingItem, ScaleKey, SupportedOctave } from '../../types';
-import { checkFileExistence, deleteFile, getLSKey, join, readFile, writeFile } from '../../utils';
-import { useInitializerRef } from '../../utils/useInitializerRef';
+import mediaService from '../../services/media';
+import { RecordingItem, ScaleKey, SupportedOctave } from '../../types';
+import { checkFileExistence, deleteFile, getLSKey, join, readWavAsBlob, writeArrayBufferToFile } from '../../utils';
 import BackButton from '../back-button';
 
 import NoteFrequencyMap from './note-to-frequency';
@@ -38,23 +36,18 @@ type RecordingState = { [k: string]: boolean };
 
 export const RecordingPage: FC<RecordingPageProps> = ({ onBack, recordingItems, basePath, scaleKey, octave }) => {
   const [[recordKey, playKey, playScaleKey]] = useState(['R', ' ', 'S']);
-  const {
-    deviceStatus: { audioOutputDeviceId },
-  } = useContext(DeviceContext);
-  const { audioInputStream } = useContext(AudioInputStreamContext);
   const [state, setState] = useState<State>('idle');
   const prevState = usePrevious(state);
   log.info(`prevState`, prevState, `state`, state);
   const [index = 0, setIndex] = useLocalStorage(getLSKey('RecordingPage', 'index'), 0);
   const recordingStateRef = useRef<RecordingState>({});
-  const audioPlayBackRef = useRef<ChromeHTMLAudioElement>(null);
-  const audioCtxRef = useInitializerRef<AudioContext>(() => new AudioContext());
   const rerender = useUpdate();
 
   const updateProjectFileStatus = (): Promise<void> => {
     log.info('Update project file status');
     const previousState = recordingStateRef.current;
     const state: RecordingState = {};
+    let changed = false;
     return Promise.all(
       recordingItems.map(({ fileSystemName }) => {
         state[fileSystemName] = previousState[fileSystemName];
@@ -62,11 +55,17 @@ export const RecordingPage: FC<RecordingPageProps> = ({ onBack, recordingItems, 
         return checkFileExistence(filePath)
           .then((result) => {
             state[fileSystemName] = result === 'file';
+            if (state[fileSystemName] !== previousState[fileSystemName]) {
+              changed = true;
+            }
           })
           .catch(log.error);
       }),
     ).then(() => {
-      recordingStateRef.current = state;
+      if (changed) {
+        recordingStateRef.current = state;
+        rerender();
+      }
     });
   };
 
@@ -74,28 +73,13 @@ export const RecordingPage: FC<RecordingPageProps> = ({ onBack, recordingItems, 
     updateProjectFileStatus().catch(log.error);
   });
 
-  useEffect((): void => {
-    log.debug('Update studio output sink ID', ...[audioPlayBackRef, audioOutputDeviceId]);
-    const audioElement = audioPlayBackRef.current;
-    if (!audioElement) {
-      return;
-    }
-    audioElement.setSinkId(audioOutputDeviceId).catch(log.error);
-  }, [audioPlayBackRef, audioOutputDeviceId]);
-
   const stopPlayingScaleRef = useRef(noOp());
   const startPlayingScale = (): void => {
     log.debug('Start playing scale called');
-    const audioElement = audioPlayBackRef.current;
-    if (!audioElement) {
-      return;
-    }
-
-    const audioCtx = audioCtxRef.current;
-
     stopPlayingScaleRef.current = (): void => {
       log.debug('Stop playing scale called');
-      audioElement.srcObject = null;
+      mediaService.stopPlaying().catch(log.error);
+      stopPlayingScaleRef.current = noOp();
       setState('idle');
     };
 
@@ -103,56 +87,44 @@ export const RecordingPage: FC<RecordingPageProps> = ({ onBack, recordingItems, 
     if (!frequency) {
       return;
     }
-    const oscillator = new OscillatorNode(audioCtx, {
-      frequency,
-    });
-    const destination = audioCtx.createMediaStreamDestination();
-    oscillator.connect(destination);
-    oscillator.start();
+    const oscillator = mediaService.createOscillator();
+    oscillator.frequency.setValueAtTime(frequency, 0);
+    mediaService.playAudioNode(oscillator).catch(log.error);
     // FIXME: Temporarily disabling this because it doesn't play well with push to play
     // setTimeout(stopPlayingScaleRef.current, 2000);
-    audioElement.srcObject = destination.stream;
   };
 
   const stopPlayingRef = useRef(noOp());
   const startPlaying = (): void => {
     log.debug('Start playing called');
     let cancelled = false;
-    const audioElement = audioPlayBackRef.current;
-    if (!audioElement) {
-      return;
-    }
     stopPlayingRef.current = (): void => {
       log.debug('Stop playing called');
       cancelled = true;
-      audioElement.src = '';
-      audioElement.onended = null;
+      mediaService.stopPlaying().catch(log.error);
+      stopPlayingRef.current = noOp();
       setState('idle');
     };
-    audioElement.onended = stopPlayingRef.current;
-    (async (): Promise<void> => {
-      log.debug('Reading wav file from disk');
-      const filePath = join(basePath, `${recordingItems[index].fileSystemName}.wav`);
-      const data = await readFile(filePath, true);
-      if (cancelled) {
-        return;
+    readWavAsBlob(join(basePath, `${recordingItems[index].fileSystemName}.wav`)).then((blob) => {
+      if (!cancelled) {
+        mediaService.playBlob(blob).catch(log.error);
       }
-      const blob = new Blob([new Uint8Array(data)]);
-      audioElement.src = URL.createObjectURL(blob);
-    })();
+    });
   };
 
   const stopRecordingRef = useRef(noOp());
   const startRecording = (): void => {
     log.debug('Start recording called');
-    if (!audioInputStream) {
-      return;
-    }
-    const audioCtx = audioCtxRef.current;
-
     let cancelled = false;
-    const recordedChunks: Blob[] = [];
-    const recorder = new MediaRecorder(audioInputStream);
+
+    stopRecordingRef.current = (): void => {
+      log.debug('Stop recording called');
+      cancelled = true;
+      mediaService.stopRecording();
+      stopRecordingRef.current = noOp();
+      setState('idle');
+    };
+
     (async (): Promise<void> => {
       const fileSystemName = recordingItems[index]?.fileSystemName;
       const filePath = join(basePath, `${fileSystemName}.wav`);
@@ -164,53 +136,17 @@ export const RecordingPage: FC<RecordingPageProps> = ({ onBack, recordingItems, 
       }
       log.debug('Recorder starting');
       if (!cancelled) {
-        recorder.start();
+        const recordedBlob = await mediaService.startRecording();
+        const recordedArrayBuffer = await mediaService.audioBlobToWavArrayBuffer(recordedBlob);
+        try {
+          await writeArrayBufferToFile(filePath, recordedArrayBuffer);
+          alert(`File written to: ${filePath}`);
+          rerender();
+        } catch (e) {
+          log.error(`Failed to write to ${filePath}`, e);
+        }
       }
     })();
-
-    recorder.ondataavailable = (e): void => {
-      log.debug('New recorded data available');
-      recordedChunks.push(e.data);
-    };
-
-    stopRecordingRef.current = (): void => {
-      log.debug('Stop recording called');
-      cancelled = true;
-      if (recorder.state !== 'inactive') {
-        recorder.stop();
-      }
-      setState('idle');
-    };
-
-    recorder.onstop = (): void => {
-      if (!recordedChunks.length) {
-        alert('No data recorded');
-      }
-      recorder.onstop = null;
-      const finalBlob = new Blob(recordedChunks);
-      const reader = new FileReader();
-      const filePath = join(basePath, `${recordingItems[index].fileSystemName}.wav`);
-      reader.onload = (): void => {
-        const { result } = reader;
-        if (result === null) {
-          alert('Nothing recorded!');
-          return;
-        }
-        if (typeof result === 'string') {
-          alert(`Result happens to be string: ${result}`);
-          return;
-        }
-        audioCtx
-          .decodeAudioData(result)
-          .then((audioBuffer) => toWav(audioBuffer))
-          .then((convertedBuffer) => writeFile(filePath, Buffer.from(convertedBuffer), 'binary'))
-          .then(() => alert(`File written to: ${filePath}`))
-          .then(() => stopRecordingRef.current())
-          .then(updateProjectFileStatus)
-          .then(rerender);
-      };
-      reader.readAsArrayBuffer(finalBlob);
-    };
   };
 
   useEffect(() => {
@@ -352,7 +288,6 @@ export const RecordingPage: FC<RecordingPageProps> = ({ onBack, recordingItems, 
         <Row className={'d-flex justify-content-center mt-3'}>
           <RecordingVisualization
             state={state}
-            audioElement={audioPlayBackRef.current || undefined}
             filePath={
               recordingStateRef.current[recordingItems[index]?.fileSystemName]
                 ? join(basePath, `${recordingItems[index].fileSystemName}.wav`)
@@ -370,7 +305,6 @@ export const RecordingPage: FC<RecordingPageProps> = ({ onBack, recordingItems, 
           octave={octave}
         />
       </Container>
-      <audio autoPlay={true} muted={false} ref={audioPlayBackRef} />
     </Fragment>
   );
 };

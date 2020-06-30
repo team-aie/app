@@ -1,4 +1,4 @@
-import * as log from 'electron-log';
+import log from 'electron-log';
 import { BackendModule, ReadCallback, Services } from 'i18next';
 
 import { isDevelopment } from '../../env-and-consts';

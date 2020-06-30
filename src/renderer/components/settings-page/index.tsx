@@ -1,19 +1,19 @@
 import log from 'electron-log';
-import React, { FC, Fragment, MouseEventHandler, useContext, useEffect, useRef, useState } from 'react';
+import React, { FC, Fragment, MouseEventHandler, useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import { useTranslation } from 'react-i18next';
+import useEffectOnce from 'react-use/lib/useEffectOnce';
 
-import { AudioInputStreamContext } from '../../contexts';
-import { ChromeHTMLAudioElement } from '../../types';
+import mediaService from '../../services/media';
 import { naiveSerialize } from '../../utils';
 import BackButton from '../back-button';
 import NextButton from '../next-button';
 import { Select } from '../select';
 
-import { useAudioInputOutputDevice } from './hooks';
+import { useAudioInputOutputDevices } from './hooks';
 
 export const SettingsPage: FC<{
   onNext: MouseEventHandler<HTMLElement>;
@@ -27,18 +27,19 @@ export const SettingsPage: FC<{
     audioOutputDeviceId,
     setAudioInputDeviceId,
     setAudioOutputDeviceId,
-  ] = useAudioInputOutputDevice();
-  const { audioInputStream } = useContext(AudioInputStreamContext);
+  ] = useAudioInputOutputDevices();
   const [muted, setMuted] = useState(true);
-  const audioElementRef = useRef<ChromeHTMLAudioElement>(null);
-
-  useEffect(() => {
-    const audioElement = audioElementRef.current;
-    if (audioElement) {
-      audioElement.srcObject = audioInputStream || null;
-      audioElement.setSinkId(audioOutputDeviceId).catch(log.error);
+  useEffect((): void => {
+    if (muted) {
+      mediaService.stopPlaying().catch(log.error);
+    } else {
+      mediaService.playAudioInput().catch(log.error);
     }
-  }, [audioInputStream, audioOutputDeviceId]);
+  }, [muted]);
+
+  useEffectOnce(() => {
+    mediaService.switchOnAudioInput();
+  });
 
   return (
     <Fragment>
@@ -51,7 +52,7 @@ export const SettingsPage: FC<{
           <Col xs={'auto'} sm={7} md={7} lg={7} xl={7}>
             <Select
               className={'w-100'}
-              value={audioInputDeviceId}
+              value={audioInputDeviceId || ''}
               onChange={(e): void => setAudioInputDeviceId(e.target.value)}>
               {!!audioInputDeviceId || <option value={''} />}
               {audioInputDevices.map((inputDevice) => (
@@ -69,7 +70,7 @@ export const SettingsPage: FC<{
           <Col xs={'auto'} sm={7} md={7} lg={7} xl={7}>
             <Select
               className={'w-100'}
-              value={audioOutputDeviceId}
+              value={audioOutputDeviceId || ''}
               onChange={(e): void => setAudioOutputDeviceId(e.target.value)}>
               {!!audioOutputDeviceId || <option value={''} />}
               {audioOutputDevices.map((outputDevice) => (
@@ -91,7 +92,6 @@ export const SettingsPage: FC<{
         </Row>
       </Container>
       <NextButton text={t('Confirm')} onClick={onNext} disabled={false} />
-      <audio ref={audioElementRef} autoPlay={true} muted={muted} />
     </Fragment>
   );
 };
