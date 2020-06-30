@@ -2,7 +2,7 @@ import * as path from 'path';
 import { format as formatUrl } from 'url';
 
 import { BrowserWindow, Menu, MenuItemConstructorOptions, app, shell } from 'electron';
-import * as log from 'electron-log';
+import log from 'electron-log';
 
 import autoUpdater from './auto-updater';
 

@@ -1,3 +1,5 @@
+import { PartialObserver, Subscription } from 'rxjs';
+
 export type PageState = 'welcome' | 'open-project' | 'configure-recording-set' | 'settings' | 'recording';
 
 export type ScaleKey = 'C' | 'D' | 'E' | 'F' | 'G' | 'A' | 'B';
@@ -37,6 +39,8 @@ export interface RecordedVoiceItem extends RecordingItem {
 }
 
 export type Consumer<T> = (t: T) => void;
+export type Func<T, R> = (t: T) => R;
+export type UnaryOperator<T> = Func<T, T>;
 
 export interface RecordingListParser {
   parse(content: string): Promise<RecordingItem[]>;
@@ -64,3 +68,15 @@ export type Writeable<T> = { -readonly [P in keyof T]: T[P] };
  * https://stackoverflow.com/a/43001581
  */
 export type DeepWriteable<T> = { -readonly [P in keyof T]: DeepWriteable<T[P]> };
+
+export interface Closeable {
+  close(): void | Promise<void>;
+}
+
+export interface IObservable<T> {
+  /**
+   * Note: Must make sure to call onNext() with the last emitted value for each new subscriber
+   * @param observer
+   */
+  subscribe(observer: PartialObserver<T>): Subscription;
+}

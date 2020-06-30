@@ -135,3 +135,7 @@ export async function openFilePicker(
 
   return multi ? filePaths : filePaths[0];
 }
+
+export const writeArrayBufferToFile = async (filePath: string, arrayBuffer: ArrayBuffer): Promise<void> => {
+  return writeFile(filePath, Buffer.from(arrayBuffer), 'binary');
+};
