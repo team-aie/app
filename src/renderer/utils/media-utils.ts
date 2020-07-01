@@ -20,7 +20,11 @@ export const acquireAudioInputStream = async (deviceId: string): Promise<MediaSt
 
   for (let attemptCount = 0; attemptCount < ACQUIRE_PERMISSION_RETRIES; attemptCount++) {
     try {
-      const microphoneApproved = await remote.systemPreferences.askForMediaAccess('microphone');
+      // askForMediaAccess() is only for macOS
+      const microphoneApproved =
+        (remote.systemPreferences.askForMediaAccess &&
+          (await remote.systemPreferences.askForMediaAccess('microphone'))) ||
+        true;
       if (microphoneApproved) {
         return await navigator.mediaDevices.getUserMedia(constraint);
       } else {
