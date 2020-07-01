@@ -13,21 +13,6 @@ const WAIT_FOR_OTHERS_SECONDS = 5;
  * This config aims to allow webpack-license-plugin to load all licenses and save to {@code src/renderer/licenses.ts}.
  */
 module.exports = async (env) => {
-  // TODO: Remove this after wavesurfer.js fixes their bug
-  fsp
-    .readFile('node_modules/wavesurfer.js/dist/plugin/wavesurfer.spectrogram.js')
-    .then((buffer) => {
-      return String(buffer).replace(
-        "  this.drawer.wrapper.removeEventListener('scroll', this._onScroll);",
-        "  this.drawer && this.drawer.wrapper.removeEventListener('scroll', this._onScroll);",
-      );
-    })
-    .then((content) => fsp.writeFile('node_modules/wavesurfer.js/dist/plugin/wavesurfer.spectrogram.js', content))
-    // eslint-disable-next-line no-console
-    .then(() => console.log('Performed hotfix'))
-    // eslint-disable-next-line no-console
-    .catch(console.error);
-
   const [mainConfig, rendererConfig, licenseConfig] = await Promise.all([
     require('electron-webpack/webpack.main.config')(env),
     require('electron-webpack/webpack.renderer.config')(env),
