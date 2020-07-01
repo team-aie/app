@@ -16,7 +16,7 @@ interface DelegatedAudioContextActions {
   createDynamicsCompressor(): DynamicsCompressorNode;
   createGain(): GainNode;
   createIIRFilter(feedforward: number[], feedback: number[]): IIRFilterNode;
-  createOscillator(): OscillatorNode;
+  createOscillator(options?: OscillatorOptions): OscillatorNode;
   createPanner(): PannerNode;
   createPeriodicWave(
     real: number[] | Float32Array,
@@ -36,7 +36,6 @@ export interface MediaService extends DelegatedAudioContextActions {
   getIsRecording(): boolean;
   startRecording(): Promise<Blob>;
   stopRecording(): void;
-  setSource(source: AudioNode): void;
   currentState(): MediaServiceState;
   resumePlaying(): Promise<void>;
   suspendPlaying(): Promise<void>;
@@ -47,7 +46,7 @@ export interface MediaService extends DelegatedAudioContextActions {
   switchOnAudioInput(): void;
   audioBlobToWavArrayBuffer(audioBlob: Blob): Promise<ArrayBuffer>;
   playBlob(blob: Blob): Promise<void>;
-  playAudioNode(node: AudioNode): Promise<void>;
+  playAudioNode(node: AudioScheduledSourceNode | AudioNode): Promise<void>;
   playAudioInput(): Promise<void>;
   playMediaStream(stream: MediaStream): Promise<void>;
 }
