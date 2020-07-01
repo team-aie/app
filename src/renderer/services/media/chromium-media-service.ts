@@ -17,9 +17,9 @@ import { MediaServiceState } from './types';
  * 5. Allow configurations
  */
 export class ChromiumMediaService extends BaseMediaService implements Closeable {
-  private readonly gainNode: GainNode = this.audioCtx.createGain();
-  private readonly destinationNode: MediaStreamAudioDestinationNode = this.audioCtx.createMediaStreamDestination();
-  private currentSource?: AudioNode;
+  private gainNode: GainNode = this.audioCtx.createGain();
+  private destinationNode: MediaStreamAudioDestinationNode = this.audioCtx.createMediaStreamDestination();
+  private currentSource?: AudioScheduledSourceNode | AudioNode;
   private audioInputStream?: MediaStream;
   private recorder?: MediaRecorder;
 
@@ -30,9 +30,8 @@ export class ChromiumMediaService extends BaseMediaService implements Closeable 
     private readonly audioInputStreamObservable: AudioInputStreamObservable,
   ) {
     super(audioCtx);
-    this.gainNode.connect(this.destinationNode);
     this.audioElement.autoplay = true;
-    this.audioElement.srcObject = this.destinationNode.stream;
+    this.createNewAudioGraph();
     this.audioDeviceConfigObservable.subscribe({
       next: this.onNextAudioDeviceConfig,
     });
@@ -40,6 +39,20 @@ export class ChromiumMediaService extends BaseMediaService implements Closeable 
       next: this.onNextAudioInputStream,
     });
   }
+
+  /**
+   * TODO Remove this after Chromium fixes the pitch-related bug when reusing the AudioContext.
+   */
+  createNewAudioGraph = (): void => {
+    const volume = this.getVolume();
+    this.audioCtx.close().catch(log.error);
+    this.audioCtx = new AudioContext();
+    this.gainNode = this.audioCtx.createGain();
+    this.setVolume(volume);
+    this.destinationNode = this.audioCtx.createMediaStreamDestination();
+    this.gainNode.connect(this.destinationNode);
+    this.audioElement.srcObject = this.destinationNode.stream;
+  };
 
   private onNextAudioDeviceConfig = (audioDeviceConfig: AudioDeviceConfig): void => {
     if (audioDeviceConfig.audioOutputDeviceId) {
@@ -61,6 +74,11 @@ export class ChromiumMediaService extends BaseMediaService implements Closeable 
   startRecording = async (): Promise<Blob> => {
     return new Promise<Blob>((resolve, reject) => {
       if (!this.getIsRecording()) {
+        if (!this.audioInputStreamObservable.getIsOn()) {
+          reject(new Error('Audio input is not turned on!'));
+          return;
+        }
+
         if (!this.audioInputStream) {
           reject(new Error('No audio input is specified or failed to create input stream!'));
           return;
@@ -105,37 +123,53 @@ export class ChromiumMediaService extends BaseMediaService implements Closeable 
     this.currentSource = undefined;
   };
 
-  setSource = (source: AudioNode): void => {
-    this.removeCurrentSource();
+  private setSource = (source: AudioScheduledSourceNode | AudioNode): void => {
     source.connect(this.gainNode);
     this.currentSource = source;
   };
 
   currentState = (): MediaServiceState => {
-    return this.audioCtx.state;
+    if (this.audioCtx.state === 'closed') {
+      return 'closed';
+    } else if (!this.currentSource) {
+      return 'suspended';
+    } else {
+      return 'running';
+    }
   };
 
   resumePlaying = async (): Promise<void> => {
-    if (this.currentState() === 'suspended') {
-      return this.audioCtx.resume();
-    }
+    this.audioElement.muted = false;
+    // FIXME Not sure if this works well
+    // if (this.currentState() === 'suspended') {
+    //   return this.audioCtx.resume();
+    // }
   };
 
   suspendPlaying = async (): Promise<void> => {
-    if (this.currentState() === 'running') {
-      return this.audioCtx.suspend();
-    }
+    this.audioElement.muted = true;
+    // FIXME Not sure if this works well
+    // if (this.currentState() === 'running') {
+    //   return this.audioCtx.suspend();
+    // }
   };
 
   stopPlaying = async (): Promise<void> => {
     if (this.currentState() === 'running') {
+      if (this.currentSource && 'stop' in this.currentSource) {
+        this.currentSource.stop();
+        if (this.currentSource.onended) {
+          // Because this is set by startPlaying();
+          (this.currentSource.onended as () => void)();
+        }
+      }
       await this.suspendPlaying();
       this.removeCurrentSource();
     }
   };
 
   close = async (): Promise<void> => {
-    await stop();
+    await this.stopPlaying();
     return this.audioCtx.close();
   };
 
@@ -173,20 +207,41 @@ export class ChromiumMediaService extends BaseMediaService implements Closeable 
     });
   };
 
-  playAudioNode = async (node: AudioNode): Promise<void> => {
-    this.setSource(node);
-    return this.resumePlaying();
+  playAudioNode = async (node: AudioScheduledSourceNode | AudioNode): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      try {
+        this.setSource(node);
+        const resumePlayingPromise = this.resumePlaying();
+        if ('start' in node) {
+          node.start();
+          node.onended = (): void => {
+            node.onended = null;
+            resolve();
+          };
+          resumePlayingPromise.catch(reject);
+        } else {
+          resumePlayingPromise.then(resolve).catch(reject);
+        }
+      } catch (e) {
+        reject(e);
+      }
+    });
   };
 
   playBlob = async (blob: Blob): Promise<void> => {
-    const sourceElement = new Audio();
-    sourceElement.srcObject = blob;
-    return this.playAudioNode(this.audioCtx.createMediaElementSource(sourceElement));
+    const buffer = await this.audioBlobToWavArrayBuffer(blob);
+    const audioBuffer = await this.audioCtx.decodeAudioData(buffer);
+    this.createNewAudioGraph();
+    const bufferSource = this.audioCtx.createBufferSource();
+    bufferSource.buffer = audioBuffer;
+
+    return this.playAudioNode(bufferSource);
   };
 
   playAudioInput = async (): Promise<void> => {
     this.audioInputStreamObservable.switchOn();
     if (this.audioInputStream) {
+      this.createNewAudioGraph();
       return this.playMediaStream(this.audioInputStream);
     }
     throw new Error('No audio input stream to play!');

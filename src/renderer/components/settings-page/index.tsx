@@ -33,6 +33,7 @@ export const SettingsPage: FC<{
     if (muted) {
       mediaService.stopPlaying().catch(log.error);
     } else {
+      mediaService.createNewAudioGraph();
       mediaService.playAudioInput().catch(log.error);
     }
   }, [muted]);
