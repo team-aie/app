@@ -7,7 +7,7 @@ const path = require('path');
 const LicensePlugin = require('webpack-license-plugin');
 const { exec } = require('child_process');
 
-const WAIT_FOR_OTHERS_SECONDS = 5;
+const WAIT_FOR_OTHERS_SECONDS = 10;
 
 /**
  * This config aims to allow webpack-license-plugin to load all licenses and save to {@code src/renderer/licenses.ts}.
