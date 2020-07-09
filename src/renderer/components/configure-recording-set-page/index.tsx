@@ -239,6 +239,10 @@ const ConfigureRecordingSetPage: FC<{
                 removeRecordingSet={removeRecordingSet}
                 selectedRecordingSetIndex={selectedRecordingSetIndex}
                 setSelectedRecordingSetIndex={setSelectedRecordingSetIndex}
+                style={{
+                  maxHeight: '14rem',
+                  overflowY: 'scroll',
+                }}
               />
             </Col>
             <Col />

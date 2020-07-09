@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { CSSProperties, FC, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Image from 'react-bootstrap/Image';
@@ -63,6 +63,8 @@ interface CreatedRecordingSetListProps {
   removeRecordingSet: Consumer<RecordingSet>;
   selectedRecordingSetIndex: number;
   setSelectedRecordingSetIndex: Consumer<number>;
+  minListLength?: number;
+  style?: CSSProperties;
 }
 
 const CreatedRecordingSetList: FC<CreatedRecordingSetListProps> = ({
@@ -70,9 +72,11 @@ const CreatedRecordingSetList: FC<CreatedRecordingSetListProps> = ({
   removeRecordingSet,
   selectedRecordingSetIndex,
   setSelectedRecordingSetIndex,
+  minListLength = 4,
+  style,
 }) => {
   const recordingSetsToDisplay: (RecordingSet | undefined)[] =
-    recordingSets.length >= 4 ? recordingSets : [...Array(4)].map((x, i) => recordingSets[i]);
+    recordingSets.length >= minListLength ? recordingSets : [...Array(minListLength)].map((x, i) => recordingSets[i]);
   const recordingSetStrings: [RecordingSet | undefined, string][] = recordingSetsToDisplay.map((recordingSet) => {
     if (recordingSet) {
       const {
@@ -88,7 +92,7 @@ const CreatedRecordingSetList: FC<CreatedRecordingSetListProps> = ({
   });
 
   return (
-    <ListGroup>
+    <ListGroup style={style}>
       {recordingSetStrings.map(([recordingSet, recordingSetStr], i) => (
         <ListGroup.Item
           key={naiveSerialize(recordingSet || i)}
