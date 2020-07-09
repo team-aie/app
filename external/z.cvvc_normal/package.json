@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "name": "z.cvvc_normal",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Reclist.txt",
+  "repository": {
+    "url": ""
+  },
+  "author": "残月",
+  "license": "UNLICENSED"
+}

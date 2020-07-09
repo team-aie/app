@@ -95,6 +95,12 @@ const AieApp: FC = () => {
             import('delta_eng_ver5/デルタ式engver5_reclist.txt')
               .then((content) => lineByLineParser.parse(content.default))
               .then(setRecordingList);
+            break;
+          case 'Z式CVVC-Normal (Z Chinese CVVC - Normal)':
+            import('z.cvvc_normal/Reclist.txt')
+              .then((content) => lineByLineParser.parse(content.default))
+              .then(setRecordingList);
+            break;
         }
       } else {
         readFile(recordingList.filePath).then(lineByLineParser.parse).then(setRecordingList);

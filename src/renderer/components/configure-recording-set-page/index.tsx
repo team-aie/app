@@ -42,7 +42,10 @@ const DUMMY_PROJECT_FILE = {
   recordingSets: [],
 };
 
-const BUILT_IN_RECLISTS: BuiltInRecordingList[] = ['デルタ式英語リストver5 (Delta English Ver. 5)'];
+const BUILT_IN_RECORDING_LISTS: BuiltInRecordingList[] = [
+  'デルタ式英語リストver5 (Delta English Ver. 5)',
+  'Z式CVVC-Normal (Z Chinese CVVC - Normal)',
+];
 
 const ConfigureRecordingSetPage: FC<{
   onNext: MouseEventHandler<HTMLElement>;
@@ -208,7 +211,7 @@ const ConfigureRecordingSetPage: FC<{
           </Row>
           <Row>
             <SetRecordingListConfiguration
-              builtInLists={BUILT_IN_RECLISTS}
+              builtInLists={BUILT_IN_RECORDING_LISTS}
               chosenBuiltInList={chosenBuiltInList}
               setChosenBuiltInList={setChosenBuiltInList}
               chosenCustomListPath={chosenCustomListPath}
