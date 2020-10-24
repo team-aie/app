@@ -20,7 +20,7 @@ const WelcomePage: FC<{ onNext: MouseEventHandler<HTMLElement> }> = ({ onNext })
         <h2>{t('A fantastic list recording application')}</h2>
       </Row>
       <Row style={{ marginTop: '100px' }}>
-        <Image onClick={onNext} src={startButton} thumbnail style={{ width: '10rem' }} />
+        <Image onClick={onNext} src={startButton} thumbnail style={{ width: '10rem' }} className="highlightButton" />
       </Row>
       <Row>
         <span>{t('Link Start')}</span>
