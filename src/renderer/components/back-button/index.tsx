@@ -5,16 +5,24 @@ import { Positional } from '../helper-components';
 
 import backButton from './back-button.svg';
 
-const imgStyle = {
-  width: '1rem',
-  borderStyle: 'solid',
-  borderColor: '#cb4335',
-};
+// const buttonStyle = {
+//   width: '1rem',
+// };
+
+// const highlightButtonStyle = {
+//   borderStyle: 'solid',
+//   borderColor: '#cb4335',
+// }
+
+// const selectedButtonStyle = {
+//   borderStyle: 'solid',
+//   borderColor: 'blue',
+// }
 
 const BackButton: FC<{ onBack?: MouseEventHandler<HTMLElement> }> = ({ onBack }) => {
   return (
     <Positional position={'top-left'}>
-      <Image src={backButton} style={imgStyle} onClick={onBack} />
+      <Image src={backButton} onClick={onBack} className="highlightButton" />
     </Positional>
   );
 };
