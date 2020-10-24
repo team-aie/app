@@ -22,7 +22,7 @@ import backButton from './back-button.svg';
 const BackButton: FC<{ onBack?: MouseEventHandler<HTMLElement> }> = ({ onBack }) => {
   return (
     <Positional position={'top-left'}>
-      <Image src={backButton} style={{ width: '1rem' }} onClick={onBack} className="highlightButton" />
+      <Image src={backButton} style={{ width: '1rem' }} onClick={onBack} className="highlightButton" tabIndex={0} />
     </Positional>
   );
 };
