@@ -40,7 +40,7 @@ const CreatedRecordingSetListItem: FC<CreatedRecordingSetListItemProps> = ({
         }
       }}>
       <Row>
-        <Col className={'text-truncate'} style={{ maxWidth: '100%' }}>
+        <Col className={'text-truncate'} style={{ maxWidth: '100%' }} tabIndex={0}>
           {recordingSetStr}
         </Col>
         <Col xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'}>
@@ -51,6 +51,7 @@ const CreatedRecordingSetListItem: FC<CreatedRecordingSetListItemProps> = ({
               e.stopPropagation();
               removeRecordingSet(recordingSet);
             }}
+            tabIndex={0}
           />
         </Col>
       </Row>

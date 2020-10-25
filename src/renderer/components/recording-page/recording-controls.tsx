@@ -41,6 +41,8 @@ export const RecordingControls: FC<RecordingControlsProps> = ({
               toggleRecord();
             }}
             style={{ width: '6rem' }}
+            tabIndex={0}
+            className="highlightButton"
           />
         </Col>
         <Col className={'d-flex flex-column justify-content-center'}>
@@ -55,10 +57,11 @@ export const RecordingControls: FC<RecordingControlsProps> = ({
           <Row>
             <Image
               src={playRecordedItem}
-              className={'mt-2 mb-2'}
+              className={'mt-2 mb-2 highlightButton'}
               onClick={(): void => {
                 togglePlay();
               }}
+              tabIndex={0}
             />
           </Row>
           <Row>
@@ -76,10 +79,11 @@ export const RecordingControls: FC<RecordingControlsProps> = ({
         {octave}
         <Image
           src={playScale}
-          className={'ml-2'}
+          className={'ml-2 highlightButton'}
           onClick={(): void => {
             togglePlayScale();
           }}
+          tabIndex={0}
         />
       </Row>
     </Fragment>
