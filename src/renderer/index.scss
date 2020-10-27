@@ -3,9 +3,8 @@ div#app {
   width: 100vw;
   height: 100vh;
 }
-
 *:focus {
-  outline-color: #cb4335;
+  border-style: none;
 }
 
 .highlightButton:hover{
@@ -13,9 +12,11 @@ div#app {
   border-color: #cb4335;
 }
 
-*:active {
-  outline-color: blue;
-  border-color: blue;
+.highlightButton:focus{
+  box-shadow: 0 0 0 0.2rem purple;
+  border-style: solid;
+  border-width: 3rem;
+  border-color: purple;
 }
 
 .highlightButton:active{
