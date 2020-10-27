@@ -1,4 +1,5 @@
 import React, { FC, MouseEventHandler } from 'react';
+import { Button } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
@@ -20,14 +21,9 @@ const WelcomePage: FC<{ onNext: MouseEventHandler<HTMLElement> }> = ({ onNext })
         <h2>{t('A fantastic list recording application')}</h2>
       </Row>
       <Row style={{ marginTop: '100px' }}>
-        <Image
-          onClick={onNext}
-          src={startButton}
-          thumbnail
-          style={{ width: '10rem' }}
-          className="highlightButton"
-          tabIndex={0}
-        />
+        <Button onClick={onNext} variant={'outline-secondary'} className="highlightButton">
+          <Image src={startButton} style={{ width: '10rem' }} />
+        </Button>
       </Row>
       <Row>
         <span>{t('Link Start')}</span>
