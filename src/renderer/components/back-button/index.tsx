@@ -8,7 +8,7 @@ import backButton from './back-button.svg';
 const BackButton: FC<{ onBack?: MouseEventHandler<HTMLElement> }> = ({ onBack }) => {
   return (
     <Positional position={'top-left'}>
-      <ImageButton onClick={onBack} img={backButton}></ImageButton>
+      <ImageButton onClick={onBack} img={backButton} passedWidth="1rem"></ImageButton>
     </Positional>
   );
 };
