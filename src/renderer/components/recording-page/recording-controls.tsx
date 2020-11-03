@@ -1,6 +1,5 @@
 import React, { FC, Fragment } from 'react';
 import Col from 'react-bootstrap/Col';
-import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
 import { useTranslation } from 'react-i18next';
 

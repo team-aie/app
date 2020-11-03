@@ -8,7 +8,7 @@ const ImageButton: FC<{ onClick?: MouseEventHandler<HTMLElement>; img: string; p
   passedWidth,
 }) => {
   return (
-    <Button onClick={onClick} variant={'outline-secondary'} className="highlightButton">
+    <Button onClick={onClick} className="image-button">
       <Image src={img} style={{ width: passedWidth }} />
     </Button>
   );
