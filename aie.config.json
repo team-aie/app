@@ -1,0 +1,16 @@
+{
+  "name": "app",
+  "recordingSets": [
+    {
+      "name": "test",
+      "scale": {
+        "key": "C",
+        "octave": 3
+      },
+      "recordingList": {
+        "type": "built-in",
+        "name": "デルタ式英語リストver5 (Delta English Ver. 5)"
+      }
+    }
+  ]
+}

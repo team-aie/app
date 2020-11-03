@@ -3,18 +3,21 @@ import React, { FC, useContext } from 'react';
 import { LocaleContext } from '../../contexts';
 import { SupportedLocale } from '../../types';
 
+// import switchButton from './switch-button.svg';
+
 const StyleSwitcher: FC = () => {
+  const { locale } = useContext(LocaleContext);
+  const styleHref = `${locale}.styles.css`;
+  return (
+    <div>
+      <link href={styleHref} rel={'stylesheet'} />
+    </div>
+  );
+};
+const StyleButton: FC = () => {
   const { locale, setLocale } = useContext(LocaleContext);
   const styleHref = `${locale}.styles.css`;
-
   return (
-    // <div>
-    //   const switchMode = (): void => {
-    //     styleHref = `${locale}-dark.styles.css`;
-    //     console.log(styleHref);
-    //   };
-
-    // return (
     <div>
       <button
         onClick={(): void => {
@@ -34,4 +37,5 @@ const StyleSwitcher: FC = () => {
   );
 };
 
-export default StyleSwitcher;
+export { StyleSwitcher };
+export { StyleButton };
