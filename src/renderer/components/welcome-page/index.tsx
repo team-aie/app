@@ -21,7 +21,7 @@ const WelcomePage: FC<{ onNext: MouseEventHandler<HTMLElement> }> = ({ onNext })
         <h2>{t('A fantastic list recording application')}</h2>
       </Row>
       <Row style={{ marginTop: '100px' }}>
-        <Button onClick={onNext} variant={'outline-secondary'} className="highlightButton">
+        <Button onClick={onNext} className="img-button">
           <Image src={startButton} style={{ width: '10rem' }} />
         </Button>
       </Row>
