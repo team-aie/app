@@ -1,9 +1,9 @@
 import React, { FC, MouseEventHandler } from 'react';
-import { Button } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
-import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
 import { useTranslation } from 'react-i18next';
+
+import ImageButton from '../image-button';
 
 import startButton from './start-button.svg';
 
@@ -21,9 +21,7 @@ const WelcomePage: FC<{ onNext: MouseEventHandler<HTMLElement> }> = ({ onNext })
         <h2>{t('A fantastic list recording application')}</h2>
       </Row>
       <Row style={{ marginTop: '100px' }}>
-        <Button onClick={onNext} className="img-button">
-          <Image src={startButton} style={{ width: '10rem' }} />
-        </Button>
+        <ImageButton onClick={onNext} img={startButton}></ImageButton>
       </Row>
       <Row>
         <span>{t('Link Start')}</span>

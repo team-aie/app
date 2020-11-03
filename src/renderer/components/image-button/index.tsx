@@ -2,18 +2,12 @@ import React, { FC, MouseEventHandler } from 'react';
 import { Button } from 'react-bootstrap';
 import Image from 'react-bootstrap/Image';
 
-import { Positional } from '../helper-components';
-
-import backButton from './back-button.svg';
-
-const BackButton: FC<{ onBack?: MouseEventHandler<HTMLElement> }> = ({ onBack }) => {
+const ImageButton: FC<{ onClick?: MouseEventHandler<HTMLElement>; img: string }> = ({ onClick, img }) => {
   return (
-    <Positional position={'top-left'}>
-      <Button onClick={onBack} variant={'outline-secondary'} className="highlightButton">
-        <Image src={backButton} style={{ width: '1rem' }} />
-      </Button>
-    </Positional>
+    <Button onClick={onClick} variant={'outline-secondary'} className="highlightButton">
+      <Image src={img} style={{ width: '1rem' }} />
+    </Button>
   );
 };
 
-export default BackButton;
+export default ImageButton;
