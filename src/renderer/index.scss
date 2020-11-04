@@ -5,13 +5,18 @@ div#app {
 }
 
 .image-button {
-  border: transparent !important;
-  background: transparent !important;
+  background: transparent;
+  border: transparent;
 }
 
 .image-button:hover {
-  border: #6c757d !important;
-  background: transparent !important;
+  background-color: #656769;
+  outline-color: #656769;
+}
+
+.image-button:focus {
+  outline-color: #bbb9b9;
+  outline-width: '10rem';
 }
 
 ::-webkit-scrollbar {

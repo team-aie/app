@@ -27,8 +27,7 @@ const ProjectRow: FC<ProjectRowProps> = ({ project, onClick, selected }) => {
       onClick={(): void => project && onClick(project)}
       style={selected || hovered ? { filter: 'invert(1)', textDecoration: 'underline' } : undefined}
       onMouseEnter={(): void => setHovered(true)}
-      onMouseOut={(): void => setHovered(false)}
-      tabIndex={0}>
+      onMouseOut={(): void => setHovered(false)}>
       <td className={'border-bottom'}>{project && project.name}</td>
       <td className={'border-bottom'} align={'right'}>
         {project && project.lastAccessTime && project.lastAccessTime.toLocaleString()}
