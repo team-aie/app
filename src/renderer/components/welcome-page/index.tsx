@@ -3,8 +3,11 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import { useTranslation } from 'react-i18next';
 
-import ImageButton from '../image-button';
+import { Positional } from '../helper-components';
 
+import startButton from './start-button-img.svg';
+import StyleButton from './style-button';
+import ImageButton from '../image-button';
 import startButton from './start-button.svg';
 
 const WelcomePage: FC<{ onNext: MouseEventHandler<HTMLElement> }> = ({ onNext }) => {
@@ -26,6 +29,9 @@ const WelcomePage: FC<{ onNext: MouseEventHandler<HTMLElement> }> = ({ onNext })
       <Row>
         <span>{t('Link Start')}</span>
       </Row>
+      <Positional position={'top-right'}>
+        <StyleButton />
+      </Positional>
     </Container>
   );
 };

@@ -11,7 +11,7 @@ import LocaleSelector from './components/locale-selector';
 import OpenProjectPage from './components/open-project-page';
 import { RecordingPage } from './components/recording-page';
 import { SettingsPage } from './components/settings-page';
-import StyleSwitcher from './components/style-switcher';
+import { StyleSwitcher } from './components/style-switcher';
 import WelcomePage from './components/welcome-page';
 import { LocaleContext, RecordingProjectContext } from './contexts';
 import { PAGE_STATES_IN_ORDER } from './env-and-consts';
@@ -30,7 +30,13 @@ const BottomRightDisplay: FC = () => (
     </Col>
   </Positional>
 );
-
+// const TopRightDisplay: FC = () => (
+//   <Positional position={'top-right'}>
+//     <Col xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'}>
+//       <StyleSwitcher triggerStyle={{ fontSize: '75%' }} />
+//     </Col>
+//   </Positional>
+// );
 const AieApp: FC = () => {
   const [locale, setLocale] = useLocale();
   const [pageStateIndex = 0, setPageStateIndex] = useLocalStorage(getLSKey('AieApp', 'pageStateIndex'), 0);
@@ -149,7 +155,9 @@ const AieApp: FC = () => {
     <LocaleContext.Provider value={{ locale, setLocale }}>
       <RecordingProjectContext.Provider value={{ recordingProject, setRecordingProject }}>
         <Fragment>
-          <StyleSwitcher />
+          <Positional position={'top-right'}>
+            <StyleSwitcher />
+          </Positional>
           {routePageToComponent()}
           {pageStateIndex === 0 && <BottomRightDisplay />}
         </Fragment>
