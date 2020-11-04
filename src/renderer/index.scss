@@ -5,19 +5,19 @@ div#app {
 }
 
 .image-button {
-  // background: transparent;
+  background: white;
   border: transparent;
   border-radius: 35px;
 }
 
 .image-button:hover {
-  filter: invert(40%);
+  filter: invert(30%);
 }
 
 .image-button:focus {
   border: solid;
-  // border-color: #bbb9b9;
-  border-color: black;
+  border-color: #bbb9b9;
+  // border-color: black;
   border-width: '10rem';
   outline: none;
 }
