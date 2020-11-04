@@ -6,20 +6,20 @@ div#app {
 
 .image-button {
   background: white;
-  border: transparent;
+  border: white;
   border-radius: 35px;
 }
 
 .image-button:hover {
-  filter: invert(30%);
+  filter: invert(60%);
 }
 
 .image-button:focus {
   border: solid;
-  border-color: #bbb9b9;
-  // border-color: black;
+  border-color: #a59696;
   border-width: '10rem';
   outline: none;
+  filter: box-shadow(5px 5px #ff0000) invert(60%);
 }
 
 ::-webkit-scrollbar {
