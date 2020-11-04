@@ -5,18 +5,21 @@ div#app {
 }
 
 .image-button {
-  background: transparent;
+  // background: transparent;
   border: transparent;
+  border-radius: 35px;
 }
 
 .image-button:hover {
-  background-color: #656769;
-  outline-color: #656769;
+  filter: invert(40%);
 }
 
 .image-button:focus {
-  outline-color: #bbb9b9;
-  outline-width: '10rem';
+  border: solid;
+  // border-color: #bbb9b9;
+  border-color: black;
+  border-width: '10rem';
+  outline: none;
 }
 
 ::-webkit-scrollbar {
