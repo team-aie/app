@@ -1,9 +1,10 @@
 import React, { FC, useContext } from 'react';
+import Image from 'react-bootstrap/Image';
 
 import { LocaleContext } from '../../contexts';
 import { SupportedLocale } from '../../types';
 
-// import switchButton from './switch-button.svg';
+import switchButton from './styleSwitchButton.svg';
 
 const StyleSwitcher: FC = () => {
   const { locale } = useContext(LocaleContext);
@@ -19,19 +20,17 @@ const StyleButton: FC = () => {
   const styleHref = `${locale}.styles.css`;
   return (
     <div>
-      <button
+      <Image
         onClick={(): void => {
-          console.log('mode is: ' + locale.substring(locale.length - 4));
           if (locale.substring(locale.length - 4) == 'dark') {
-            console.log('locale is: ' + locale.substring(0, locale.length - 5));
             setLocale(locale.substring(0, locale.length - 5) as SupportedLocale);
           } else {
             setLocale(`${locale}-dark` as SupportedLocale);
           }
-          console.log(locale);
-        }}>
-        Switch Mode
-      </button>
+        }}
+        src={switchButton}
+        style={{ width: '2rem' }}
+      />
       <link href={styleHref} rel={'stylesheet'} />
     </div>
   );
