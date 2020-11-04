@@ -7,6 +7,7 @@ import Row from 'react-bootstrap/Row';
 
 import { Consumer, RecordingSet } from '../../types';
 import { filename, naiveSerialize } from '../../utils';
+import ImageButton from '../image-button';
 
 import deleteButton from './delete-button.svg';
 
@@ -44,14 +45,13 @@ const CreatedRecordingSetListItem: FC<CreatedRecordingSetListItemProps> = ({
           {recordingSetStr}
         </Col>
         <Col xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'}>
-          <Image
-            src={deleteButton}
-            style={{ width: '1rem' }}
+          <ImageButton
             onClick={(e): void => {
               e.stopPropagation();
               removeRecordingSet(recordingSet);
             }}
-          />
+            img={deleteButton}
+            passedWidth="1rem"></ImageButton>
         </Col>
       </Row>
     </Container>

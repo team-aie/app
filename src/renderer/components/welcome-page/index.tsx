@@ -1,6 +1,5 @@
 import React, { FC, MouseEventHandler } from 'react';
 import Container from 'react-bootstrap/Container';
-import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
 import { useTranslation } from 'react-i18next';
 
@@ -8,6 +7,8 @@ import { Positional } from '../helper-components';
 
 import startButton from './start-button-img.svg';
 import StyleButton from './style-button';
+import ImageButton from '../image-button';
+import startButton from './start-button.svg';
 
 const WelcomePage: FC<{ onNext: MouseEventHandler<HTMLElement> }> = ({ onNext }) => {
   const { t } = useTranslation();
@@ -23,7 +24,7 @@ const WelcomePage: FC<{ onNext: MouseEventHandler<HTMLElement> }> = ({ onNext })
         <h2>{t('A fantastic list recording application')}</h2>
       </Row>
       <Row style={{ marginTop: '100px' }}>
-        <Image onClick={onNext} src={startButton} thumbnail style={{ width: '10rem' }} />
+        <ImageButton onClick={onNext} img={startButton} passedWidth="10rem"></ImageButton>
       </Row>
       <Row>
         <span>{t('Link Start')}</span>

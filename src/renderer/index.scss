@@ -4,6 +4,23 @@ div#app {
   height: 100vh;
 }
 
+.image-button {
+  background: white;
+  border: white;
+  border-radius: 35px;
+}
+
+.image-button:hover {
+  filter: invert(60%);
+}
+
+.image-button:focus {
+  border: solid;
+  border-color: #8688f3;
+  border-width: '3rem';
+  outline: none;
+}
+
 ::-webkit-scrollbar {
   width: 0;
   background: transparent;

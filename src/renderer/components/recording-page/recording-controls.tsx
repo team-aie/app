@@ -1,10 +1,10 @@
 import React, { FC, Fragment } from 'react';
 import Col from 'react-bootstrap/Col';
-import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
 import { useTranslation } from 'react-i18next';
 
 import { ScaleKey, SupportedOctave } from '../../types';
+import ImageButton from '../image-button';
 
 import playRecordedItem from './play-recorded-item.svg';
 import playScale from './play-scale.svg';
@@ -35,13 +35,12 @@ export const RecordingControls: FC<RecordingControlsProps> = ({
       <Row>
         <Col />
         <Col xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'}>
-          <Image
-            src={recordButton}
+          <ImageButton
             onClick={(): void => {
               toggleRecord();
             }}
-            style={{ width: '6rem' }}
-          />
+            img={recordButton}
+            passedWidth="6rem"></ImageButton>
         </Col>
         <Col className={'d-flex flex-column justify-content-center'}>
           <Row>
@@ -53,13 +52,12 @@ export const RecordingControls: FC<RecordingControlsProps> = ({
             </span>
           </Row>
           <Row>
-            <Image
-              src={playRecordedItem}
-              className={'mt-2 mb-2'}
+            <ImageButton
               onClick={(): void => {
                 togglePlay();
               }}
-            />
+              img={playRecordedItem}
+              passedWidth="3rem"></ImageButton>
           </Row>
           <Row>
             <span
@@ -74,13 +72,12 @@ export const RecordingControls: FC<RecordingControlsProps> = ({
       <Row className={'d-flex justify-content-center mt-3'}>
         {t('Scale')} - {scaleKey}
         {octave}
-        <Image
-          src={playScale}
-          className={'ml-2'}
+        <ImageButton
           onClick={(): void => {
             togglePlayScale();
           }}
-        />
+          img={playScale}
+          passedWidth="2rem"></ImageButton>
       </Row>
     </Fragment>
   );
