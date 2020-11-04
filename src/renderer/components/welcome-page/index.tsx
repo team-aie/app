@@ -4,11 +4,10 @@ import Row from 'react-bootstrap/Row';
 import { useTranslation } from 'react-i18next';
 
 import { Positional } from '../helper-components';
+import ImageButton from '../image-button';
 
 import startButton from './start-button-img.svg';
 import StyleButton from './style-button';
-import ImageButton from '../image-button';
-import startButton from './start-button.svg';
 
 const WelcomePage: FC<{ onNext: MouseEventHandler<HTMLElement> }> = ({ onNext }) => {
   const { t } = useTranslation();

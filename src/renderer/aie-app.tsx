@@ -11,7 +11,7 @@ import LocaleSelector from './components/locale-selector';
 import OpenProjectPage from './components/open-project-page';
 import { RecordingPage } from './components/recording-page';
 import { SettingsPage } from './components/settings-page';
-import { StyleSwitcher } from './components/style-switcher';
+import StyleSwitcher from './components/style-switcher';
 import WelcomePage from './components/welcome-page';
 import { LocaleContext, RecordingProjectContext } from './contexts';
 import { PAGE_STATES_IN_ORDER } from './env-and-consts';
