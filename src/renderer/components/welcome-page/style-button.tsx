@@ -1,8 +1,8 @@
 import React, { FC, useContext } from 'react';
-import Image from 'react-bootstrap/Image';
 
 import { LocaleContext } from '../../contexts';
 import { SupportedLocale } from '../../types';
+import ImageButton from '../image-button';
 
 import switchButton from './styleSwitchButton.svg';
 
@@ -11,7 +11,7 @@ const StyleButton: FC = () => {
   const styleHref = `${locale}.styles.css`;
   return (
     <div>
-      <Image
+      <ImageButton
         onClick={(): void => {
           if (locale.substring(locale.length - 4) == 'dark') {
             setLocale(locale.substring(0, locale.length - 5) as SupportedLocale);
@@ -19,9 +19,8 @@ const StyleButton: FC = () => {
             setLocale(`${locale}-dark` as SupportedLocale);
           }
         }}
-        src={switchButton}
-        style={{ width: '2rem' }}
-      />
+        img={switchButton}
+        passedWidth="2rem"></ImageButton>
       <link href={styleHref} rel={'stylesheet'} />
     </div>
   );
