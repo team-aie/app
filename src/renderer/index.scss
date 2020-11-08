@@ -11,13 +11,12 @@ div#app {
 }
 
 .image-button:hover {
-  filter: invert(60%);
+  backdrop-filter: invert(60%);
 }
 
 .image-button:focus {
-  border: solid;
-  border-color: #8688f3;
-  border-width: '3rem';
+  border: none;
+  box-shadow: 0 0 2px #babcbe;
   outline: none;
 }
 
