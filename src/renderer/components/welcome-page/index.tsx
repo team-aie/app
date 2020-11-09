@@ -21,7 +21,6 @@ const WelcomePage: FC<{ onNext: MouseEventHandler<HTMLElement> }> = ({ onNext })
         <h2>{t('Here is aie')}</h2>
       </Row>
       <Row>
-        <Button variant={'outline-secondary'}>Testing</Button>
         <h2>{t('A fantastic list recording application')}</h2>
       </Row>
       <Row style={{ marginTop: '100px' }}>
