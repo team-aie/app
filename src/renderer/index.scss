@@ -14,7 +14,7 @@ div#app {
 .image-button-dark:focus, .image-button-dark:hover { // focus and hover
   padding: 0px;
   border: none;
-  box-shadow: 0 0 0 4px #808080;
+  box-shadow: 0 0 0 4px rgb(195, 195, 195);
   outline: none;
 }
 
@@ -28,7 +28,7 @@ div#app {
 .image-button:focus, .image-button:hover { // focus and hover
   padding: 0px;
   border: none;
-  box-shadow: 0 0 0 4px #808080;
+  box-shadow: 0 0 0 4px rgb(195, 195, 195);
   outline: none;
 }
 
