@@ -6,14 +6,14 @@ A cross-platform audio recorder designed for recording using recording lists (a.
 Recording lists are lists of symbols that denote phonemes to be recorded by human voice suppliers.
 They are frequently used in the production of voice banks.
 
-# Usage Notes
-## Linux
+## Usage Notes
+### Linux
 If you are on a Linux distro, please consider using [`AppImageLauncher`](https://github.com/TheAssassin/AppImageLauncher)
 to execute the `.AppImage` file. Alternatively, you can use [`appimaged`](https://github.com/AppImage/appimaged) or
 simply make the file executable and run it (though you will lose some benefits, including seeing the app icon).
 
-# Developer Setup
-## Build for Windows
+## Developer Setup
+### Build for Windows
 You need to install [Wine](https://wiki.winehq.org/). On macOS, you can install via [HomeBrew](https://brew.sh/):
 ```bash
 # xquartz is the dependency of wine-stable
