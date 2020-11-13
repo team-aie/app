@@ -6,6 +6,12 @@ A cross-platform audio recorder designed for recording using recording lists (a.
 Recording lists are lists of symbols that denote phonemes to be recorded by human voice suppliers.
 They are frequently used in the production of voice banks.
 
+## Download
+The latest release page is located [here](https://github.com/team-aie/app/releases/latest). Look for the respective file name for your platform:
+- Windows: `aie-setup-x.y.z.exe`
+- macOS: `aie-x.y.z.dmg`
+- Linux: `aie.AppImage`
+
 ## Usage Notes
 ### Linux
 If you are on a Linux distro, please consider using [`AppImageLauncher`](https://github.com/TheAssassin/AppImageLauncher)
