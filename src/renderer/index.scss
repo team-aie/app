@@ -4,24 +4,10 @@ div#app {
   height: 100vh;
 }
 
-.image-button-dark {
-  padding: 0px;
-  background: #3A3A3A;
-  border: #3A3A3A;
-  border-radius: 35px;
-}
-
-.image-button-dark:focus, .image-button-dark:hover { // focus and hover
-  padding: 0px;
-  border: none;
-  box-shadow: 0 0 0 4px rgb(195, 195, 195);
-  outline: none;
-}
-
 .image-button {
   padding: 0px;
-  background: white;
-  border: white;
+  background: transparent;
+  border: transparent;
   border-radius: 35px;
 }
 
