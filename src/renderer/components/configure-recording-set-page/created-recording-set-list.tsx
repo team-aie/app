@@ -49,7 +49,7 @@ const CreatedRecordingSetListItem: FC<CreatedRecordingSetListItemProps> = ({
               e.stopPropagation();
               removeRecordingSet(recordingSet);
             }}
-            img={deleteButton}
+            src={deleteButton}
             passedWidth="1rem"></ImageButton>
         </Col>
       </Row>

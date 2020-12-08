@@ -19,7 +19,7 @@ const StyleButton: FC = () => {
             setLocale(`${locale}-dark` as SupportedLocale);
           }
         }}
-        img={switchButton}
+        src={switchButton}
         passedWidth="2rem"></ImageButton>
       <link href={styleHref} rel={'stylesheet'} />
     </div>
