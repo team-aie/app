@@ -1,13 +1,13 @@
 import * as React from 'react';
 import * as renderer from 'react-test-renderer';
 
-import BackButton from '.';
+import ImageButton from '';
 
-describe('back button', () => {
+describe('ImageButton', () => {
   it('should render correctly', () => {
     expect.hasAssertions();
 
-    const tree = renderer.create(<BackButton />).toJSON();
+    const tree = renderer.create(<ImageButton />).toJSON();
     expect(tree).toMatchInlineSnapshot(`
       <div
         className="position-absolute p-0 d-flex justify-content-start align-items-center container"
