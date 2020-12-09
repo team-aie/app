@@ -20,7 +20,7 @@ const StyleButton: FC = () => {
           }
         }}
         src={switchButton}
-        passedWidth="2rem"></ImageButton>
+        width="2rem"></ImageButton>
       <link href={styleHref} rel={'stylesheet'} />
     </div>
   );

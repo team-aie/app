@@ -23,7 +23,7 @@ const WelcomePage: FC<{ onNext: MouseEventHandler<HTMLElement> }> = ({ onNext })
         <h2>{t('A fantastic list recording application')}</h2>
       </Row>
       <Row style={{ marginTop: '100px' }}>
-        <ImageButton onClick={onNext} src={startButton} passedWidth="10rem"></ImageButton>
+        <ImageButton onClick={onNext} src={startButton} width="10rem"></ImageButton>
       </Row>
       <Row>
         <span>{t('Link Start')}</span>

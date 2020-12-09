@@ -4,13 +4,13 @@ import Image from 'react-bootstrap/Image';
 interface ImageButtonProps {
   onClick?: MouseEventHandler<HTMLElement>;
   src: string;
-  passedWidth: string;
+  width: string;
 }
 
-const ImageButton: FC<ImageButtonProps> = ({ onClick, src, passedWidth }) => {
+const ImageButton: FC<ImageButtonProps> = ({ onClick, src, width }) => {
   return (
     <button onClick={onClick} className={'image-button'}>
-      <Image src={src} style={{ width: passedWidth }} />
+      <Image src={src} style={{ width }} />
     </button>
   );
 };

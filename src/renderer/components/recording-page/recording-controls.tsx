@@ -40,7 +40,7 @@ export const RecordingControls: FC<RecordingControlsProps> = ({
               toggleRecord();
             }}
             src={recordButton}
-            passedWidth="6rem"></ImageButton>
+            width="6rem"></ImageButton>
         </Col>
         <Col className={'d-flex flex-column justify-content-center'}>
           <Row>
@@ -57,7 +57,7 @@ export const RecordingControls: FC<RecordingControlsProps> = ({
                 togglePlay();
               }}
               src={playRecordedItem}
-              passedWidth="3rem"></ImageButton>
+              width="3rem"></ImageButton>
           </Row>
           <Row>
             <span
@@ -77,7 +77,7 @@ export const RecordingControls: FC<RecordingControlsProps> = ({
             togglePlayScale();
           }}
           src={playScale}
-          passedWidth="2rem"></ImageButton>
+          width="2rem"></ImageButton>
       </Row>
     </Fragment>
   );
