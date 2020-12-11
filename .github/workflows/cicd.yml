@@ -67,7 +67,6 @@ jobs:
         env:
           FAST_PACKAGING: true
       - name: Package Production App
-        if: github.ref == 'refs/heads/master'
         run: npm run dist:win -- -p never
       - name: Upload Packaged App
         uses: actions/upload-artifact@v1
@@ -122,7 +121,6 @@ jobs:
         env:
           FAST_PACKAGING: true
       - name: Package Production App
-        if: github.ref == 'refs/heads/master'
         run: npm run dist:macos -- -p never
       - name: Upload Packaged App
         uses: actions/upload-artifact@v1
@@ -177,7 +175,6 @@ jobs:
         env:
           FAST_PACKAGING: true
       - name: Package Production App
-        if: github.ref == 'refs/heads/master'
         run: npm run dist:linux -- -p never
       - name: Upload Packaged App
         uses: actions/upload-artifact@v1
