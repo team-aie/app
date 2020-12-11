@@ -41,7 +41,7 @@ export const deleteFolder = async (filePath: string): Promise<void> => {
   return fsp.rmdir(filePath, { recursive: true });
 };
 export const createFolder = async (filePath: string): Promise<void> => {
-  return fsp.mkdir(filePath, { recursive: true });
+  await fsp.mkdir(filePath, { recursive: true });
 };
 export const parentFolderName = path.dirname;
 export const filename = path.basename;
