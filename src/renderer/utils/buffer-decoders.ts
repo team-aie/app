@@ -34,7 +34,7 @@ abstract class BestEffortDecoder<ResultType> {
     return decoded;
   }
 
-  protected abstract async analyze(buffer: Buffer): Promise<ResultType>;
+  protected abstract analyze(buffer: Buffer): Promise<ResultType>;
   protected abstract findEncodingToAttempt(result: ResultType): string | null | undefined;
 }
 
