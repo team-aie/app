@@ -27,64 +27,11 @@ div#app {
   height: 100vh;
 }
 
-.image-button-dark {
-  background: #3A3A3A;
-  border: #3A3A3A;
-  border-radius: 35px;
-}
-
-.image-button-dark:hover {
-  filter: invert(60%);
-}
-
-.image-button-dark:focus:not(.hover) {
-  border: none;
-  box-shadow: 0 0 0 4px #6c757d;
-  outline: none;
-}
-
-.image-button-dark:focus { // focus and hover
-  border: none;
-  box-shadow: 0 0 0 4px #808080;
-  outline: none;
-}
-
-.image-button {
-  background: white;
-  border: white;
-  border-radius: 35px;
-}
-
-.image-button:hover {
-  filter: invert(60%);
-}
-
-.image-button:focus:not(.hover) {
-  border: none;
-  box-shadow: 0 0 0 4px #6c757d;
-  outline: none;
-}
-
-.image-button:focus { // focus and hover
-  border: none;
-  box-shadow: 0 0 0 4px #808080;
-  outline: none;
-}
-
 ::-webkit-scrollbar {
   width: 0;
   background: transparent;
 }
 
-// .alert-enter {
-//   opacity: 0;
-//   transform: scale(0.9);
-// }
-// .alert-enter-active {
-//   opacity: 1;
-//   transform: translateX(0);
-//   transition: opacity 3000ms, transform 3000ms;
-// }
 .slide-down-appear {
   opacity: 0;
   transform: translateY(-100%);
