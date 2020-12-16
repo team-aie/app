@@ -2,13 +2,14 @@ import * as React from 'react';
 import * as renderer from 'react-test-renderer';
 
 import backButton from './back-button.svg';
+
 import ImageButton from '.';
 
-describe('ImageButton', () => {
+describe('imageButton', () => {
   it('should render correctly', () => {
     expect.hasAssertions();
 
-    const tree = renderer.create(<ImageButton src={backButton} width="1rem"/>).toJSON();
+    const tree = renderer.create(<ImageButton src={backButton} width="1rem" />).toJSON();
     expect(tree).toMatchInlineSnapshot(`
       <div
         className="position-absolute p-0 d-flex justify-content-start align-items-center container"
