@@ -20,17 +20,17 @@ describe('imageButton', () => {
           }
         }
       >
-        <button
+        <button class="image-button">
           <img
-            className=""
             src="test-file-stub"
+            class=""
             style={
               Object {
                 "width": "1rem",
               }
             }
-          />
-        />
+          >
+        </button>
       </div>
     `);
   });
