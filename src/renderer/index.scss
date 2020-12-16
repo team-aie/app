@@ -11,7 +11,9 @@ div#app {
   border-radius: 35px;
 }
 
-.image-button:focus, .image-button:hover { // focus and hover
+.image-button:focus,
+.image-button:hover
+{ // focus and hover
   padding: 0px;
   border: none;
   box-shadow: 0 0 0 4px rgb(195, 195, 195);
