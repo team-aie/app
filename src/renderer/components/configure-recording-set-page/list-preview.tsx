@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import Container from 'react-bootstrap/esm/Container';
 import { CSSTransition } from 'react-transition-group';
+import { usePrevious } from 'react-use';
 
 import { Consumer } from '../../types';
 
@@ -9,8 +10,8 @@ import { RecordingPageState } from '.';
 const ListPreview: FC<{
   setRecordingSetState: Consumer<RecordingPageState>;
   prevState: RecordingPageState;
-  setPrevRecordingSetState: Consumer<RecordingPageState>;
-}> = ({ setRecordingSetState, prevState, setPrevRecordingSetState }) => {
+}> = ({ setRecordingSetState, prevState }) => {
+  console.log(prevState);
   const transitionProps = {
     in: true,
     appear: true,
@@ -23,14 +24,12 @@ const ListPreview: FC<{
         <div
           onClick={(): void => {
             setRecordingSetState('home');
-            setPrevRecordingSetState('list-preview');
           }}>
           ^^^^^^^
         </div>
         <button
           onClick={(): void => {
             setRecordingSetState('dvcfg');
-            setPrevRecordingSetState('list-preview');
           }}>
           {' '}
           Back{' '}
@@ -39,7 +38,6 @@ const ListPreview: FC<{
         <button
           onClick={(): void => {
             setRecordingSetState('oto-ini');
-            setPrevRecordingSetState('list-preview');
           }}>
           Next{' '}
         </button>

@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { Container } from 'react-bootstrap';
 import { CSSTransition } from 'react-transition-group';
+import { usePrevious } from 'react-use';
 
 import { Consumer } from '../../types';
 
@@ -9,8 +10,8 @@ import { RecordingPageState } from '.';
 const OtoIni: FC<{
   setRecordingSetState: Consumer<RecordingPageState>;
   prevState: RecordingPageState;
-  setPrevRecordingSetState: Consumer<RecordingPageState>;
-}> = ({ setRecordingSetState, prevState, setPrevRecordingSetState }) => {
+}> = ({ setRecordingSetState, prevState }) => {
+  console.log(prevState);
   const transitionProps = {
     in: true,
     appear: true,
@@ -24,7 +25,6 @@ const OtoIni: FC<{
         <button
           onClick={(): void => {
             setRecordingSetState('list-preview');
-            setPrevRecordingSetState('oto-ini');
           }}>
           {' '}
           Back{' '}
@@ -33,7 +33,6 @@ const OtoIni: FC<{
         <button
           onClick={(): void => {
             setRecordingSetState('dvcfg');
-            setPrevRecordingSetState('oto-ini');
           }}>
           Next{' '}
         </button>{' '}

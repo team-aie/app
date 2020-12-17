@@ -9,8 +9,8 @@ import { RecordingPageState } from '.';
 const Dvcfg: FC<{
   setRecordingSetState: Consumer<RecordingPageState>;
   prevState: RecordingPageState;
-  setPrevRecordingSetState: Consumer<RecordingPageState>;
-}> = ({ setRecordingSetState, prevState, setPrevRecordingSetState }) => {
+}> = ({ setRecordingSetState, prevState }) => {
+  console.log(prevState);
   const transitionProps = {
     in: true,
     appear: true,
@@ -24,7 +24,6 @@ const Dvcfg: FC<{
         <button
           onClick={(): void => {
             setRecordingSetState('oto-ini');
-            setPrevRecordingSetState('dvcfg');
           }}>
           {' '}
           Back{' '}
@@ -33,7 +32,6 @@ const Dvcfg: FC<{
         <button
           onClick={(): void => {
             setRecordingSetState('list-preview');
-            setPrevRecordingSetState('dvcfg');
           }}>
           Next{' '}
         </button>{' '}

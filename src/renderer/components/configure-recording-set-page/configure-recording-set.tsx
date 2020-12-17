@@ -5,6 +5,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import { useTranslation } from 'react-i18next';
 import CSSTransition from 'react-transition-group/CSSTransition';
+import { usePrevious } from 'react-use';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 
 import { RecordingProjectContext } from '../../contexts';
@@ -53,9 +54,9 @@ const ConfigureRecordingSet: FC<{
   onBack: MouseEventHandler<HTMLElement>;
   onSetSelected: Consumer<RecordingSet>;
   setRecordingSetState: Consumer<RecordingPageState>;
-  setPrevRecordingSetState: Consumer<RecordingPageState>;
   prevState: RecordingPageState;
-}> = ({ onNext, onBack, onSetSelected, setRecordingSetState, setPrevRecordingSetState, prevState }) => {
+  currState: RecordingPageState;
+}> = ({ onNext, onBack, onSetSelected, setRecordingSetState, prevState, currState }) => {
   const { t } = useTranslation();
   const { recordingProject } = useContext(RecordingProjectContext);
   const [projectFile = DUMMY_PROJECT_FILE, setProjectFile] = useLocalStorage<ProjectFile>(
@@ -197,18 +198,22 @@ const ConfigureRecordingSet: FC<{
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [naiveSerialize(recordingProject), naiveSerialize(recordingSets)]);
-
   const transitionProps = {
     in: true,
     appear: true,
     timeout: 3000,
-    classNames: prevState == 'external' ? '' : 'config-rec-set',
+    classNames: currState == 'external' ? '' : 'config-rec-set',
   };
 
   return (
     <Fragment>
       <CSSTransition {...transitionProps}>
-        <BackButton onBack={clearTemporaryItemsOnBack} />
+        <BackButton
+          onBack={(event: React.MouseEvent<HTMLElement, MouseEvent>): void => {
+            setRecordingSetState('external');
+            clearTemporaryItemsOnBack(event);
+          }}
+        />
       </CSSTransition>
       <CSSTransition {...transitionProps}>
         <Container style={{ height: '100%' }} className={'d-flex justify-content-center align-items-center'}>
@@ -268,7 +273,7 @@ const ConfigureRecordingSet: FC<{
         <NextButton
           text={t('Start')}
           onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>): void => {
-            setPrevRecordingSetState('external');
+            setRecordingSetState('external');
             onNext(event);
           }}
           disabled={selectedRecordingSetIndex < 0}
@@ -282,8 +287,8 @@ const ConfigureRecordingSet: FC<{
             showingDetails ? 'move-up-in-down-out-start-in' : 'move-up-in-down-out-start-out'
           }`}
           onClick={(): void => {
-            setRecordingSetState(prevState == 'external' ? 'list-preview' : prevState);
-            setPrevRecordingSetState('home');
+            setRecordingSetState(prevState == 'home' || prevState == 'external' ? 'list-preview' : prevState);
+            console.log('clicked');
           }}>
           {t('Show Details')}
         </div>
