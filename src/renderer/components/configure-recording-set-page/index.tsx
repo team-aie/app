@@ -4,11 +4,11 @@ import { usePrevious } from 'react-use';
 
 import { Consumer, RecordingSet } from '../../types';
 
-import ConfigureRecordingSet from './configure-recording-set';
+import { ConfigureRecordingSet } from './configure-recording-set';
 import './show-details.scss';
-import Dvcfg from './dvcfg';
-import ListPreview from './list-preview';
-import OtoIni from './oto-ini';
+import { Dvcfg } from './dvcfg';
+import { ListPreview } from './list-preview';
+import { OtoIni } from './oto-ini';
 
 export type RecordingPageState = 'home' | 'list-preview' | 'oto-ini' | 'dvcfg' | 'external';
 

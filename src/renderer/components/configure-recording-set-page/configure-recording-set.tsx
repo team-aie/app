@@ -5,7 +5,6 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import { useTranslation } from 'react-i18next';
 import CSSTransition from 'react-transition-group/CSSTransition';
-import { usePrevious } from 'react-use';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 
 import { RecordingProjectContext } from '../../contexts';
@@ -49,7 +48,7 @@ const BUILT_IN_RECORDING_LISTS: BuiltInRecordingList[] = [
   'Z式CVVC-Normal (Z Chinese CVVC - Normal)',
 ];
 
-const ConfigureRecordingSet: FC<{
+export const ConfigureRecordingSet: FC<{
   onNext: MouseEventHandler<HTMLElement>;
   onBack: MouseEventHandler<HTMLElement>;
   onSetSelected: Consumer<RecordingSet>;
@@ -288,7 +287,6 @@ const ConfigureRecordingSet: FC<{
           }`}
           onClick={(): void => {
             setRecordingSetState(prevState == 'home' || prevState == 'external' ? 'list-preview' : prevState);
-            console.log('clicked');
           }}>
           {t('Show Details')}
         </div>
@@ -296,5 +294,3 @@ const ConfigureRecordingSet: FC<{
     </Fragment>
   );
 };
-
-export default ConfigureRecordingSet;

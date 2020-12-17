@@ -6,11 +6,10 @@ import { Consumer } from '../../types';
 
 import { RecordingPageState } from '.';
 
-const Dvcfg: FC<{
+export const Dvcfg: FC<{
   setRecordingSetState: Consumer<RecordingPageState>;
   prevState: RecordingPageState;
 }> = ({ setRecordingSetState, prevState }) => {
-  console.log(prevState);
   const transitionProps = {
     in: true,
     appear: true,
@@ -39,5 +38,3 @@ const Dvcfg: FC<{
     </CSSTransition>
   );
 };
-
-export default Dvcfg;

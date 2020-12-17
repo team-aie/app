@@ -1,17 +1,15 @@
 import React, { FC } from 'react';
 import { Container } from 'react-bootstrap';
 import { CSSTransition } from 'react-transition-group';
-import { usePrevious } from 'react-use';
 
 import { Consumer } from '../../types';
 
 import { RecordingPageState } from '.';
 
-const OtoIni: FC<{
+export const OtoIni: FC<{
   setRecordingSetState: Consumer<RecordingPageState>;
   prevState: RecordingPageState;
 }> = ({ setRecordingSetState, prevState }) => {
-  console.log(prevState);
   const transitionProps = {
     in: true,
     appear: true,
@@ -40,5 +38,3 @@ const OtoIni: FC<{
     </CSSTransition>
   );
 };
-
-export default OtoIni;

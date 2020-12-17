@@ -1,17 +1,15 @@
 import React, { FC } from 'react';
 import Container from 'react-bootstrap/esm/Container';
 import { CSSTransition } from 'react-transition-group';
-import { usePrevious } from 'react-use';
 
 import { Consumer } from '../../types';
 
 import { RecordingPageState } from '.';
 
-const ListPreview: FC<{
+export const ListPreview: FC<{
   setRecordingSetState: Consumer<RecordingPageState>;
   prevState: RecordingPageState;
 }> = ({ setRecordingSetState, prevState }) => {
-  console.log(prevState);
   const transitionProps = {
     in: true,
     appear: true,
@@ -45,5 +43,3 @@ const ListPreview: FC<{
     </CSSTransition>
   );
 };
-
-export default ListPreview;
