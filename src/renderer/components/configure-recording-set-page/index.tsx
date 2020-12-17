@@ -9,9 +9,10 @@ import './show-details.scss';
 import { Dvcfg } from './dvcfg';
 import { ListPreview } from './list-preview';
 import { OtoIni } from './oto-ini';
-
-export type RecordingPageState = 'home' | 'list-preview' | 'oto-ini' | 'dvcfg' | 'external';
-
+import { RecordingPageState } from './types';
+/*
+Base page to handle configure-recording-set, dvcfg, oto.ini, and list-preview pages
+*/
 const ConfigureRecordingSetPage: FC<{
   onNext: MouseEventHandler<HTMLElement>;
   onBack: MouseEventHandler<HTMLElement>;
