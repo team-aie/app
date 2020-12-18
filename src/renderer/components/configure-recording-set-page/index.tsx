@@ -9,7 +9,13 @@ import './show-details.scss';
 import { Dvcfg } from './dvcfg';
 import { ListPreview } from './list-preview';
 import { OtoIni } from './oto-ini';
-import { RecordingPageState } from './types';
+/*
+ Represents the page states controlled by configure-recording-set.
+ 'external' represents pages external from this system
+  - it's used to determine which transition should be used for the entering home page
+*/
+export type RecordingPageState = 'home' | 'list-preview' | 'oto-ini' | 'dvcfg' | 'external';
+
 /*
 Base page to handle configure-recording-set, dvcfg, oto.ini, and list-preview pages
 */

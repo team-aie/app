@@ -4,7 +4,7 @@ import { CSSTransition } from 'react-transition-group';
 
 import { Consumer } from '../../types';
 
-import { RecordingPageState } from './types';
+import { RecordingPageState } from '.';
 
 export const Dvcfg: FC<{
   setRecordingSetState: Consumer<RecordingPageState>;
