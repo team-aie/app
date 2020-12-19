@@ -17,8 +17,8 @@
     "lint:js": "eslint . --ext .js,.ts,.tsx",
     "lint:css": "stylelint src",
     "test": "npm run test:unit:ci",
-    "test:unit": "ELECTRON_RUN_AS_NODE=true electron $(which jest)",
-    "test:unit:ci": "ELECTRON_RUN_AS_NODE=true electron $(which jest) --ci --collectCoverage"
+    "test:unit": "cross-env ELECTRON_RUN_AS_NODE=true electron node_modules/.bin/jest-runtime",
+    "test:unit:ci": "cross-env ELECTRON_RUN_AS_NODE=true electron node_modules/.bin/jest-runtime --ci --collectCoverage"
   },
   "repository": {
     "type": "git",
@@ -46,6 +46,7 @@
     "audiobuffer-to-wav": "^1.0.0",
     "bootstrap": "^4.5.0",
     "chardet": "^1.2.1",
+    "cross-env": "",
     "delta_eng_ver5": "file:external/delta_eng_ver5",
     "dexie": "^3.0.1",
     "electron-log": "^4.2.2",
@@ -82,6 +83,7 @@
     "@typescript-eslint/parser": "^3.6.0",
     "conventional-changelog-angular": "^5.0.10",
     "conventional-recommended-bump": "^6.0.9",
+    "cross-env": "^7.0.3",
     "electron": "^9.1.0",
     "electron-builder": "^22.7.0",
     "electron-webpack": "^2.8.2",

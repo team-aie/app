@@ -11,27 +11,19 @@ describe('imageButton', () => {
 
     const tree = renderer.create(<ImageButton src={backButton} width="1rem" />).toJSON();
     expect(tree).toMatchInlineSnapshot(`
-      <div
-        className="position-absolute p-0 d-flex justify-content-start align-items-center container"
-        style={
-          Object {
-            "left": "1.5rem",
-            "top": "1.5rem",
-          }
-        }
+      <button
+        className="image-button"
       >
-        <button class="image-button">
-          <img
-            src="test-file-stub"
-            class=""
-            style={
-              Object {
-                "width": "1rem",
-              }
+        <img
+          className=""
+          src="test-file-stub"
+          style={
+            Object {
+              "width": "1rem",
             }
-          >
-        </button>
-      </div>
+          }
+        />
+      </button>
     `);
   });
 });
