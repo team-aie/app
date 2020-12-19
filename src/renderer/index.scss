@@ -27,11 +27,6 @@ div#app {
   height: 100vh;
 }
 
-::-webkit-scrollbar {
-  width: 0;
-  background: transparent;
-}
-
 .slide-down-appear {
   opacity: 0;
   transform: translateY(-100%);
