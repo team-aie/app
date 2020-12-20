@@ -21,4 +21,3 @@ src/renderer/licenses.ts
 *.missing.json
 
 .idea/*
-.gitignore
