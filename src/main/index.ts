@@ -91,10 +91,12 @@ if (!isFirstInstance) {
       minWidth: 400,
       minHeight: 300,
       webPreferences: {
-        nodeIntegration: true,
-        nodeIntegrationInWorker: true,
+        contextIsolation: false,
         defaultEncoding: 'UTF-8',
         enableRemoteModule: true,
+        nodeIntegration: true,
+        nodeIntegrationInWorker: true,
+        worldSafeExecuteJavaScript: true,
       },
     });
 
