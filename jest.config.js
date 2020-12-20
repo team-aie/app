@@ -6,6 +6,7 @@ const { TextEncoder, TextDecoder } = require('text-decoding');
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
+  collectCoverageFrom: ['**/*.{ts,tsx}', '!**/*.d.ts', '!dist/**'],
   /**
    * See {@link https://jestjs.io/docs/en/webpack#handling-static-assets}.
    */
