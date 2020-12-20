@@ -19,3 +19,6 @@ src/renderer/licenses.ts
 
 # Missed Translations during Development
 *.missing.json
+
+.idea/*
+.gitignore
