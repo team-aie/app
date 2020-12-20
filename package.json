@@ -17,8 +17,8 @@
     "lint:js": "eslint . --ext .js,.ts,.tsx",
     "lint:css": "stylelint src",
     "test": "npm run test:unit:ci",
-    "test:unit": "ELECTRON_RUN_AS_NODE=true electron node_modules/.bin/jest-runtime",
-    "test:unit:ci": "ELECTRON_RUN_AS_NODE=true electron node_modules/.bin/jest-runtime --ci --collectCoverage"
+    "test:unit": "ELECTRON_RUN_AS_NODE=true electron $(which jest)",
+    "test:unit:ci": "ELECTRON_RUN_AS_NODE=true electron $(which jest) --ci --collectCoverage"
   },
   "repository": {
     "type": "git",
