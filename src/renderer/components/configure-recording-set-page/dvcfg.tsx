@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { Button } from 'react-bootstrap';
 import Container from 'react-bootstrap/esm/Container';
 import { CSSTransition } from 'react-transition-group';
 
@@ -20,20 +21,19 @@ export const Dvcfg: FC<{
     <CSSTransition {...transitionProps}>
       <Container>
         <div onClick={() => setRecordingSetState('home')}>^^^^^^^</div>
-        <button
+        <Button
           onClick={(): void => {
             setRecordingSetState('oto-ini');
           }}>
-          {' '}
-          Back{' '}
-        </button>{' '}
+          Back
+        </Button>
         <div>.dvcfg</div>
-        <button
+        <Button
           onClick={(): void => {
             setRecordingSetState('list-preview');
           }}>
-          Next{' '}
-        </button>{' '}
+          Next
+        </Button>
       </Container>
     </CSSTransition>
   );

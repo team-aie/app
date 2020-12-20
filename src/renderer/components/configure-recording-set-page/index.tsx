@@ -25,8 +25,7 @@ const ConfigureRecordingSetPage: FC<{
   onSetSelected: Consumer<RecordingSet>;
 }> = ({ onNext, onBack, onSetSelected }) => {
   const [recordingSetState, setRecordingSetState] = useState<RecordingPageState>('external');
-  const prevStateWithUndefine = usePrevious(recordingSetState);
-  const prevState: RecordingPageState = prevStateWithUndefine != undefined ? prevStateWithUndefine : 'home';
+  const prevState = usePrevious(recordingSetState) ?? 'home';
 
   switch (recordingSetState) {
     case 'home':

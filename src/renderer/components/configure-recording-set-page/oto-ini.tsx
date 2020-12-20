@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Container } from 'react-bootstrap';
+import { Button, Container } from 'react-bootstrap';
 import { CSSTransition } from 'react-transition-group';
 
 import { Consumer } from '../../types';
@@ -20,20 +20,19 @@ export const OtoIni: FC<{
     <CSSTransition {...transitionProps}>
       <Container>
         <div onClick={() => setRecordingSetState('home')}>^^^^^^^</div>
-        <button
+        <Button
           onClick={(): void => {
             setRecordingSetState('list-preview');
           }}>
-          {' '}
-          Back{' '}
-        </button>{' '}
+          Back
+        </Button>
         <div>Oto.ini</div>
-        <button
+        <Button
           onClick={(): void => {
             setRecordingSetState('dvcfg');
           }}>
-          Next{' '}
-        </button>{' '}
+          Next
+        </Button>
       </Container>
     </CSSTransition>
   );
