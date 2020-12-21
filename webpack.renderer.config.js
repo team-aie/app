@@ -50,6 +50,7 @@ module.exports = (config) => {
         },
       };
     });
+
     config.entry = entry;
     config.optimization = {
       splitChunks: { cacheGroups },

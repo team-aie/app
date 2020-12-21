@@ -18,15 +18,19 @@ describe('back button', () => {
           }
         }
       >
-        <img
-          className=""
-          src="test-file-stub"
-          style={
-            Object {
-              "width": "1rem",
+        <button
+          className="image-button"
+        >
+          <img
+            className=""
+            src="test-file-stub"
+            style={
+              Object {
+                "width": "1rem",
+              }
             }
-          }
-        />
+          />
+        </button>
       </div>
     `);
   });
