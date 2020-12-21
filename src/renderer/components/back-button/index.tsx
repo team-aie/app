@@ -1,14 +1,14 @@
 import React, { FC, MouseEventHandler } from 'react';
-import Image from 'react-bootstrap/Image';
 
 import { Positional } from '../helper-components';
+import ImageButton from '../image-button';
 
 import backButton from './back-button.svg';
 
 const BackButton: FC<{ onBack?: MouseEventHandler<HTMLElement> }> = ({ onBack }) => {
   return (
     <Positional position={'top-left'}>
-      <Image src={backButton} style={{ width: '1rem' }} onClick={onBack} />
+      <ImageButton onClick={onBack} src={backButton} width="1rem"></ImageButton>
     </Positional>
   );
 };

@@ -4,6 +4,21 @@ div#app {
   height: 100vh;
 }
 
+.image-button {
+  padding: 0px;
+  background: transparent;
+  border: transparent;
+  border-radius: 35px;
+}
+
+.image-button:focus,
+.image-button:hover {
+  padding: 0px;
+  border: none;
+  box-shadow: 0 0 0 4px rgb(195, 195, 195);
+  outline: none;
+}
+
 ::-webkit-scrollbar {
   width: 0;
   background: transparent;
