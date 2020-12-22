@@ -60,6 +60,11 @@ export const enum SupportedLocale {
   JA_JP = 'ja-JP',
 }
 
+export const enum SupportedTheme {
+  LIGHT = 'light',
+  DARK = 'dark',
+}
+
 /**
  * https://stackoverflow.com/a/43001581
  */
