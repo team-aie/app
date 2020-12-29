@@ -6,9 +6,7 @@ import { Consumer, RecordingSet } from '../../types';
 
 import { ConfigureRecordingSet } from './configure-recording-set';
 import './show-details.scss';
-import { Dvcfg } from './dvcfg';
-import { ListPreview } from './list-preview';
-import { OtoIni } from './oto-ini';
+import { PreviewPage } from './preview-page';
 /*
  Represents the page states controlled by configure-recording-set.
  'external' represents pages external from this system
@@ -51,11 +49,35 @@ const ConfigureRecordingSetPage: FC<{
         />
       );
     case 'list-preview':
-      return <ListPreview setRecordingSetState={setRecordingSetState} prevState={prevState} />;
+      return (
+        <PreviewPage
+          setRecordingSetState={setRecordingSetState}
+          prevState={prevState}
+          leftPage="dvcfg"
+          rightPage="oto-ini"
+          pageName="List Preview"
+        />
+      );
     case 'oto-ini':
-      return <OtoIni setRecordingSetState={setRecordingSetState} prevState={prevState} />;
+      return (
+        <PreviewPage
+          setRecordingSetState={setRecordingSetState}
+          prevState={prevState}
+          leftPage="list-preview"
+          rightPage="dvcfg"
+          pageName="Oto.ini"
+        />
+      );
     case 'dvcfg':
-      return <Dvcfg setRecordingSetState={setRecordingSetState} prevState={prevState} />;
+      return (
+        <PreviewPage
+          setRecordingSetState={setRecordingSetState}
+          prevState={prevState}
+          leftPage="oto-ini"
+          rightPage="list-preview"
+          pageName="Dvcfg"
+        />
+      );
     default: {
       const error = new Error(`Unknown pageState: ${recordingSetState}`);
       log.error(error);
