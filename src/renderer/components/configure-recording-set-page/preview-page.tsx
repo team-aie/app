@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import Container from 'react-bootstrap/esm/Container';
 import { CSSTransition } from 'react-transition-group';
@@ -18,6 +18,9 @@ interface PreviewPageProps {
   leftPage: RecordingPageState;
   rightPage: RecordingPageState;
   pageName: string;
+  transition: boolean;
+  setTransition: Consumer<boolean>;
+  // thisPage: RecordingPageState;
 }
 
 export const PreviewPage: FC<PreviewPageProps> = ({
@@ -26,14 +29,30 @@ export const PreviewPage: FC<PreviewPageProps> = ({
   leftPage,
   rightPage,
   pageName,
+  transition,
+  setTransition,
+  // thisPage,
 }) => {
-  const transitionProps = {
-    in: true,
-    //appear: true,
-    appear: false, //change this back
-    timeout: 3000,
-    classNames: prevState == rightPage ? 'slide-left' : prevState == leftPage ? 'slide-right' : 'slide-down',
+  const getClassName: () => string = () => {
+    return rightPage ? 'slide-left' : prevState == leftPage ? 'slide-right' : 'slide-down';
   };
+
+  const [className, setClassName] = useState<string>(getClassName());
+
+  const transitionProps = {
+    in: transition,
+    appear: true,
+    timeout: 3000,
+    classNames: className,
+  };
+
+  useEffect(() => {
+    if (!transition) {
+      setTransition(true);
+    }
+  });
+
+  console.log(transitionProps.classNames);
   return (
     <>
       <CSSTransition {...transitionProps}>
@@ -57,6 +76,7 @@ export const PreviewPage: FC<PreviewPageProps> = ({
               <ImageButton
                 onClick={(): void => {
                   setRecordingSetState(leftPage);
+                  setTransition(false);
                 }}
                 src={leftButton}
                 width="2rem"
@@ -67,6 +87,7 @@ export const PreviewPage: FC<PreviewPageProps> = ({
               <ImageButton
                 onClick={(): void => {
                   setRecordingSetState(rightPage);
+                  setTransition(false);
                 }}
                 src={rightButton}
                 width="2rem"

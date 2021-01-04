@@ -24,6 +24,7 @@ const ConfigureRecordingSetPage: FC<{
 }> = ({ onNext, onBack, onSetSelected }) => {
   const [recordingSetState, setRecordingSetState] = useState<RecordingPageState>('external');
   const prevState = usePrevious(recordingSetState) ?? 'home';
+  const [transition, setTransition] = useState<boolean>(true);
 
   switch (recordingSetState) {
     case 'home':
@@ -56,6 +57,8 @@ const ConfigureRecordingSetPage: FC<{
           leftPage="dvcfg"
           rightPage="oto-ini"
           pageName="List Preview"
+          transition={transition}
+          setTransition={setTransition}
         />
       );
     case 'oto-ini':
@@ -66,6 +69,8 @@ const ConfigureRecordingSetPage: FC<{
           leftPage="list-preview"
           rightPage="dvcfg"
           pageName="Oto.ini"
+          transition={transition}
+          setTransition={setTransition}
         />
       );
     case 'dvcfg':
@@ -76,6 +81,8 @@ const ConfigureRecordingSetPage: FC<{
           leftPage="oto-ini"
           rightPage="list-preview"
           pageName="Dvcfg"
+          transition={transition}
+          setTransition={setTransition}
         />
       );
     default: {
