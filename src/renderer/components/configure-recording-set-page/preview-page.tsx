@@ -37,7 +37,7 @@ export const PreviewPage: FC<PreviewPageProps> = ({
     return rightPage ? 'slide-left' : prevState == leftPage ? 'slide-right' : 'slide-down';
   };
 
-  const [className, setClassName] = useState<string>(getClassName());
+  const [className, setClassName] = useState<string>('slide-down');
 
   const transitionProps = {
     in: transition,
@@ -77,6 +77,7 @@ export const PreviewPage: FC<PreviewPageProps> = ({
                 onClick={(): void => {
                   setRecordingSetState(leftPage);
                   setTransition(false);
+                  setClassName('slide-left');
                 }}
                 src={leftButton}
                 width="2rem"
@@ -88,6 +89,7 @@ export const PreviewPage: FC<PreviewPageProps> = ({
                 onClick={(): void => {
                   setRecordingSetState(rightPage);
                   setTransition(false);
+                  setClassName('slide-right');
                 }}
                 src={rightButton}
                 width="2rem"
