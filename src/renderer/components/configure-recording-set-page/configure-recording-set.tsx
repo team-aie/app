@@ -21,10 +21,13 @@ import {
   writeFile,
 } from '../../utils';
 import BackButton from '../back-button';
+import { Positional } from '../helper-components';
+import ImageButton from '../image-button';
 import NextButton from '../next-button';
 
 import AddRecordingSetButton from './add-recording-set-button';
 import CreatedRecordingSetList from './created-recording-set-list';
+import downButton from './down-button.svg';
 import SetMetaConfiguration from './set-meta-configuration';
 import SetRecordingListConfiguration from './set-recording-list-configuration';
 import { BuiltInRecordingList } from './types';
@@ -65,10 +68,6 @@ export const ConfigureRecordingSet: FC<{
   const [recordingSets = [], setRecordingSets] = useLocalStorage<RecordingSet[]>(
     getLSKey('ConfigureRecordingSetPage', 'recordingSets'),
     [],
-  );
-  const [showingDetails = false, setShowingDetails] = useLocalStorage(
-    getLSKey('ConfigureRecordingSetPage', 'showingDetails'),
-    false,
   );
   const [canWrite, setCanWrite] = useState(false);
 
@@ -174,7 +173,6 @@ export const ConfigureRecordingSet: FC<{
     rawSetChosenCustomListPath('');
     setSelectedRecordingSetIndex(-1);
     setProjectFile(DUMMY_PROJECT_FILE);
-    setShowingDetails(false);
     setImmediate(() => onBack(e));
   };
 
@@ -265,31 +263,28 @@ export const ConfigureRecordingSet: FC<{
               </Col>
               <Col />
             </Row>
+            <Row>
+              <Positional position="bottom-center">
+                <ImageButton
+                  src={downButton}
+                  width="2rem"
+                  onClick={(): void => {
+                    setRecordingSetState(prevState == 'home' || prevState == 'external' ? 'list-preview' : prevState);
+                  }}
+                />
+                <div>{t('Show Details')}</div>
+              </Positional>
+              <NextButton
+                text={t('Start')}
+                onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>): void => {
+                  setRecordingSetState('external');
+                  onNext(event);
+                }}
+                disabled={selectedRecordingSetIndex < 0}
+              />
+            </Row>
           </Col>
         </Container>
-      </CSSTransition>
-      <CSSTransition {...transitionProps}>
-        <NextButton
-          text={t('Start')}
-          onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>): void => {
-            setRecordingSetState('external');
-            onNext(event);
-          }}
-          disabled={selectedRecordingSetIndex < 0}
-        />
-      </CSSTransition>
-      <CSSTransition {...transitionProps}>
-        <div
-          // position={'bottom-center'}
-          style={{ bottom: undefined, display: 'hidden' }}
-          className={`show-details ${
-            showingDetails ? 'move-up-in-down-out-start-in' : 'move-up-in-down-out-start-out'
-          }`}
-          onClick={(): void => {
-            setRecordingSetState(prevState == 'home' || prevState == 'external' ? 'list-preview' : prevState);
-          }}>
-          {t('Show Details')}
-        </div>
       </CSSTransition>
     </Fragment>
   );
