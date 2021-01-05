@@ -27,10 +27,10 @@ import NextButton from '../next-button';
 
 import AddRecordingSetButton from './add-recording-set-button';
 import CreatedRecordingSetList from './created-recording-set-list';
-import downButton from './down-button.svg';
 import SetMetaConfiguration from './set-meta-configuration';
 import SetRecordingListConfiguration from './set-recording-list-configuration';
 import { BuiltInRecordingList } from './types';
+import upButton from './up-button.svg';
 
 import './show-details.scss';
 import { RecordingPageState } from '.';
@@ -269,14 +269,20 @@ export const ConfigureRecordingSet: FC<{
       <CSSTransition {...transitionProps}>
         <div>
           <Positional position="bottom-center">
-            <ImageButton
-              src={downButton}
-              width="2rem"
-              onClick={(): void => {
-                setRecordingSetState(prevState == 'home' || prevState == 'external' ? 'list-preview' : prevState);
-              }}
-            />
-            {t('Show Details')}
+            <Container>
+              <Row className="d-flex justify-content-center">
+                <ImageButton
+                  src={upButton}
+                  width="2rem"
+                  onClick={(): void => {
+                    setRecordingSetState(prevState == 'home' || prevState == 'external' ? 'list-preview' : prevState);
+                  }}
+                />
+              </Row>
+              <Row className="d-flex justify-content-center">
+                <div>{t('Show Details')}</div>
+              </Row>
+            </Container>
           </Positional>
           <NextButton
             text={t('Start')}
