@@ -6,6 +6,7 @@ import { Consumer, RecordingSet } from '../../types';
 
 import { ConfigureRecordingSet } from './configure-recording-set';
 import './show-details.scss';
+import './index.scss';
 import { PreviewPage } from './preview-page';
 /*
  Represents the page states controlled by configure-recording-set.
@@ -53,7 +54,6 @@ const ConfigureRecordingSetPage: FC<{
       return (
         <PreviewPage
           setRecordingSetState={setRecordingSetState}
-          prevState={prevState}
           leftPage="dvcfg"
           rightPage="oto-ini"
           pageName="List Preview"
@@ -65,7 +65,6 @@ const ConfigureRecordingSetPage: FC<{
       return (
         <PreviewPage
           setRecordingSetState={setRecordingSetState}
-          prevState={prevState}
           leftPage="list-preview"
           rightPage="dvcfg"
           pageName="Oto.ini"
@@ -77,7 +76,6 @@ const ConfigureRecordingSetPage: FC<{
       return (
         <PreviewPage
           setRecordingSetState={setRecordingSetState}
-          prevState={prevState}
           leftPage="oto-ini"
           rightPage="list-preview"
           pageName="Dvcfg"

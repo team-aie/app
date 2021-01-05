@@ -1,0 +1,66 @@
+.slide-down-appear {
+  opacity: 0;
+  transform: translateY(-100%);
+}
+.slide-down-appear-active {
+  opacity: 1;
+  transform: translateY(0%);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.slide-left-appear {
+  opacity: 0;
+  transform: translateX(100%);
+}
+.slide-left-appear-active {
+  opacity: 1;
+  transform: translateX(0%);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.slide-left-enter {
+  opacity: 0;
+  transform: translateX(100%);
+}
+.slide-left-enter-active {
+  opacity: 1;
+  transform: translateX(0%);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.slide-right-enter {
+  opacity: 0;
+  transform: translateX(-100%);
+}
+.slide-right-enter-active {
+  opacity: 1;
+  transform: translateX(0%);
+  transition: opacity 300ms, transform 300ms;
+}
+.slide-right-appear {
+  opacity: 0;
+  transform: translateX(-100%);
+}
+.slide-right-appear-active {
+  opacity: 1;
+  transform: translateX(0%);
+  transition: opacity 300ms, transform 300ms;
+}
+.config-rec-set-appear {
+  opacity: 0;
+  transform: translateY(100%);
+}
+.config-rec-set-appear-active {
+  opacity: 1;
+  transform: translateY(0%);
+  transition: opacity 300ms, transform 300ms;
+}
+.config-rec-set-exit {
+  opacity: 1;
+  transform: translateY(0%);
+}
+.config-rec-set-exit-active {
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: opacity 300ms, transform 300ms;
+}
