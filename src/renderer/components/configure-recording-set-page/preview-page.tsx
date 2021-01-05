@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import Container from 'react-bootstrap/esm/Container';
 import { CSSTransition } from 'react-transition-group';
@@ -14,26 +14,36 @@ import { RecordingPageState } from '.';
 
 interface PreviewPageProps {
   setRecordingSetState: Consumer<RecordingPageState>;
-  prevState: RecordingPageState;
   leftPage: RecordingPageState;
   rightPage: RecordingPageState;
   pageName: string;
+  transition: boolean;
+  setTransition: Consumer<boolean>;
 }
 
 export const PreviewPage: FC<PreviewPageProps> = ({
   setRecordingSetState,
-  prevState,
   leftPage,
   rightPage,
   pageName,
+  transition,
+  setTransition,
 }) => {
+  const [className, setClassName] = useState<string>('slide-down');
+
   const transitionProps = {
-    in: true,
-    //appear: true,
-    appear: false, //change this back
+    in: transition,
+    appear: true,
     timeout: 3000,
-    classNames: prevState == rightPage ? 'slide-left' : prevState == leftPage ? 'slide-right' : 'slide-down',
+    classNames: className,
   };
+
+  useEffect(() => {
+    if (!transition) {
+      setTransition(true);
+    }
+  });
+
   return (
     <>
       <CSSTransition {...transitionProps}>
@@ -57,6 +67,8 @@ export const PreviewPage: FC<PreviewPageProps> = ({
               <ImageButton
                 onClick={(): void => {
                   setRecordingSetState(leftPage);
+                  setTransition(false);
+                  setClassName('slide-left');
                 }}
                 src={leftButton}
                 width="2rem"
@@ -67,6 +79,8 @@ export const PreviewPage: FC<PreviewPageProps> = ({
               <ImageButton
                 onClick={(): void => {
                   setRecordingSetState(rightPage);
+                  setTransition(false);
+                  setClassName('slide-right');
                 }}
                 src={rightButton}
                 width="2rem"

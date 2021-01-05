@@ -6,6 +6,7 @@ import { Consumer, RecordingSet } from '../../types';
 
 import { ConfigureRecordingSet } from './configure-recording-set';
 import './show-details.scss';
+import './index.scss';
 import { PreviewPage } from './preview-page';
 /*
  Represents the page states controlled by configure-recording-set.
@@ -24,6 +25,7 @@ const ConfigureRecordingSetPage: FC<{
 }> = ({ onNext, onBack, onSetSelected }) => {
   const [recordingSetState, setRecordingSetState] = useState<RecordingPageState>('external');
   const prevState = usePrevious(recordingSetState) ?? 'home';
+  const [transition, setTransition] = useState<boolean>(true);
 
   switch (recordingSetState) {
     case 'home':
@@ -52,30 +54,33 @@ const ConfigureRecordingSetPage: FC<{
       return (
         <PreviewPage
           setRecordingSetState={setRecordingSetState}
-          prevState={prevState}
           leftPage="dvcfg"
           rightPage="oto-ini"
           pageName="List Preview"
+          transition={transition}
+          setTransition={setTransition}
         />
       );
     case 'oto-ini':
       return (
         <PreviewPage
           setRecordingSetState={setRecordingSetState}
-          prevState={prevState}
           leftPage="list-preview"
           rightPage="dvcfg"
           pageName="Oto.ini"
+          transition={transition}
+          setTransition={setTransition}
         />
       );
     case 'dvcfg':
       return (
         <PreviewPage
           setRecordingSetState={setRecordingSetState}
-          prevState={prevState}
           leftPage="oto-ini"
           rightPage="list-preview"
           pageName="Dvcfg"
+          transition={transition}
+          setTransition={setTransition}
         />
       );
     default: {
