@@ -118,6 +118,8 @@ const AieApp: FC = () => {
   const routePageToComponent = (): ReactElement => {
     const simpleOnNext = (): void => changePage(true);
     const simpleOnBack = (): void => changePage(false);
+    const selectSetting = (): void => setPageStateIndex(4);
+    const selectConfigrue = (): void => setPageStateIndex(2);
 
     switch (pageState) {
       case 'welcome':
@@ -127,13 +129,14 @@ const AieApp: FC = () => {
       case 'configure-recording-set':
         return (
           <ConfigureRecordingSetPage
+            onSelect={selectSetting}
             onNext={simpleOnNext}
             onBack={simpleOnBack}
             onSetSelected={adaptToPrototypeRecordingStudio}
           />
         );
       case 'settings':
-        return <SettingsPage onNext={simpleOnNext} onBack={simpleOnBack} />;
+        return <SettingsPage onSelect={selectConfigrue} />;
       case 'recording':
         return (
           <RecordingPage

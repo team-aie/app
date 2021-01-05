@@ -16,9 +16,8 @@ import { Select } from '../select';
 import { useAudioInputOutputDevices } from './hooks';
 
 export const SettingsPage: FC<{
-  onNext: MouseEventHandler<HTMLElement>;
-  onBack: MouseEventHandler<HTMLElement>;
-}> = ({ onNext, onBack }) => {
+  onSelect: MouseEventHandler<HTMLElement>;
+}> = ({ onSelect }) => {
   const { t } = useTranslation();
   const [
     audioInputDevices,
@@ -44,7 +43,7 @@ export const SettingsPage: FC<{
 
   return (
     <Fragment>
-      <BackButton onBack={onBack} />
+      <BackButton onBack={onSelect} />
       <Container>
         <Row style={{ paddingTop: '6rem' }}>
           <Col xs={'auto'} sm={3} md={3} lg={3} xl={3}>
@@ -92,7 +91,7 @@ export const SettingsPage: FC<{
           </Button>
         </Row>
       </Container>
-      <NextButton text={t('Confirm')} onClick={onNext} disabled={false} />
+      <NextButton text={t('OK')} onClick={onSelect} disabled={false} />
     </Fragment>
   );
 };
