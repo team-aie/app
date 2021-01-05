@@ -71,7 +71,7 @@ export const PreviewPage: FC<PreviewPageProps> = ({
                   setClassName('slide-left');
                 }}
                 src={leftButton}
-                width="2rem"
+                width="1rem"
               />
             </Col>
             <Col className="d-flex justify-content-end">
@@ -83,7 +83,7 @@ export const PreviewPage: FC<PreviewPageProps> = ({
                   setClassName('slide-right');
                 }}
                 src={rightButton}
-                width="2rem"
+                width="1rem"
               />
             </Col>
           </Row>
