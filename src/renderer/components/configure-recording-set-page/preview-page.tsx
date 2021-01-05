@@ -14,29 +14,21 @@ import { RecordingPageState } from '.';
 
 interface PreviewPageProps {
   setRecordingSetState: Consumer<RecordingPageState>;
-  prevState: RecordingPageState;
   leftPage: RecordingPageState;
   rightPage: RecordingPageState;
   pageName: string;
   transition: boolean;
   setTransition: Consumer<boolean>;
-  // thisPage: RecordingPageState;
 }
 
 export const PreviewPage: FC<PreviewPageProps> = ({
   setRecordingSetState,
-  prevState,
   leftPage,
   rightPage,
   pageName,
   transition,
   setTransition,
-  // thisPage,
 }) => {
-  const getClassName: () => string = () => {
-    return rightPage ? 'slide-left' : prevState == leftPage ? 'slide-right' : 'slide-down';
-  };
-
   const [className, setClassName] = useState<string>('slide-down');
 
   const transitionProps = {
@@ -52,7 +44,6 @@ export const PreviewPage: FC<PreviewPageProps> = ({
     }
   });
 
-  console.log(transitionProps.classNames);
   return (
     <>
       <CSSTransition {...transitionProps}>
