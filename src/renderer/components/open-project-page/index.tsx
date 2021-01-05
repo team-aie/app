@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { RecordingProjectContext } from '../../contexts';
 import { Consumer, RecordingProject } from '../../types';
 import { ensureFolderExists, filename, openFilePicker } from '../../utils';
+import { watchfile } from '../../utils/fs-utils';
 import BackButton from '../back-button';
 
 import knownProjects from './known-projects';
@@ -88,6 +89,8 @@ const OpenProjectPage: FC<{ onNext: Consumer<void>; onBack: MouseEventHandler<HT
       name: filename(folderPath),
       rootPath: folderPath,
     };
+
+    watchfile(folderPath);
 
     return selectProject(project);
   };

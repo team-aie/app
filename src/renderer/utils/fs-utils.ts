@@ -1,6 +1,7 @@
 import fs, { promises as fsp } from 'fs';
 import path from 'path';
 
+import chokidar from 'chokidar';
 import { OpenDialogOptions, remote } from 'electron';
 import log from 'electron-log';
 
@@ -45,6 +46,27 @@ export const createFolder = async (filePath: string): Promise<void> => {
 };
 export const parentFolderName = path.dirname;
 export const filename = path.basename;
+
+// Use chokidar to moniter file/folder changes
+export function watchfile(filePath: string) {
+  const watcher = chokidar.watch(filePath, {
+    ignored: /(^|[/\\])\../,
+    persistent: true,
+  });
+
+  console.log('open path: ' + filePath);
+
+  const log = console.log.bind(console);
+  watcher
+    .on('add', (path) => log(`File ${path} has been added`))
+    .on('change', (path) => alert(`File ${path} has been changed`))
+    .on('unlink', (path) => alert(`File ${path} has been removed`))
+    .on('addDir', (path) => log(`File ${path} has been added`))
+    .on('changeDir', (path) => alert(`File ${path} has been changed`))
+    .on('unlinkDir', (path) => alert(`File ${path} has been removed`));
+
+  return;
+}
 
 // New Methods
 export const checkFileExistence = async (filePath: string): Promise<'folder' | 'file' | false> => {
