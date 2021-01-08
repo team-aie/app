@@ -68,20 +68,29 @@ module.exports = (config) => {
 
     let { entry = {} } = config;
     let cacheGroups = {};
+    console.log('start');
     localeDirs.forEach((localeDir) => {
-      entry = {
-        ...entry,
-        [localeDir]: path.join(__dirname, 'src/locales', localeDir, 'themes/light/index.scss'),
-      };
-      cacheGroups = {
-        ...cacheGroups,
-        [localeDir]: {
-          name: localeDir,
-          test: (m, c, entry = localeDir) => m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry,
-          chunks: 'all',
-          enforce: true,
-        },
-      };
+      const themeDirs = fs
+        .readdirSync(path.join(__dirname, 'src/locales', localeDir, 'themes'), { withFileTypes: true })
+        .filter((file) => file.isDirectory())
+        .map((file) => file.name);
+      console.log('this is ' + path.join(__dirname, 'src/locales', localeDir, 'themes'));
+      themeDirs.forEach((theme) => {
+        entry = {
+          ...entry,
+          [`${localeDir}-${theme}`]: path.join(__dirname, 'src/locales', localeDir, `themes/${theme}/index.scss`),
+        };
+        cacheGroups = {
+          ...cacheGroups,
+          [`${localeDir}-${theme}`]: {
+            name: `${localeDir}-${theme}`,
+            test: (m, c, entry = `${localeDir}-${theme}`) =>
+              m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry,
+            chunks: 'all',
+            enforce: true,
+          },
+        };
+      });
     });
 
     config.entry = entry;
@@ -90,7 +99,8 @@ module.exports = (config) => {
     };
 
     const mcePlugin = config.plugins.find((plugin) => plugin.options && plugin.options.filename === 'styles.css');
-    mcePlugin.options.filename = '[name]/themes/light.styles.css';
+    mcePlugin.options.filename = '[name].styles.css';
+    console.log('this is ' + mcePlugin.options.filename);
 
     /**
      * See {@link https://github.com/jantimon/html-webpack-plugin#options}.
