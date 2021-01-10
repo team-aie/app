@@ -1,8 +1,9 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import Container from 'react-bootstrap/esm/Container';
 import { CSSTransition } from 'react-transition-group';
 
+import { RecordingProjectContext } from '../../contexts';
 import { Consumer } from '../../types';
 import ImageButton from '../image-button';
 
@@ -19,6 +20,7 @@ interface PreviewPageProps {
   pageName: string;
   transition: boolean;
   setTransition: Consumer<boolean>;
+  pageText: string;
 }
 
 export const PreviewPage: FC<PreviewPageProps> = ({
@@ -28,6 +30,7 @@ export const PreviewPage: FC<PreviewPageProps> = ({
   pageName,
   transition,
   setTransition,
+  pageText,
 }) => {
   const [className, setClassName] = useState<string>('slide-down');
 
@@ -37,13 +40,12 @@ export const PreviewPage: FC<PreviewPageProps> = ({
     timeout: 3000,
     classNames: className,
   };
-
+  const { recordingProject } = useContext(RecordingProjectContext);
   useEffect(() => {
     if (!transition) {
       setTransition(true);
     }
   });
-
   return (
     <>
       <CSSTransition {...transitionProps}>
@@ -60,7 +62,7 @@ export const PreviewPage: FC<PreviewPageProps> = ({
           <Row>
             <h1>{pageName}</h1>
           </Row>
-          <Row>{'There will be a lot of text here at some point'}</Row>
+          <Row>{pageText}</Row>
           <Row>
             <Col className="d-flex justify-content-start">
               {' '}

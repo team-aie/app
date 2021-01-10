@@ -3,11 +3,13 @@ import React, { FC, MouseEventHandler, useState } from 'react';
 import { usePrevious } from 'react-use';
 
 import { Consumer, RecordingSet } from '../../types';
+import { join, readFile } from '../../utils';
 
 import { ConfigureRecordingSet } from './configure-recording-set';
 import './show-details.scss';
 import './index.scss';
 import { PreviewPage } from './preview-page';
+
 /*
  Represents the page states controlled by configure-recording-set.
  'external' represents pages external from this system
@@ -26,6 +28,37 @@ const ConfigureRecordingSetPage: FC<{
   const [recordingSetState, setRecordingSetState] = useState<RecordingPageState>('external');
   const prevState = usePrevious(recordingSetState) ?? 'home';
   const [transition, setTransition] = useState<boolean>(true);
+  const [otoText, setOtoText] = useState<string>('oto file not availible');
+  const [recListText, setRecListText] = useState<string>('reclist file not availible');
+  const [dvcfgText, setDvcfgText] = useState<string>('dvcfg file not availible');
+
+  (async (): Promise<string> => {
+    const rootPath = 'external\\z.cvvc_normal';
+    const filePath = join(rootPath, 'oto.ini');
+
+    return await readFile(filePath);
+  })().then((otoIniText) => {
+    setOtoText(otoIniText);
+  });
+
+  (async (): Promise<string> => {
+    const rootPath = 'external\\z.cvvc_normal';
+    const filePath = join(rootPath, 'Reclist.txt');
+
+    return await readFile(filePath);
+  })().then((listPreviewText) => {
+    setRecListText(listPreviewText);
+  });
+
+  (async (): Promise<string> => {
+    // const rootPath = 'external\\z.cvvc_normal';
+    // const filePath = join(rootPath, 'Reclist.txt');
+    return 'dvcfg file does not exist';
+
+    // return await readFile(filePath);
+  })().then((dvcfgText) => {
+    setDvcfgText(dvcfgText);
+  });
 
   switch (recordingSetState) {
     case 'home':
@@ -59,6 +92,7 @@ const ConfigureRecordingSetPage: FC<{
           pageName="List Preview"
           transition={transition}
           setTransition={setTransition}
+          pageText={recListText}
         />
       );
     case 'oto-ini':
@@ -70,6 +104,7 @@ const ConfigureRecordingSetPage: FC<{
           pageName="Oto.ini"
           transition={transition}
           setTransition={setTransition}
+          pageText={otoText}
         />
       );
     case 'dvcfg':
@@ -81,6 +116,7 @@ const ConfigureRecordingSetPage: FC<{
           pageName="Dvcfg"
           transition={transition}
           setTransition={setTransition}
+          pageText={dvcfgText}
         />
       );
     default: {
