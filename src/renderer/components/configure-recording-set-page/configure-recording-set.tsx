@@ -58,17 +58,29 @@ export const ConfigureRecordingSet: FC<{
   setRecordingSetState: Consumer<RecordingPageState>;
   prevState: RecordingPageState;
   currState: RecordingPageState;
-}> = ({ onNext, onBack, onSetSelected, setRecordingSetState, prevState, currState }) => {
+  recordingSets: RecordingSet[];
+  setRecordingSets: React.Dispatch<React.SetStateAction<RecordingSet[] | undefined>>;
+  selectedRecordingSetIndex: number;
+  setSelectedRecordingSetIndex: React.Dispatch<React.SetStateAction<number | undefined>>;
+}> = ({
+  onNext,
+  onBack,
+  onSetSelected,
+  setRecordingSetState,
+  prevState,
+  currState,
+  recordingSets,
+  setRecordingSets,
+  selectedRecordingSetIndex,
+  setSelectedRecordingSetIndex,
+}) => {
   const { t } = useTranslation();
   const { recordingProject } = useContext(RecordingProjectContext);
   const [projectFile = DUMMY_PROJECT_FILE, setProjectFile] = useLocalStorage<ProjectFile>(
     getLSKey('ConfigureRecordingSetPage', 'projectFile'),
     DUMMY_PROJECT_FILE,
   );
-  const [recordingSets = [], setRecordingSets] = useLocalStorage<RecordingSet[]>(
-    getLSKey('ConfigureRecordingSetPage', 'recordingSets'),
-    [],
-  );
+
   const [canWrite, setCanWrite] = useState(false);
 
   useEffect(() => {
@@ -138,11 +150,6 @@ export const ConfigureRecordingSet: FC<{
       setRecordingSets([...recordingSets, newRecordingSet]);
     }
   };
-
-  const [selectedRecordingSetIndex = -1, setSelectedRecordingSetIndex] = useLocalStorage<number>(
-    getLSKey('ConfigureRecordingSetPage', 'selectedRecordingSetIndex'),
-    -1,
-  );
 
   const removeRecordingSet = async (setToDelete: RecordingSet): Promise<void> => {
     const willDelete = confirm(`Are you sure you want to delete ${setToDelete.name}?`);

@@ -1,9 +1,8 @@
-import React, { FC, useContext, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import Container from 'react-bootstrap/esm/Container';
 import { CSSTransition } from 'react-transition-group';
 
-import { RecordingProjectContext } from '../../contexts';
 import { Consumer } from '../../types';
 import ImageButton from '../image-button';
 
@@ -40,57 +39,60 @@ export const PreviewPage: FC<PreviewPageProps> = ({
     timeout: 3000,
     classNames: className,
   };
-  const { recordingProject } = useContext(RecordingProjectContext);
   useEffect(() => {
     if (!transition) {
       setTransition(true);
     }
   });
   return (
-    <>
+    <div>
       <CSSTransition {...transitionProps}>
         <Container fluid={true}>
-          <Row className="d-flex justify-content-center">
-            <ImageButton
-              onClick={(): void => {
-                setRecordingSetState('home');
-              }}
-              src={downButton}
-              width="2rem"
-            />
-          </Row>
-          <Row>
-            <h1>{pageName}</h1>
-          </Row>
-          <Row>{pageText}</Row>
-          <Row>
-            <Col className="d-flex justify-content-start">
-              {' '}
+          <Col></Col>
+          <Col>
+            <Row className="d-flex justify-content-center">
               <ImageButton
                 onClick={(): void => {
-                  setRecordingSetState(leftPage);
-                  setTransition(false);
-                  setClassName('slide-left');
+                  setRecordingSetState('home');
                 }}
-                src={leftButton}
-                width="1rem"
+                src={downButton}
+                width="2rem"
               />
-            </Col>
-            <Col className="d-flex justify-content-end">
-              {' '}
-              <ImageButton
-                onClick={(): void => {
-                  setRecordingSetState(rightPage);
-                  setTransition(false);
-                  setClassName('slide-right');
-                }}
-                src={rightButton}
-                width="1rem"
-              />
-            </Col>
-          </Row>
+            </Row>
+            <Row>
+              <h1>{pageName}</h1>
+            </Row>
+            <Row>{pageText}</Row>
+            <Row>
+              <Col className="d-flex justify-content-start">
+                {' '}
+                <ImageButton
+                  onClick={(): void => {
+                    setRecordingSetState(leftPage);
+                    setTransition(false);
+                    setClassName('slide-left');
+                  }}
+                  src={leftButton}
+                  width="1rem"
+                />
+              </Col>
+              <Col className="d-flex justify-content-end">
+                {' '}
+                <ImageButton
+                  onClick={(): void => {
+                    setRecordingSetState(rightPage);
+                    setTransition(false);
+                    setClassName('slide-right');
+                  }}
+                  src={rightButton}
+                  width="1rem"
+                />
+              </Col>
+            </Row>
+          </Col>
+          <Col></Col>
         </Container>
       </CSSTransition>
-    </>
+    </div>
   );
 };

@@ -1,9 +1,9 @@
 import log from 'electron-log';
 import React, { FC, MouseEventHandler, useState } from 'react';
-import { usePrevious } from 'react-use';
+import { useLocalStorage, usePrevious } from 'react-use';
 
 import { Consumer, RecordingSet } from '../../types';
-import { join, readFile } from '../../utils';
+import { checkFileExistence, getLSKey, join, readFile } from '../../utils';
 
 import { ConfigureRecordingSet } from './configure-recording-set';
 import './show-details.scss';
@@ -28,37 +28,64 @@ const ConfigureRecordingSetPage: FC<{
   const [recordingSetState, setRecordingSetState] = useState<RecordingPageState>('external');
   const prevState = usePrevious(recordingSetState) ?? 'home';
   const [transition, setTransition] = useState<boolean>(true);
+
   const [otoText, setOtoText] = useState<string>('oto file not availible');
   const [recListText, setRecListText] = useState<string>('reclist file not availible');
   const [dvcfgText, setDvcfgText] = useState<string>('dvcfg file not availible');
 
-  (async (): Promise<string> => {
-    const rootPath = 'external\\z.cvvc_normal';
-    const filePath = join(rootPath, 'oto.ini');
+  const [recordingSets = [], setRecordingSets] = useLocalStorage<RecordingSet[]>(
+    getLSKey('ConfigureRecordingSetPage', 'recordingSets'),
+    [],
+  );
 
-    return await readFile(filePath);
-  })().then((otoIniText) => {
-    setOtoText(otoIniText);
-  });
+  const [selectedRecordingSetIndex = -1, setSelectedRecordingSetIndex] = useLocalStorage<number>(
+    getLSKey('ConfigureRecordingSetPage', 'selectedRecordingSetIndex'),
+    -1,
+  );
 
-  (async (): Promise<string> => {
-    const rootPath = 'external\\z.cvvc_normal';
-    const filePath = join(rootPath, 'Reclist.txt');
+  const rootPath = 'external\\z.cvvc_normal';
+  const filePathOto = join(rootPath, 'oto.ini');
+  (async (): Promise<'folder' | 'file' | false> => {
+    return checkFileExistence(filePathOto);
+  })().then((result) =>
+    (async (): Promise<string> => {
+      if (result == false) {
+        return 'oto.ini file does not exist';
+      }
+      return await readFile(filePathOto);
+    })().then((otoIniText) => {
+      setOtoText(otoIniText);
+    }),
+  );
 
-    return await readFile(filePath);
-  })().then((listPreviewText) => {
-    setRecListText(listPreviewText);
-  });
+  const filePathList = join(rootPath, 'Reclist.txt');
+  (async (): Promise<'folder' | 'file' | false> => {
+    return checkFileExistence(filePathList);
+  })().then((result) =>
+    (async (): Promise<string> => {
+      if (result == false) {
+        return 'reclist file does not exist';
+      }
+      return await readFile(filePathList);
+    })().then((recListText) => {
+      setRecListText(recListText);
+    }),
+  );
 
-  (async (): Promise<string> => {
-    // const rootPath = 'external\\z.cvvc_normal';
-    // const filePath = join(rootPath, 'Reclist.txt');
-    return 'dvcfg file does not exist';
-
-    // return await readFile(filePath);
-  })().then((dvcfgText) => {
-    setDvcfgText(dvcfgText);
-  });
+  const filePathDvcfg = join(rootPath, 'voice.dvcfg');
+  (async (): Promise<'folder' | 'file' | false> => {
+    return checkFileExistence(filePathDvcfg);
+  })().then((result) =>
+    (async (): Promise<string> => {
+      if (result == false) {
+        return 'voice.dvcfg file does not exist';
+      } else {
+        return await readFile(filePathDvcfg);
+      }
+    })().then((dvcfgText) => {
+      setDvcfgText(dvcfgText);
+    }),
+  );
 
   switch (recordingSetState) {
     case 'home':
@@ -70,6 +97,10 @@ const ConfigureRecordingSetPage: FC<{
           setRecordingSetState={setRecordingSetState}
           prevState={prevState}
           currState={recordingSetState}
+          recordingSets={recordingSets}
+          setRecordingSets={setRecordingSets}
+          selectedRecordingSetIndex={selectedRecordingSetIndex}
+          setSelectedRecordingSetIndex={setSelectedRecordingSetIndex}
         />
       );
     case 'external':
@@ -81,6 +112,10 @@ const ConfigureRecordingSetPage: FC<{
           setRecordingSetState={setRecordingSetState}
           prevState={prevState}
           currState={recordingSetState}
+          recordingSets={recordingSets}
+          setRecordingSets={setRecordingSets}
+          selectedRecordingSetIndex={selectedRecordingSetIndex}
+          setSelectedRecordingSetIndex={setSelectedRecordingSetIndex}
         />
       );
     case 'list-preview':
