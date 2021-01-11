@@ -3,12 +3,13 @@ import React, { FC, MouseEventHandler, useState } from 'react';
 import { useLocalStorage, usePrevious } from 'react-use';
 
 import { Consumer, RecordingSet } from '../../types';
-import { checkFileExistence, getLSKey, join, readFile } from '../../utils';
+import { getLSKey } from '../../utils';
 
 import { ConfigureRecordingSet } from './configure-recording-set';
 import './show-details.scss';
 import './index.scss';
 import { PreviewPage } from './preview-page';
+import { BuiltInRecordingList } from './types';
 
 /*
  Represents the page states controlled by configure-recording-set.
@@ -29,10 +30,6 @@ const ConfigureRecordingSetPage: FC<{
   const prevState = usePrevious(recordingSetState) ?? 'home';
   const [transition, setTransition] = useState<boolean>(true);
 
-  const [otoText, setOtoText] = useState<string>('oto file not availible');
-  const [recListText, setRecListText] = useState<string>('reclist file not availible');
-  const [dvcfgText, setDvcfgText] = useState<string>('dvcfg file not availible');
-
   const [recordingSets = [], setRecordingSets] = useLocalStorage<RecordingSet[]>(
     getLSKey('ConfigureRecordingSetPage', 'recordingSets'),
     [],
@@ -43,49 +40,33 @@ const ConfigureRecordingSetPage: FC<{
     -1,
   );
 
-  const rootPath = 'external\\z.cvvc_normal';
-  const filePathOto = join(rootPath, 'oto.ini');
-  (async (): Promise<'folder' | 'file' | false> => {
-    return checkFileExistence(filePathOto);
-  })().then((result) =>
-    (async (): Promise<string> => {
-      if (result == false) {
-        return 'oto.ini file does not exist';
-      }
-      return await readFile(filePathOto);
-    })().then((otoIniText) => {
-      setOtoText(otoIniText);
-    }),
-  );
+  let filePathOto = 'external\\';
+  let filePathRec = 'external\\';
+  let filePathDvcfg = 'external\\';
 
-  const filePathList = join(rootPath, 'Reclist.txt');
-  (async (): Promise<'folder' | 'file' | false> => {
-    return checkFileExistence(filePathList);
-  })().then((result) =>
-    (async (): Promise<string> => {
-      if (result == false) {
-        return 'reclist file does not exist';
-      }
-      return await readFile(filePathList);
-    })().then((recListText) => {
-      setRecListText(recListText);
-    }),
-  );
+  if (selectedRecordingSetIndex != -1) {
+    const recList = recordingSets[selectedRecordingSetIndex].recordingList;
+    if (recList.type === 'built-in') {
+      const builtInListName = recList.name as BuiltInRecordingList;
+      switch (builtInListName) {
+        case 'デルタ式英語リストver5 (Delta English Ver. 5)':
+          filePathOto = filePathOto + 'delta_eng_ver5\\mkototemp.ini';
+          filePathRec = filePathRec + 'delta_eng_ver5\\デルタ式engver5_reclist.txt';
+          filePathDvcfg = filePathDvcfg + ''; //To be addded later
 
-  const filePathDvcfg = join(rootPath, 'voice.dvcfg');
-  (async (): Promise<'folder' | 'file' | false> => {
-    return checkFileExistence(filePathDvcfg);
-  })().then((result) =>
-    (async (): Promise<string> => {
-      if (result == false) {
-        return 'voice.dvcfg file does not exist';
-      } else {
-        return await readFile(filePathDvcfg);
+          break;
+        case 'Z式CVVC-Normal (Z Chinese CVVC - Normal)':
+          filePathOto = filePathOto + 'z.cvvc_normal\\oto.ini';
+          filePathRec = filePathRec + 'z.cvvc_normal\\Reclist.txt';
+          filePathDvcfg = filePathDvcfg + ''; //To be addded later
+          break;
       }
-    })().then((dvcfgText) => {
-      setDvcfgText(dvcfgText);
-    }),
-  );
+    } else {
+      filePathOto = filePathOto + recList.filePath + '\\' + 'oto.ini';
+      filePathRec = filePathRec + recList.filePath + '\\' + 'Reclist.txt';
+      filePathDvcfg = filePathDvcfg + recList.filePath + '\\' + 'voice.dvcfg';
+    }
+  }
 
   switch (recordingSetState) {
     case 'home':
@@ -127,7 +108,7 @@ const ConfigureRecordingSetPage: FC<{
           pageName="List Preview"
           transition={transition}
           setTransition={setTransition}
-          pageText={recListText}
+          fileName={filePathRec}
         />
       );
     case 'oto-ini':
@@ -139,7 +120,7 @@ const ConfigureRecordingSetPage: FC<{
           pageName="Oto.ini"
           transition={transition}
           setTransition={setTransition}
-          pageText={otoText}
+          fileName={filePathOto}
         />
       );
     case 'dvcfg':
@@ -151,7 +132,7 @@ const ConfigureRecordingSetPage: FC<{
           pageName="Dvcfg"
           transition={transition}
           setTransition={setTransition}
-          pageText={dvcfgText}
+          fileName={filePathDvcfg}
         />
       );
     default: {
