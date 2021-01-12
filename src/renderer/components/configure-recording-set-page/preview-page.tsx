@@ -60,11 +60,7 @@ export const PreviewPage: FC<PreviewPageProps> = ({
               />
             </Row>
             <Row>
-              <h1>{pageName}</h1>
-            </Row>
-            <Row>{pageText}</Row>
-            <Row>
-              <Col className="d-flex justify-content-start">
+              <Col sm="auto">
                 {' '}
                 <ImageButton
                   onClick={(): void => {
@@ -76,8 +72,15 @@ export const PreviewPage: FC<PreviewPageProps> = ({
                   width="1rem"
                 />
               </Col>
-              <Col className="d-flex justify-content-end">
-                {' '}
+              <Col>
+                <Row>
+                  <h1>{pageName}</h1>
+                </Row>
+                <Row>
+                  <pre>{pageText}</pre>
+                </Row>
+              </Col>
+              <Col sm="auto">
                 <ImageButton
                   onClick={(): void => {
                     setRecordingSetState(rightPage);
