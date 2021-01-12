@@ -4,6 +4,7 @@ import Container from 'react-bootstrap/esm/Container';
 import { CSSTransition } from 'react-transition-group';
 
 import { Consumer } from '../../types';
+import { checkFileExistence, readFile } from '../../utils';
 import ImageButton from '../image-button';
 
 import downButton from './down-button.svg';
@@ -19,7 +20,7 @@ interface PreviewPageProps {
   pageName: string;
   transition: boolean;
   setTransition: Consumer<boolean>;
-  pageText: string;
+  fileName: string;
 }
 
 export const PreviewPage: FC<PreviewPageProps> = ({
@@ -29,9 +30,10 @@ export const PreviewPage: FC<PreviewPageProps> = ({
   pageName,
   transition,
   setTransition,
-  pageText,
+  fileName,
 }) => {
   const [className, setClassName] = useState<string>('slide-down');
+  const [pageText, setPageText] = useState<string>(pageName + ' not availible');
 
   const transitionProps = {
     in: transition,
@@ -44,6 +46,20 @@ export const PreviewPage: FC<PreviewPageProps> = ({
       setTransition(true);
     }
   });
+
+  (async (): Promise<'folder' | 'file' | false> => {
+    return checkFileExistence(fileName);
+  })().then((result) =>
+    (async (): Promise<string> => {
+      if (result != 'file') {
+        return pageName + ' file does not exist';
+      }
+      return await readFile(fileName);
+    })().then((otoIniText) => {
+      setPageText(otoIniText);
+    }),
+  );
+
   return (
     <div>
       <CSSTransition {...transitionProps}>
