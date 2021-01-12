@@ -4,6 +4,7 @@ import Modal from 'react-bootstrap/Modal';
 import Table from 'react-bootstrap/Table';
 import { useTranslation } from 'react-i18next';
 
+import { version } from '../../../../package.json';
 import LICENSES, { LicenseInfo } from '../../licenses';
 
 type LicenseTextModalProps = LicenseInfo;
@@ -69,13 +70,17 @@ const LicenseDisclosure: FC<{ triggerStyle?: CSSProperties }> = ({ triggerStyle 
   return (
     <Fragment>
       <a href={'#'} className={'alert-light'} style={triggerStyle} onClick={(): void => setShowModal(true)}>
-        {t('Open-Source Licenses')}
+        {t('About')}
       </a>
       <Modal show={showModal} onHide={hideLicenseDisclosure} centered size={'xl'}>
         <Modal.Header closeButton>
-          <Modal.Title>{t('Open-Source Licenses')}</Modal.Title>
+          <Modal.Title>{t('About')}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          <p>
+            {t('Version')} {version}
+          </p>
+          <h5>Open-Source Licenses</h5>
           <Table>
             <thead>
               <tr>

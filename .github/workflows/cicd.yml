@@ -57,7 +57,7 @@ jobs:
       - name: Install Wine via Homebrew
         run: |
           /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-          brew cask install xquartz wine-stable
+          brew install --cask xquartz wine-stable
       - run: npm ci
       - run: npm run lint
       - run: npm run compile
