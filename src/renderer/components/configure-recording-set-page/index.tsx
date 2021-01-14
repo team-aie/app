@@ -9,7 +9,6 @@ import { ConfigureRecordingSet } from './configure-recording-set';
 import './show-details.scss';
 import './index.scss';
 import { PreviewPage } from './preview-page';
-import { BuiltInRecordingList } from './types';
 
 /*
  Represents the page states controlled by configure-recording-set.
@@ -30,42 +29,37 @@ const ConfigureRecordingSetPage: FC<{
   const prevState = usePrevious(recordingSetState) ?? 'home';
   const [transition, setTransition] = useState<boolean>(true);
 
-  const [recordingSets = [], setRecordingSets] = useLocalStorage<RecordingSet[]>(
-    getLSKey('ConfigureRecordingSetPage', 'recordingSets'),
-    [],
+  const [chosenBuiltInList = '', rawSetChosenBuiltInList] = useLocalStorage(
+    getLSKey('ConfigureRecordingSetPage', 'chosenBuiltInList'),
+    '',
   );
-
-  const [selectedRecordingSetIndex = -1, setSelectedRecordingSetIndex] = useLocalStorage<number>(
-    getLSKey('ConfigureRecordingSetPage', 'selectedRecordingSetIndex'),
-    -1,
+  const [chosenCustomListPath = '', rawSetChosenCustomListPath] = useLocalStorage(
+    getLSKey('ConfigureRecordingSetPage', 'chosenCustomListPath'),
+    '',
   );
 
   let filePathOto = 'external\\';
   let filePathRec = 'external\\';
   let filePathDvcfg = 'external\\';
 
-  if (selectedRecordingSetIndex != -1) {
-    const recList = recordingSets[selectedRecordingSetIndex].recordingList;
-    if (recList.type === 'built-in') {
-      const builtInListName = recList.name as BuiltInRecordingList;
-      switch (builtInListName) {
-        case 'デルタ式英語リストver5 (Delta English Ver. 5)':
-          filePathOto = filePathOto + 'delta_eng_ver5\\mkototemp.ini';
-          filePathRec = filePathRec + 'delta_eng_ver5\\デルタ式engver5_reclist.txt';
-          filePathDvcfg = filePathDvcfg + ''; //To be addded later
+  if (chosenBuiltInList != '') {
+    switch (chosenBuiltInList) {
+      case 'デルタ式英語リストver5 (Delta English Ver. 5)':
+        filePathOto = filePathOto + 'delta_eng_ver5\\mkototemp.ini';
+        filePathRec = filePathRec + 'delta_eng_ver5\\デルタ式engver5_reclist.txt';
+        filePathDvcfg = filePathDvcfg + ''; //To be addded later
 
-          break;
-        case 'Z式CVVC-Normal (Z Chinese CVVC - Normal)':
-          filePathOto = filePathOto + 'z.cvvc_normal\\oto.ini';
-          filePathRec = filePathRec + 'z.cvvc_normal\\Reclist.txt';
-          filePathDvcfg = filePathDvcfg + ''; //To be addded later
-          break;
-      }
-    } else {
-      filePathOto = filePathOto + recList.filePath + '\\' + 'oto.ini';
-      filePathRec = filePathRec + recList.filePath + '\\' + 'Reclist.txt';
-      filePathDvcfg = filePathDvcfg + recList.filePath + '\\' + 'voice.dvcfg';
+        break;
+      case 'Z式CVVC-Normal (Z Chinese CVVC - Normal)':
+        filePathOto = filePathOto + 'z.cvvc_normal\\oto.ini';
+        filePathRec = filePathRec + 'z.cvvc_normal\\Reclist.txt';
+        filePathDvcfg = filePathDvcfg + ''; //To be addded later
+        break;
     }
+  } else {
+    filePathOto = filePathOto + chosenCustomListPath + '\\' + 'oto.ini';
+    filePathRec = filePathRec + chosenCustomListPath + '\\' + 'Reclist.txt';
+    filePathDvcfg = filePathDvcfg + chosenCustomListPath + '\\' + 'voice.dvcfg';
   }
 
   switch (recordingSetState) {
@@ -78,10 +72,10 @@ const ConfigureRecordingSetPage: FC<{
           setRecordingSetState={setRecordingSetState}
           prevState={prevState}
           currState={recordingSetState}
-          recordingSets={recordingSets}
-          setRecordingSets={setRecordingSets}
-          selectedRecordingSetIndex={selectedRecordingSetIndex}
-          setSelectedRecordingSetIndex={setSelectedRecordingSetIndex}
+          chosenBuiltInList={chosenBuiltInList}
+          rawSetChosenBuiltInList={rawSetChosenBuiltInList}
+          chosenCustomListPath={chosenCustomListPath}
+          rawSetChosenCustomListPath={rawSetChosenCustomListPath}
         />
       );
     case 'external':
@@ -93,10 +87,10 @@ const ConfigureRecordingSetPage: FC<{
           setRecordingSetState={setRecordingSetState}
           prevState={prevState}
           currState={recordingSetState}
-          recordingSets={recordingSets}
-          setRecordingSets={setRecordingSets}
-          selectedRecordingSetIndex={selectedRecordingSetIndex}
-          setSelectedRecordingSetIndex={setSelectedRecordingSetIndex}
+          chosenBuiltInList={chosenBuiltInList}
+          rawSetChosenBuiltInList={rawSetChosenBuiltInList}
+          chosenCustomListPath={chosenCustomListPath}
+          rawSetChosenCustomListPath={rawSetChosenCustomListPath}
         />
       );
     case 'list-preview':

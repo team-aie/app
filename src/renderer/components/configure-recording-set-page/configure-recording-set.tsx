@@ -58,10 +58,10 @@ export const ConfigureRecordingSet: FC<{
   setRecordingSetState: Consumer<RecordingPageState>;
   prevState: RecordingPageState;
   currState: RecordingPageState;
-  recordingSets: RecordingSet[];
-  setRecordingSets: React.Dispatch<React.SetStateAction<RecordingSet[] | undefined>>;
-  selectedRecordingSetIndex: number;
-  setSelectedRecordingSetIndex: React.Dispatch<React.SetStateAction<number | undefined>>;
+  chosenBuiltInList: string;
+  rawSetChosenBuiltInList: React.Dispatch<React.SetStateAction<string | undefined>>;
+  chosenCustomListPath: string;
+  rawSetChosenCustomListPath: React.Dispatch<React.SetStateAction<string | undefined>>;
 }> = ({
   onNext,
   onBack,
@@ -69,10 +69,10 @@ export const ConfigureRecordingSet: FC<{
   setRecordingSetState,
   prevState,
   currState,
-  recordingSets,
-  setRecordingSets,
-  selectedRecordingSetIndex,
-  setSelectedRecordingSetIndex,
+  chosenBuiltInList,
+  rawSetChosenBuiltInList,
+  chosenCustomListPath,
+  rawSetChosenCustomListPath,
 }) => {
   const { t } = useTranslation();
   const { recordingProject } = useContext(RecordingProjectContext);
@@ -83,6 +83,15 @@ export const ConfigureRecordingSet: FC<{
 
   const [canWrite, setCanWrite] = useState(false);
 
+  const [recordingSets = [], setRecordingSets] = useLocalStorage<RecordingSet[]>(
+    getLSKey('ConfigureRecordingSetPage', 'recordingSets'),
+    [],
+  );
+
+  const [selectedRecordingSetIndex = -1, setSelectedRecordingSetIndex] = useLocalStorage<number>(
+    getLSKey('ConfigureRecordingSetPage', 'selectedRecordingSetIndex'),
+    -1,
+  );
   useEffect(() => {
     if (recordingProject) {
       (async (): Promise<void> => {
@@ -122,14 +131,7 @@ export const ConfigureRecordingSet: FC<{
     3,
   );
   const [chosenName = '', setChosenName] = useLocalStorage(getLSKey('ConfigureRecordingSetPage', 'chosenName'), '');
-  const [chosenBuiltInList = '', rawSetChosenBuiltInList] = useLocalStorage(
-    getLSKey('ConfigureRecordingSetPage', 'chosenBuiltInList'),
-    '',
-  );
-  const [chosenCustomListPath = '', rawSetChosenCustomListPath] = useLocalStorage(
-    getLSKey('ConfigureRecordingSetPage', 'chosenCustomListPath'),
-    '',
-  );
+
   const setChosenBuiltInList = (name: string): void => {
     rawSetChosenBuiltInList(name);
     if (name) {
