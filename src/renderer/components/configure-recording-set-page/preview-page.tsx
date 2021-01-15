@@ -54,8 +54,8 @@ export const PreviewPage: FC<PreviewPageProps> = ({
         return pageName + ' file does not exist';
       }
       return await readFile(fileName);
-    })().then((otoIniText) => {
-      setPageText(otoIniText);
+    })().then((fileText) => {
+      setPageText(fileText);
     }),
   );
 
@@ -79,11 +79,15 @@ export const PreviewPage: FC<PreviewPageProps> = ({
                 <Row>
                   <h1>{pageName}</h1>
                 </Row>
-                <Row>
+                <Row
+                  style={{
+                    maxHeight: '30rem',
+                    overflowY: 'scroll',
+                  }}>
                   <pre>{pageText}</pre>
                 </Row>
               </Col>
-              <Col sm="auto" className="d-flex align-self-center">
+              <Col sm="auto" className="d-flex justify-content-center">
                 <ImageButton
                   onClick={(): void => {
                     setRecordingSetState(rightPage);
