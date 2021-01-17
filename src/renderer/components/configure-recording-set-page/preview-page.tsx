@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
-import Container from 'react-bootstrap/esm/Container';
+import Container from 'react-bootstrap/Container';
 import { CSSTransition } from 'react-transition-group';
 
 import { Consumer } from '../../types';
