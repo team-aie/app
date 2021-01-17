@@ -14,22 +14,20 @@ import { RecordingPageState } from '.';
 
 interface PreviewPageProps {
   setRecordingSetState: Consumer<RecordingPageState>;
-  leftPage: RecordingPageState;
-  rightPage: RecordingPageState;
   pageName: string;
   transition: boolean;
   setTransition: Consumer<boolean>;
   fileName: string;
+  setDropDownState: () => void;
 }
 
 export const PreviewPage: FC<PreviewPageProps> = ({
   setRecordingSetState,
-  leftPage,
-  rightPage,
   pageName,
   transition,
   setTransition,
   fileName,
+  setDropDownState,
 }) => {
   const [className, setClassName] = useState<string>('slide-down');
   const [pageText, setPageText] = useState<string>(pageName + ' not availible');
@@ -90,7 +88,7 @@ export const PreviewPage: FC<PreviewPageProps> = ({
               <Col sm="auto" className="d-flex justify-content-center">
                 <ImageButton
                   onClick={(): void => {
-                    setRecordingSetState(rightPage);
+                    setDropDownState();
                     setTransition(false);
                     setClassName('slide-right');
                   }}

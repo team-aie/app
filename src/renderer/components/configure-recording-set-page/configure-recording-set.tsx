@@ -62,6 +62,8 @@ export const ConfigureRecordingSet: FC<{
   rawSetChosenBuiltInList: React.Dispatch<React.SetStateAction<string | undefined>>;
   chosenCustomListPath: string;
   rawSetChosenCustomListPath: React.Dispatch<React.SetStateAction<string | undefined>>;
+  metaDataIndex: number;
+  getFilePath: (listName: string, isBuiltIn: boolean) => void;
 }> = ({
   onNext,
   onBack,
@@ -73,6 +75,8 @@ export const ConfigureRecordingSet: FC<{
   rawSetChosenBuiltInList,
   chosenCustomListPath,
   rawSetChosenCustomListPath,
+  metaDataIndex,
+  getFilePath,
 }) => {
   const { t } = useTranslation();
   const { recordingProject } = useContext(RecordingProjectContext);
@@ -241,6 +245,7 @@ export const ConfigureRecordingSet: FC<{
                 setChosenBuiltInList={setChosenBuiltInList}
                 chosenCustomListPath={chosenCustomListPath}
                 setChosenCustomListPath={setChosenCustomListPath}
+                getFilePath={getFilePath}
               />
               <Col xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'}>
                 <AddRecordingSetButton
@@ -278,13 +283,15 @@ export const ConfigureRecordingSet: FC<{
       <CSSTransition {...transitionProps}>
         <div>
           <Positional position="bottom-center">
-            <ImageButton
-              src={showDetailButton}
-              width="7rem"
-              onClick={(): void => {
-                setRecordingSetState(prevState == 'home' || prevState == 'external' ? 'list-preview' : prevState);
-              }}
-            />
+            {metaDataIndex != -1 && (
+              <ImageButton
+                src={showDetailButton}
+                width="7rem"
+                onClick={(): void => {
+                  setRecordingSetState(prevState == 'home' || prevState == 'external' ? 'metadata' : prevState);
+                }}
+              />
+            )}
           </Positional>
           <NextButton
             text={t('Start')}
