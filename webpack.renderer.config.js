@@ -78,13 +78,20 @@ module.exports = (config) => {
       themeDirs.forEach((theme) => {
         entry = {
           ...entry,
-          [`${localeDir}-${theme}`]: path.join(__dirname, 'src/locales', localeDir, `themes/${theme}/index.scss`),
+          [`${localeDir}/themes/${theme}`]: path.join(
+            __dirname,
+            'src/locales',
+            localeDir,
+            'themes',
+            theme,
+            'index.scss',
+          ),
         };
         cacheGroups = {
           ...cacheGroups,
-          [`${localeDir}-${theme}`]: {
-            name: `${localeDir}-${theme}`,
-            test: (m, c, entry = `${localeDir}-${theme}`) =>
+          [`${localeDir}/themes/${theme}`]: {
+            name: `${localeDir}/themes/${theme}`,
+            test: (m, c, entry = `${localeDir}/themes/${theme}`) =>
               m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry,
             chunks: 'all',
             enforce: true,
@@ -100,7 +107,8 @@ module.exports = (config) => {
 
     const mcePlugin = config.plugins.find((plugin) => plugin.options && plugin.options.filename === 'styles.css');
     mcePlugin.options.filename = '[name].styles.css';
-    console.log('this is ' + mcePlugin.options.filename);
+
+    // const styleHref = `${locale}/themes/${theme}.styles.css`;
 
     /**
      * See {@link https://github.com/jantimon/html-webpack-plugin#options}.
