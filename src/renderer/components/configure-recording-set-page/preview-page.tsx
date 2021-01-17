@@ -79,7 +79,7 @@ export const PreviewPage: FC<PreviewPageProps> = ({
                 </Row>
                 <Row
                   style={{
-                    maxHeight: '30rem',
+                    maxHeight: 'calc(100vh - 75px)',
                     overflowY: 'scroll',
                   }}>
                   <pre>{pageText}</pre>
