@@ -22,10 +22,10 @@ const StyleButton: FC = () => {
           console.log('What is theme?');
           if (theme == 'light') {
             console.log('It is light');
-            setTheme(SupportedTheme.DARK as SupportedTheme);
+            setTheme(SupportedTheme.DARK);
           } else {
             console.log('It is dark');
-            setTheme(SupportedTheme.LIGHT as SupportedTheme);
+            setTheme(SupportedTheme.LIGHT);
           }
         }}
         src={switchButton}
