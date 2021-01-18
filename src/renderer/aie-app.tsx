@@ -39,7 +39,7 @@ const BottomRightDisplay: FC = () => (
 // );
 const AieApp: FC = () => {
   const [locale, setLocale] = useLocale();
-  const [theme, setTheme] = useLocalStorage(getLSKey('AieApp', 'theme'), SupportedTheme.LIGHT);
+  const [theme = SupportedTheme.LIGHT, setTheme] = useLocalStorage(getLSKey('AieApp', 'theme'), SupportedTheme.LIGHT);
   const [pageStateIndex = 0, setPageStateIndex] = useLocalStorage(getLSKey('AieApp', 'pageStateIndex'), 0);
   const pageState = PAGE_STATES_IN_ORDER[pageStateIndex];
   function changePage(isNext: boolean): void {

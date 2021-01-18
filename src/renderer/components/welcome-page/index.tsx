@@ -4,6 +4,7 @@ import Row from 'react-bootstrap/Row';
 import { useTranslation } from 'react-i18next';
 
 import { Positional } from '../helper-components';
+import ImageButton from '../image-button';
 
 import startButton from './start-button-img.svg';
 import StyleButton from './style-button';
@@ -22,7 +23,7 @@ const WelcomePage: FC<{ onNext: MouseEventHandler<HTMLElement> }> = ({ onNext })
         <h2>{t('A fantastic list recording application')}</h2>
       </Row>
       <Row style={{ marginTop: '100px' }}>
-        <ImageButton onClick={onNext} src={startButton} width="10rem"></ImageButton>
+        <ImageButton onClick={onNext} src={startButton} width="10rem" />
       </Row>
       <Row>
         <span>{t('Link Start')}</span>
