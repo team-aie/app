@@ -8,7 +8,6 @@ import switchButton from './styleSwitchButton.svg';
 
 const StyleButton: FC = () => {
   // const { locale, setLocale } = useContext(LocaleContext);
-  // console.log('locale is: ' + locale);
   const { theme, setTheme } = useContext(ThemeContext);
   const { locale } = useContext(LocaleContext);
   // setLocale(locale as SupportedLocale);

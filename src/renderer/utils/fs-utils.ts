@@ -49,7 +49,6 @@ export const filename = path.basename;
 // New Methods
 export const checkFileExistence = async (filePath: string): Promise<'folder' | 'file' | false> => {
   if (!fs.existsSync(filePath)) {
-    console.log(filePath);
     return false;
   }
 

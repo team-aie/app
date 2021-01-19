@@ -76,8 +76,6 @@ const OpenProjectPage: FC<{ onNext: Consumer<void>; onBack: MouseEventHandler<HT
       `${t('Please select a folder to save voice samples.')}`,
     );
 
-    console.log('folder path is: ' + folderPath);
-
     if (!folderPath) {
       return;
     }
@@ -86,7 +84,6 @@ const OpenProjectPage: FC<{ onNext: Consumer<void>; onBack: MouseEventHandler<HT
       await ensureFolderExists(folderPath);
     }
 
-    console.log('isNew is: ' + isNew);
 
     const project = projects.find(({ rootPath }) => rootPath === folderPath) || {
       name: filename(folderPath),

@@ -68,13 +68,11 @@ module.exports = (config) => {
 
     let { entry = {} } = config;
     let cacheGroups = {};
-    console.log('start');
     localeDirs.forEach((localeDir) => {
       const themeDirs = fs
         .readdirSync(path.join(__dirname, 'src/locales', localeDir, 'themes'), { withFileTypes: true })
         .filter((file) => file.isDirectory())
         .map((file) => file.name);
-      console.log('this is ' + path.join(__dirname, 'src/locales', localeDir, 'themes'));
       themeDirs.forEach((theme) => {
         entry = {
           ...entry,
