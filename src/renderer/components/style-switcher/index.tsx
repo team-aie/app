@@ -1,10 +1,11 @@
 import React, { FC, useContext } from 'react';
 
-import { ThemeContext } from '../../contexts';
+import { LocaleContext, ThemeContext } from '../../contexts';
 
 const StyleSwitcher: FC = () => {
   const { theme } = useContext(ThemeContext);
-  const styleHref = `en-US/themes/${theme}.styles.css`;
+  const { locale } = useContext(LocaleContext);
+  const styleHref = `${locale}/themes/${theme}.styles.css`;
   //const styleHref = `${theme}.styles.css`;
   return (
     <div>

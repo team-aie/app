@@ -13,18 +13,14 @@ const StyleButton: FC = () => {
   const { locale } = useContext(LocaleContext);
   // setLocale(locale as SupportedLocale);
   const styleHref = `${locale}/themes/${theme}.styles.css`;
-  console.log('start!');
   //const styleHref = `${theme}.styles.css`;
   return (
     <div>
       <Image
         onClick={(): void => {
-          console.log('What is theme?');
           if (theme == 'light') {
-            console.log('It is light');
             setTheme(SupportedTheme.DARK);
           } else {
-            console.log('It is dark');
             setTheme(SupportedTheme.LIGHT);
           }
         }}
