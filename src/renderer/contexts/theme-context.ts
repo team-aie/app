@@ -9,9 +9,8 @@ interface ThemeContextType {
 }
 
 /**
- * Currently, we will use Locale in place of "language", because Locale will include "region" and each region speaks a language.
- * However, there are users who use one language for display, but their number formats are from anothe region.
- * We will ignore those use cases until later time.
+ * Currently, we will use Theme to support theme mode switching.
+ * It contains light and dark style and the initial theme is set as light
  */
 export const ThemeContext = React.createContext<ThemeContextType>({
   theme: SupportedTheme.LIGHT,
