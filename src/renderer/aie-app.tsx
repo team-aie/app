@@ -13,9 +13,9 @@ import { RecordingPage } from './components/recording-page';
 import { SettingsPage } from './components/settings-page';
 import StyleSwitcher from './components/style-switcher';
 import WelcomePage from './components/welcome-page';
-import { LocaleContext, RecordingProjectContext } from './contexts';
+import { LocaleContext, RecordingProjectContext, ThemeContext } from './contexts';
 import { PAGE_STATES_IN_ORDER } from './env-and-consts';
-import { RecordingItem, RecordingProject, RecordingSet, ScaleKey, SupportedOctave } from './types';
+import { RecordingItem, RecordingProject, RecordingSet, ScaleKey, SupportedOctave, SupportedTheme } from './types';
 import { getLSKey, join, lineByLineParser, readFile, useLocale } from './utils';
 
 const { length: numStates } = PAGE_STATES_IN_ORDER;
@@ -39,6 +39,7 @@ const BottomRightDisplay: FC = () => (
 // );
 const AieApp: FC = () => {
   const [locale, setLocale] = useLocale();
+  const [theme = SupportedTheme.LIGHT, setTheme] = useLocalStorage(getLSKey('AieApp', 'theme'), SupportedTheme.LIGHT);
   const [pageStateIndex = 0, setPageStateIndex] = useLocalStorage(getLSKey('AieApp', 'pageStateIndex'), 0);
   const pageState = PAGE_STATES_IN_ORDER[pageStateIndex];
   function changePage(isNext: boolean): void {
@@ -153,15 +154,17 @@ const AieApp: FC = () => {
 
   return (
     <LocaleContext.Provider value={{ locale, setLocale }}>
-      <RecordingProjectContext.Provider value={{ recordingProject, setRecordingProject }}>
-        <Fragment>
-          <Positional position={'top-right'}>
-            <StyleSwitcher />
-          </Positional>
-          {routePageToComponent()}
-          {pageStateIndex === 0 && <BottomRightDisplay />}
-        </Fragment>
-      </RecordingProjectContext.Provider>
+      <ThemeContext.Provider value={{ theme, setTheme }}>
+        <RecordingProjectContext.Provider value={{ recordingProject, setRecordingProject }}>
+          <Fragment>
+            <Positional position={'top-right'}>
+              <StyleSwitcher />
+            </Positional>
+            {routePageToComponent()}
+            {pageStateIndex === 0 && <BottomRightDisplay />}
+          </Fragment>
+        </RecordingProjectContext.Provider>
+      </ThemeContext.Provider>
     </LocaleContext.Provider>
   );
 };
