@@ -24,39 +24,6 @@ module.exports = (config) => {
     config.externals = [...config.externals, 'react', 'react-dom'];
   }
 
-  //     const themeDirs = fs
-  //       .readdirSync(path.join(__dirname, 'src/locales/en-US/themes'), { withFileTypes: true })
-  //       .filter((file) => file.isDirectory())
-  //       .map((file) => file.name);
-
-  //     let { entry = {} } = config;
-  //     let cacheGroups = {};
-  //     localeDirs.forEach((localeDir) => {
-  //       themeDirs.forEach((themeDir) => {
-  //         entry = {
-  //           ...entry,
-  //           [themeDir]: path.join(__dirname, 'src/locales', localeDir, 'themes', themeDir, 'index.scss'),
-  //         };
-  //         cacheGroups = {
-  //           ...cacheGroups,
-  //           [localeDir]: {
-  //             name: localeDir,
-  //             test: (m, c, entry = localeDir) => m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry,
-  //             chunks: 'all',
-  //             enforce: true,
-  //           },
-  //         };
-  //       });
-  //     });
-
-  //     config.entry = entry;
-  //     config.optimization = {
-  //       splitChunks: { cacheGroups },
-  //     };
-
-  //     const mcePlugin = config.plugins.find((plugin) => plugin.options && plugin.options.filename === 'styles.css');
-  //     mcePlugin.options.filename = '[name]/themes/dark.styles.css';
-
   {
     /**
      * For {@link https://webpack.js.org/plugins/mini-css-extract-plugin/#extracting-css-based-on-entry}.
@@ -105,8 +72,6 @@ module.exports = (config) => {
 
     const mcePlugin = config.plugins.find((plugin) => plugin.options && plugin.options.filename === 'styles.css');
     mcePlugin.options.filename = '[name].styles.css';
-
-    // const styleHref = `${locale}/themes/${theme}.styles.css`;
 
     /**
      * See {@link https://github.com/jantimon/html-webpack-plugin#options}.

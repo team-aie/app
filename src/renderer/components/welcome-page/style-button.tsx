@@ -7,17 +7,14 @@ import { SupportedTheme } from '../../types';
 import switchButton from './styleSwitchButton.svg';
 
 const StyleButton: FC = () => {
-  // const { locale, setLocale } = useContext(LocaleContext);
-  const { theme, setTheme } = useContext(ThemeContext);
   const { locale } = useContext(LocaleContext);
-  // setLocale(locale as SupportedLocale);
+  const { theme, setTheme } = useContext(ThemeContext);
   const styleHref = `${locale}/themes/${theme}.styles.css`;
-  //const styleHref = `${theme}.styles.css`;
   return (
     <div>
       <Image
         onClick={(): void => {
-          if (theme == 'light') {
+          if (theme === SupportedTheme.LIGHT) {
             setTheme(SupportedTheme.DARK);
           } else {
             setTheme(SupportedTheme.LIGHT);

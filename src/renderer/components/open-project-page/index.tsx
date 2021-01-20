@@ -84,7 +84,6 @@ const OpenProjectPage: FC<{ onNext: Consumer<void>; onBack: MouseEventHandler<HT
       await ensureFolderExists(folderPath);
     }
 
-
     const project = projects.find(({ rootPath }) => rootPath === folderPath) || {
       name: filename(folderPath),
       rootPath: folderPath,

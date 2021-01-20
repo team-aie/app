@@ -19,7 +19,7 @@ export const SUPPORTED_LOCALES: ReadonlySet<string> = new Set([
   SupportedLocale.JA_JP,
 ]);
 
-export const SUPPORTED_THEME: ReadonlySet<string> = new Set([SupportedTheme.DARK, SupportedTheme.LIGHT]);
+export const SUPPORTED_THEMES: ReadonlySet<string> = new Set([SupportedTheme.DARK, SupportedTheme.LIGHT]);
 
 export const SCALE_KEYS_IN_ORDER: ScaleKey[] = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 export const SUPPORTED_OCTAVES_IN_ORDER: SupportedOctave[] = [2, 3, 4, 5];
