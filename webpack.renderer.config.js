@@ -36,19 +36,33 @@ module.exports = (config) => {
     let { entry = {} } = config;
     let cacheGroups = {};
     localeDirs.forEach((localeDir) => {
-      entry = {
-        ...entry,
-        [localeDir]: path.join(__dirname, 'src/locales', localeDir, 'index.scss'),
-      };
-      cacheGroups = {
-        ...cacheGroups,
-        [localeDir]: {
-          name: localeDir,
-          test: (m, c, entry = localeDir) => m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry,
-          chunks: 'all',
-          enforce: true,
-        },
-      };
+      const themeDirs = fs
+        .readdirSync(path.join(__dirname, 'src/locales', localeDir, 'themes'), { withFileTypes: true })
+        .filter((file) => file.isDirectory())
+        .map((file) => file.name);
+      themeDirs.forEach((theme) => {
+        entry = {
+          ...entry,
+          [`${localeDir}/themes/${theme}`]: path.join(
+            __dirname,
+            'src/locales',
+            localeDir,
+            'themes',
+            theme,
+            'index.scss',
+          ),
+        };
+        cacheGroups = {
+          ...cacheGroups,
+          [`${localeDir}/themes/${theme}`]: {
+            name: `${localeDir}/themes/${theme}`,
+            test: (m, c, entry = `${localeDir}/themes/${theme}`) =>
+              m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry,
+            chunks: 'all',
+            enforce: true,
+          },
+        };
+      });
     });
 
     config.entry = entry;
