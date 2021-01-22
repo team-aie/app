@@ -32,7 +32,7 @@ describe('configureRecordingSetPage', () => {
     expect(imageButtons).toHaveLength(4);
     await new Promise((r) => setTimeout(r, 2000));
     imageButtons = screen.getAllByRole('button');
-    expect(imageButtons).toHaveLength(5);
+    expect(imageButtons).toHaveLength(4);
     console.error = originalError;
   });
 
