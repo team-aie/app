@@ -27,11 +27,13 @@ const SetRecordingListConfiguration: FC<SetRecordingListConfigurationProps> = ({
 }) => {
   const { t } = useTranslation();
   useEffect(() => {
+    let cleanupFunc;
     if (chosenBuiltInList != '') {
-      getFilePath(chosenBuiltInList, true);
+      cleanupFunc = getFilePath(chosenBuiltInList, true);
     } else {
-      getFilePath(chosenCustomListPath, false);
+      cleanupFunc = getFilePath(chosenCustomListPath, false);
     }
+    return cleanupFunc;
   }, [chosenBuiltInList, chosenCustomListPath, getFilePath]);
   return (
     <Fragment>
@@ -41,6 +43,7 @@ const SetRecordingListConfiguration: FC<SetRecordingListConfigurationProps> = ({
             className={'w-100'}
             style={{ paddingRight: '0.75rem' }}
             value={chosenBuiltInList}
+            testId={'test'}
             onChange={(e): void => {
               setChosenBuiltInList(e.target.value);
             }}>

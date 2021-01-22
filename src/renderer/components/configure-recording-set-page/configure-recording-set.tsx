@@ -282,16 +282,14 @@ export const ConfigureRecordingSet: FC<{
       </CSSTransition>
       <CSSTransition {...transitionProps}>
         <div>
-          <Positional position="bottom-center">
-            {metaDataIndex != -1 && (
-              <ImageButton
-                src={showDetailButton}
-                width="7rem"
-                onClick={(): void => {
-                  setRecordingSetState(prevState == 'home' || prevState == 'external' ? 'metadata' : prevState);
-                }}
-              />
-            )}
+          <Positional position="bottom-center" style={{ visibility: metaDataIndex == -1 ? 'hidden' : 'visible' }}>
+            <ImageButton
+              src={showDetailButton}
+              width="7rem"
+              onClick={(): void => {
+                setRecordingSetState(prevState == 'home' || prevState == 'external' ? 'metadata' : prevState);
+              }}
+            />
           </Positional>
           <NextButton
             text={t('Start')}
