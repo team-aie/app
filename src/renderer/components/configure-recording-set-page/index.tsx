@@ -53,20 +53,20 @@ const ConfigureRecordingSetPage: FC<{
       let filePath = 'external\\';
 
       const stateToPathDeltaEnglish = {
-        'list-preview': 'delta_eng_ver5\\mkototemp.ini',
-        'oto-ini': 'delta_eng_ver5\\デルタ式engver5_reclist.txt',
+        'oto-ini': 'delta_eng_ver5\\mkototemp.ini',
+        'list-preview': 'delta_eng_ver5\\デルタ式engver5_reclist.txt',
         dvcfg: 'To be added later',
       };
 
       const stateToPathChinese = {
-        'list-preview': 'z.cvvc_normal\\oto.ini',
-        'oto-ini': 'z.cvvc_normal\\Reclist.txt',
+        'oto-ini': 'z.cvvc_normal\\oto.ini',
+        'list-preview': 'z.cvvc_normal\\Reclist.txt',
         dvcfg: 'To be added later',
       };
 
       const stateToCustListEnding = {
-        'list-preview': 'oto.ini',
-        'oto-ini': 'Reclist.txt',
+        'oto-ini': 'oto.ini',
+        'list-preview': 'Reclist.txt',
         dvcfg: 'voice.dvcfg',
       };
       if (isBuiltIn) {
@@ -84,6 +84,9 @@ const ConfigureRecordingSetPage: FC<{
 
       return filePath;
     };
+
+    let isSubscribed = true;
+
     const otoFilePath = getFilePath('oto-ini', listName, isBuiltIn);
     const listFilePath = getFilePath('list-preview', listName, isBuiltIn);
     const dvcfgFilePath = getFilePath('dvcfg', listName, isBuiltIn);
@@ -92,33 +95,51 @@ const ConfigureRecordingSetPage: FC<{
     const listPromise = checkFileExistence(listFilePath);
     const dvcfgPromise = checkFileExistence(dvcfgFilePath);
 
-    Promise.all([otoPromise, listPromise, dvcfgPromise]).then((responses) => {
-      const states: MetadataState[] = [];
-      if (responses[0] == 'file') {
-        states.push('oto-ini');
-        setFilePathOto(otoFilePath);
-      } else {
-        setFilePathOto('');
-      }
-      if (responses[1] == 'file') {
-        states.push('list-preview');
-        setFilePathRec(listFilePath);
-      } else {
-        setFilePathRec('');
-      }
-      if (responses[2] == 'file') {
-        states.push('dvcfg');
-        setFilePathDvcfg(dvcfgFilePath);
-      } else {
-        setFilePathDvcfg('');
-      }
-      if (states.length == 0) {
-        setMetadataStateIndex(-1);
-      } else {
-        setDropdownStateArray(states);
-        setMetadataStateIndex(0);
-      }
-    });
+    Promise.all([
+      otoPromise.catch((error) => {
+        return error;
+      }),
+      listPromise.catch((error) => {
+        return error;
+      }),
+      dvcfgPromise.catch((error) => {
+        return error;
+      }),
+    ])
+      .then((responses) => {
+        const states: MetadataState[] = [];
+        if (isSubscribed) {
+          if (responses[0] == 'file') {
+            states.push('oto-ini');
+            setFilePathOto(otoFilePath);
+          } else {
+            setFilePathOto('');
+          }
+          if (responses[1] == 'file') {
+            states.push('list-preview');
+            setFilePathRec(listFilePath);
+          } else {
+            setFilePathRec('');
+          }
+          if (responses[2] == 'file') {
+            states.push('dvcfg');
+            setFilePathDvcfg(dvcfgFilePath);
+          } else {
+            setFilePathDvcfg('');
+          }
+          if (states.length == 0) {
+            setMetadataStateIndex(-1);
+          } else {
+            setDropdownStateArray(states);
+            setMetadataStateIndex(0);
+          }
+        }
+      })
+      .catch((error) => {
+        log.error(error);
+        throw error;
+      });
+    return () => (isSubscribed = false);
   };
 
   switch (recordingSetState) {
