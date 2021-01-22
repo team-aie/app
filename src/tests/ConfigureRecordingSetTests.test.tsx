@@ -12,6 +12,8 @@ import React from 'react';
 import ConfigureRecordingSetPage from '../renderer/components/configure-recording-set-page/index';
 import { RecordingSet } from '../renderer/types';
 
+const flushPromises = () => new Promise(setImmediate);
+
 describe('configureRecordingSetPage', () => {
   it('renders without showDetails button', async () => {
     const originalError = console.error;
@@ -30,7 +32,7 @@ describe('configureRecordingSetPage', () => {
     );
     let imageButtons = screen.getAllByRole('button');
     expect(imageButtons).toHaveLength(4);
-    await new Promise((r) => setTimeout(r, 2000));
+    await flushPromises();
     imageButtons = screen.getAllByRole('button');
     expect(imageButtons).toHaveLength(4);
     console.error = originalError;
@@ -57,7 +59,8 @@ describe('configureRecordingSetPage', () => {
     await waitFor(() => {
       fireEvent.change(recListDropdown, { target: { value: 'デルタ式英語リストver5 (Delta English Ver. 5)' } });
     });
-    await new Promise((r) => setTimeout(r, 4000));
+    await flushPromises();
+
     imageButtons = screen.getAllByRole('button');
     expect(imageButtons).toHaveLength(5);
     console.error = originalError;
