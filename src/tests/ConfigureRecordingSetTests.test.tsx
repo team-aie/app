@@ -53,12 +53,11 @@ describe('configureRecordingSetPage', () => {
     );
     let imageButtons = screen.getAllByRole('button');
     expect(imageButtons).toHaveLength(4);
-    // console.log(imageButtons);
     const recListDropdown = screen.getAllByTestId('test')[0];
     await waitFor(() => {
       fireEvent.change(recListDropdown, { target: { value: 'デルタ式英語リストver5 (Delta English Ver. 5)' } });
     });
-    await new Promise((r) => setTimeout(r, 2000));
+    await new Promise((r) => setTimeout(r, 4000));
     imageButtons = screen.getAllByRole('button');
     expect(imageButtons).toHaveLength(5);
     console.error = originalError;
