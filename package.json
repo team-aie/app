@@ -69,6 +69,7 @@
   },
   "devDependencies": {
     "@semantic-release/git": "^9.0.0",
+    "@testing-library/react": "^11.2.3",
     "@types/audiobuffer-to-wav": "^1.0.0",
     "@types/dom-mediacapture-record": "^1.0.7",
     "@types/jest": "^26.0.4",
