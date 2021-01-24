@@ -1,3 +1,4 @@
+import log from 'electron-log';
 import React, { FC, useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
@@ -39,23 +40,42 @@ export const PreviewPage: FC<PreviewPageProps> = ({
     classNames: className,
   };
   useEffect(() => {
+    let isSubscribed = true;
     if (!transition) {
       setTransition(true);
     }
+    (async (): Promise<'folder' | 'file' | false> => {
+      return checkFileExistence(fileName);
+    })()
+      .then((result) =>
+        (async (): Promise<string> => {
+          if (result != 'file') {
+            return pageName + ' file does not exist';
+          }
+          if (isSubscribed) {
+            return await readFile(fileName);
+          } else {
+            return 'page closed';
+          }
+        })()
+          .then((fileText) => {
+            if (isSubscribed) {
+              setPageText(fileText);
+            }
+          })
+          .catch((error) => {
+            log.error(error);
+            throw error;
+          }),
+      )
+      .catch((error) => {
+        log.error(error);
+        throw error;
+      });
+    return () => {
+      isSubscribed = false;
+    };
   });
-
-  (async (): Promise<'folder' | 'file' | false> => {
-    return checkFileExistence(fileName);
-  })().then((result) =>
-    (async (): Promise<string> => {
-      if (result != 'file') {
-        return pageName + ' file does not exist';
-      }
-      return await readFile(fileName);
-    })().then((fileText) => {
-      setPageText(fileText);
-    }),
-  );
 
   return (
     <div>

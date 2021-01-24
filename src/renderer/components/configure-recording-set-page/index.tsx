@@ -3,7 +3,7 @@ import React, { FC, MouseEventHandler, useState } from 'react';
 import { useLocalStorage, usePrevious } from 'react-use';
 
 import { Consumer, RecordingSet } from '../../types';
-import { checkFileExistence, getLSKey } from '../../utils';
+import { checkFileExistence, getLSKey, join } from '../../utils';
 
 import { ConfigureRecordingSet } from './configure-recording-set';
 import './show-details.scss';
@@ -50,36 +50,36 @@ const ConfigureRecordingSetPage: FC<{
 
   const updatePaths = (listName: string, isBuiltIn: boolean) => {
     const getFilePath = (metaDataState: MetadataState, listName: string, isBuiltIn: boolean) => {
-      let filePath = 'external\\';
+      let filePath = '';
 
       const stateToPathDeltaEnglish = {
-        'oto-ini': 'delta_eng_ver5\\mkototemp.ini',
-        'list-preview': 'delta_eng_ver5\\デルタ式engver5_reclist.txt',
-        dvcfg: 'To be added later',
+        'oto-ini': join('external', 'delta_eng_ver5', 'mkototemp.ini'),
+        'list-preview': join('external', 'delta_eng_ver5', 'デルタ式engver5_reclist.txt'),
+        dvcfg: join('external', 'To be added later'),
       };
 
       const stateToPathChinese = {
-        'oto-ini': 'z.cvvc_normal\\oto.ini',
-        'list-preview': 'z.cvvc_normal\\Reclist.txt',
-        dvcfg: 'To be added later',
+        'oto-ini': join('external', 'z.cvvc_normal', 'oto.ini'),
+        'list-preview': join('external', 'z.cvvc_normal', 'Reclist.txt'),
+        dvcfg: join('external', 'To be added later'),
       };
 
       const stateToCustListEnding = {
-        'oto-ini': 'oto.ini',
-        'list-preview': 'Reclist.txt',
-        dvcfg: 'voice.dvcfg',
+        'oto-ini': join('external', 'oto.ini'),
+        'list-preview': join('external', 'Reclist.txt'),
+        dvcfg: join('external', 'voice.dvcfg'),
       };
       if (isBuiltIn) {
         switch (listName) {
           case 'デルタ式英語リストver5 (Delta English Ver. 5)':
-            filePath = filePath + stateToPathDeltaEnglish[metaDataState];
+            filePath = join(filePath, stateToPathDeltaEnglish[metaDataState]);
             break;
           case 'Z式CVVC-Normal (Z Chinese CVVC - Normal)':
-            filePath = filePath + stateToPathChinese[metaDataState];
+            filePath = join(filePath, stateToPathChinese[metaDataState]);
             break;
         }
       } else {
-        filePath = listName + stateToCustListEnding[metaDataState];
+        filePath = join(listName, stateToCustListEnding[metaDataState]);
       }
 
       return filePath;
@@ -91,8 +91,8 @@ const ConfigureRecordingSetPage: FC<{
     const listFilePath = getFilePath('list-preview', listName, isBuiltIn);
     const dvcfgFilePath = getFilePath('dvcfg', listName, isBuiltIn);
 
-    const otoPromise = checkFileExistence(otoFilePath);
     const listPromise = checkFileExistence(listFilePath);
+    const otoPromise = checkFileExistence(otoFilePath);
     const dvcfgPromise = checkFileExistence(dvcfgFilePath);
 
     Promise.all([
@@ -110,16 +110,16 @@ const ConfigureRecordingSetPage: FC<{
         const states: MetadataState[] = [];
         if (isSubscribed) {
           if (responses[0] == 'file') {
-            states.push('oto-ini');
-            setFilePathOto(otoFilePath);
-          } else {
-            setFilePathOto('');
-          }
-          if (responses[1] == 'file') {
             states.push('list-preview');
             setFilePathRec(listFilePath);
           } else {
             setFilePathRec('');
+          }
+          if (responses[1] == 'file') {
+            states.push('oto-ini');
+            setFilePathOto(otoFilePath);
+          } else {
+            setFilePathOto('');
           }
           if (responses[2] == 'file') {
             states.push('dvcfg');
@@ -139,7 +139,9 @@ const ConfigureRecordingSetPage: FC<{
         log.error(error);
         throw error;
       });
-    return () => (isSubscribed = false);
+    return () => {
+      isSubscribed = false;
+    };
   };
 
   switch (recordingSetState) {
