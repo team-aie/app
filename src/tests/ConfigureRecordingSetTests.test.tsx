@@ -65,5 +65,4 @@ describe('configureRecordingSetPage', () => {
     expect(imageButtons).toHaveLength(5);
     console.error = originalError;
   });
-  // });
 });
