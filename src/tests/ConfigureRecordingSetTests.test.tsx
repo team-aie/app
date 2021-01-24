@@ -65,5 +65,40 @@ describe('configureRecordingSetPage', () => {
     expect(imageButtons).toHaveLength(5);
     console.error = originalError;
   });
-  // });
+
+  it('renders oto.ini page after showDetails button is clicked', async () => {
+    const originalError = console.error;
+    console.error = (...args: string[]) => {
+      if (/Warning.*not wrapped in act/.test(args[0])) {
+        return;
+      }
+      originalError.call(console, ...args);
+    };
+    render(
+      <ConfigureRecordingSetPage
+        onNext={(_event: React.MouseEvent<HTMLElement, MouseEvent>) => {}}
+        onBack={(_event: React.MouseEvent<HTMLElement, MouseEvent>) => {}}
+        onSetSelected={(_consumer: RecordingSet) => {}}
+      />,
+    );
+    await flushPromises();
+
+    let imageButtons = screen.getAllByRole('button');
+    const recListDropdown = screen.getAllByTestId('test')[0];
+    await waitFor(() => {
+      fireEvent.change(recListDropdown, { target: { value: 'デルタ式英語リストver5 (Delta English Ver. 5)' } });
+    });
+    await flushPromises();
+
+    imageButtons = screen.getAllByRole('button');
+    expect(imageButtons).toHaveLength(5);
+    const showDetailsButton = imageButtons[3];
+    fireEvent.click(showDetailsButton);
+    await flushPromises();
+
+    const header = screen.getAllByText('Oto.ini');
+    expect(header).toBeDefined();
+
+    console.error = originalError;
+  });
 });
