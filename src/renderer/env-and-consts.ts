@@ -1,4 +1,5 @@
 import { PageState, ScaleKey, SupportedLocale, SupportedOctave, SupportedTheme } from './types';
+import { join } from './utils';
 
 export const isDevelopment = process.env.NODE_ENV !== 'production';
 
