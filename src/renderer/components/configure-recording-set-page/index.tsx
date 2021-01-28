@@ -1,5 +1,5 @@
 import log from 'electron-log';
-import React, { FC, MouseEventHandler, useState } from 'react';
+import React, { FC, MouseEventHandler } from 'react';
 import { useLocalStorage, usePrevious } from 'react-use';
 
 import { Consumer, RecordingSet } from '../../types';
@@ -30,19 +30,11 @@ const ConfigureRecordingSetPage: FC<{
     getLSKey('ConfigureRecordingSetPage', 'recordingSetStateForConfig'),
     'external' as RecordingPageState,
   );
-  // const [recordingSetState, setRecordingSetState] = useState<RecordingPageState>('external');
   const [metadataStateIndex = -1, setMetadataStateIndex] = useLocalStorage(
     getLSKey('ConfigureRecordingSetPage', 'metadataStaeIndex'),
     -1,
   );
-  // const [metadataStateIndex, setMetadataStateIndex] = useState<number>(-1);
   const prevState = usePrevious(recordingSetState) ?? 'home';
-  // const [transition, setTransition] = useState<boolean>(true);
-  // const [recFilePath, setRecFilePath] = useState<string>('');
-  // const [otoFilePath, setOtoFilePath] = useState<string>('');
-  // const [dvcfgFilePath, setDvcfgFilePath] = useState<string>('');
-  // const [dropDownStates, setDropdownStateArray] = useState<MetadataState[]>([]);
-
   const [transition = true, setTransition] = useLocalStorage(getLSKey('ConfigureRecordingSetPage', 'transition'), true);
   const [recFilePath = '', setRecFilePath] = useLocalStorage(getLSKey('ConfigureRecordingSetPage', 'recFilePath'), '');
   const [otoFilePath = '', setOtoFilePath] = useLocalStorage(getLSKey('ConfigureRecordingSetPage', 'otoFilePath'), '');
@@ -163,24 +155,10 @@ const ConfigureRecordingSetPage: FC<{
       isSubscribed = false;
     };
   };
+  const currentState = dropDownStates[metadataStateIndex];
+
   switch (recordingSetState) {
     case 'home':
-      return (
-        <ConfigureRecordingSet
-          onNext={onNext}
-          onBack={onBack}
-          onSetSelected={onSetSelected}
-          setRecordingSetState={setRecordingSetState}
-          prevState={prevState}
-          currState={recordingSetState}
-          chosenBuiltInList={chosenBuiltInList}
-          rawSetChosenBuiltInList={rawSetChosenBuiltInList}
-          chosenCustomListPath={chosenCustomListPath}
-          rawSetChosenCustomListPath={rawSetChosenCustomListPath}
-          metaDataIndex={metadataStateIndex}
-          getFilePath={updatePaths}
-        />
-      );
     case 'external':
       return (
         <ConfigureRecordingSet
@@ -199,46 +177,46 @@ const ConfigureRecordingSetPage: FC<{
         />
       );
     case 'metadata':
-      if (dropDownStates[metadataStateIndex] == 'list-preview') {
-        return (
-          <PreviewPage
-            setRecordingSetState={setRecordingSetState}
-            pageName="List Preview"
-            transition={transition}
-            setTransition={setTransition}
-            fileName={recFilePath}
-            setDropDownState={goToNextDropdownState}
-          />
-        );
-      } else if (dropDownStates[metadataStateIndex] == 'oto-ini') {
-        return (
-          <PreviewPage
-            setRecordingSetState={setRecordingSetState}
-            pageName="Oto.ini"
-            transition={transition}
-            setTransition={setTransition}
-            fileName={otoFilePath}
-            setDropDownState={goToNextDropdownState}
-          />
-        );
-      } else if (dropDownStates[metadataStateIndex] == 'dvcfg') {
-        return (
-          <PreviewPage
-            setRecordingSetState={setRecordingSetState}
-            pageName="Dvcfg"
-            transition={transition}
-            setTransition={setTransition}
-            fileName={dvcfgFilePath}
-            setDropDownState={goToNextDropdownState}
-          />
-        );
-      } else {
-        const error = new Error(
-          `Unknown metadata pageState: ${dropDownStates[metadataStateIndex]} with index: ${metadataStateIndex}`,
-        );
-        log.error(error);
-        throw error;
+      switch (currentState) {
+        case 'list-preview':
+          return (
+            <PreviewPage
+              setRecordingSetState={setRecordingSetState}
+              pageName="List Preview"
+              transition={transition}
+              setTransition={setTransition}
+              fileName={recFilePath}
+              setDropDownState={goToNextDropdownState}
+            />
+          );
+        case 'oto-ini':
+          return (
+            <PreviewPage
+              setRecordingSetState={setRecordingSetState}
+              pageName="Oto.ini"
+              transition={transition}
+              setTransition={setTransition}
+              fileName={otoFilePath}
+              setDropDownState={goToNextDropdownState}
+            />
+          );
+        case 'dvcfg':
+          return (
+            <PreviewPage
+              setRecordingSetState={setRecordingSetState}
+              pageName="Dvcfg"
+              transition={transition}
+              setTransition={setTransition}
+              fileName={dvcfgFilePath}
+              setDropDownState={goToNextDropdownState}
+            />
+          );
+        default:
+          log.error(new Error(`Unknown pageState: ${recordingSetState}`));
+          throw new Error(`Unknown pageState: ${recordingSetState}`);
       }
+      break;
+
     default: {
       const error = new Error(`Unknown pageState: ${recordingSetState}`);
       log.error(error);
