@@ -26,35 +26,35 @@ const ConfigureRecordingSetPage: FC<{
   onBack: MouseEventHandler<HTMLElement>;
   onSetSelected: Consumer<RecordingSet>;
 }> = ({ onNext, onBack, onSetSelected }) => {
-  // const [recordingSetState, setRecordingSetState] = useLocalStorage(
-  //   getLSKey('ConfigureRecordingSetPage', 'recordingSetState'),
-  //   'external' as RecordingPageState,
-  // );
-  const [recordingSetState, setRecordingSetState] = useState<RecordingPageState>('external');
-  // const [metadataStateIndex = -1, setMetadataStateIndex] = useLocalStorage(
-  //   getLSKey('ConfigureRecordingSetPage', 'metadataStaeIndex'),
-  //   -1,
-  // );
-  const [metadataStateIndex, setMetadataStateIndex] = useState<number>(-1);
+  const [recordingSetState = 'external' as RecordingPageState, setRecordingSetState] = useLocalStorage(
+    getLSKey('ConfigureRecordingSetPage', 'recordingSetStateForConfig'),
+    'external' as RecordingPageState,
+  );
+  // const [recordingSetState, setRecordingSetState] = useState<RecordingPageState>('external');
+  const [metadataStateIndex = -1, setMetadataStateIndex] = useLocalStorage(
+    getLSKey('ConfigureRecordingSetPage', 'metadataStaeIndex'),
+    -1,
+  );
+  // const [metadataStateIndex, setMetadataStateIndex] = useState<number>(-1);
   const prevState = usePrevious(recordingSetState) ?? 'home';
-  const [transition, setTransition] = useState<boolean>(true);
-  const [recFilePath, setRecFilePath] = useState<string>('');
-  const [otoFilePath, setOtoFilePath] = useState<string>('');
-  const [dvcfgFilePath, setDvcfgFilePath] = useState<string>('');
-  const [dropDownStates, setDropdownStateArray] = useState<MetadataState[]>([]);
+  // const [transition, setTransition] = useState<boolean>(true);
+  // const [recFilePath, setRecFilePath] = useState<string>('');
+  // const [otoFilePath, setOtoFilePath] = useState<string>('');
+  // const [dvcfgFilePath, setDvcfgFilePath] = useState<string>('');
+  // const [dropDownStates, setDropdownStateArray] = useState<MetadataState[]>([]);
 
-  // const [transition = true, setTransition] = useLocalStorage(getLSKey('ConfigureRecordingSetPage', 'transition'), true);
-  // const [recFilePath = '', setRecFilePath] = useLocalStorage(getLSKey('ConfigureRecordingSetPage', 'recFilePath'), '');
-  // const [otoFilePath = '', setOtoFilePath] = useLocalStorage(getLSKey('ConfigureRecordingSetPage', 'otoFilePath'), '');
-  // const [dvcfgFilePath = '', setDvcfgFilePath] = useLocalStorage(
-  //   getLSKey('ConfigureRecordingSetPage', 'dvcfgFilePath'),
-  //   '',
-  // );
+  const [transition = true, setTransition] = useLocalStorage(getLSKey('ConfigureRecordingSetPage', 'transition'), true);
+  const [recFilePath = '', setRecFilePath] = useLocalStorage(getLSKey('ConfigureRecordingSetPage', 'recFilePath'), '');
+  const [otoFilePath = '', setOtoFilePath] = useLocalStorage(getLSKey('ConfigureRecordingSetPage', 'otoFilePath'), '');
+  const [dvcfgFilePath = '', setDvcfgFilePath] = useLocalStorage(
+    getLSKey('ConfigureRecordingSetPage', 'dvcfgFilePath'),
+    '',
+  );
 
-  // const [dropDownStates = new Array<MetadataState>(), setDropdownStateArray] = useLocalStorage(
-  //   getLSKey('ConfigureRecordingSetPage', 'dropDownStates'),
-  //   new Array<MetadataState>(),
-  // );
+  const [dropDownStates = new Array<MetadataState>(), setDropdownStateArray] = useLocalStorage(
+    getLSKey('ConfigureRecordingSetPage', 'dropDownStates'),
+    new Array<MetadataState>(),
+  );
 
   const goToNextDropdownState = () => {
     setMetadataStateIndex((metadataStateIndex + 1) % dropDownStates.length);
@@ -163,9 +163,24 @@ const ConfigureRecordingSetPage: FC<{
       isSubscribed = false;
     };
   };
-
   switch (recordingSetState) {
     case 'home':
+      return (
+        <ConfigureRecordingSet
+          onNext={onNext}
+          onBack={onBack}
+          onSetSelected={onSetSelected}
+          setRecordingSetState={setRecordingSetState}
+          prevState={prevState}
+          currState={recordingSetState}
+          chosenBuiltInList={chosenBuiltInList}
+          rawSetChosenBuiltInList={rawSetChosenBuiltInList}
+          chosenCustomListPath={chosenCustomListPath}
+          rawSetChosenCustomListPath={rawSetChosenCustomListPath}
+          metaDataIndex={metadataStateIndex}
+          getFilePath={updatePaths}
+        />
+      );
     case 'external':
       return (
         <ConfigureRecordingSet
