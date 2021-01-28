@@ -13,13 +13,13 @@ import switchPageButton from './switch-preview.svg';
 
 import { RecordingPageState } from '.';
 
-/*
+/**
 setRecordingSetState: Sets the local pagestate (controls which subpage is displayed)
 transition: boolean to determin whether the animated page in transition has occured
 setTransition: sets transition
 fileName: the name of the metadata file to populate the page with data from
 setDropDownState: sets the built in reclist option
-*/
+**/
 
 interface PreviewPageProps {
   setRecordingSetState: Consumer<RecordingPageState>;

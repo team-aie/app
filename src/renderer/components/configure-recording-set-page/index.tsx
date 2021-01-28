@@ -10,6 +10,24 @@ import './show-details.scss';
 import './index.scss';
 import { PreviewPage } from './preview-page';
 
+const DELTA_ENGLISH_STATE_FILEPATH_MAP = {
+  'oto-ini': join('external', 'delta_eng_ver5', 'mkototemp.ini'),
+  'list-preview': join('external', 'delta_eng_ver5', 'デルタ式engver5_reclist.txt'),
+  dvcfg: join('external', 'To be added later'),
+};
+
+const CVVC_NORMAL_STATE_FILEPATH_MAP = {
+  'oto-ini': join('external', 'z.cvvc_normal', 'oto.ini'),
+  'list-preview': join('external', 'z.cvvc_normal', 'Reclist.txt'),
+  dvcfg: join('external', 'To be added later'),
+};
+
+const CUST_LIST_STATE_FILEPATH_MAP = {
+  'oto-ini': join('external', 'oto.ini'),
+  'list-preview': join('external', 'Reclist.txt'),
+  dvcfg: join('external', 'voice.dvcfg'),
+};
+
 /*
  Represents the page states controlled by configure-recording-set.
  'external' represents pages external from this system
@@ -60,97 +78,57 @@ const ConfigureRecordingSetPage: FC<{
     '',
   );
 
-  const updatePaths = (listName: string, isBuiltIn: boolean) => {
-    const getFilePath = (metaDataState: MetadataState, listName: string, isBuiltIn: boolean) => {
+  const updatePaths = async (listName: string, isBuiltIn: boolean) => {
+    const states: MetadataState[] = [];
+    let isSubscribed = true;
+
+    const getFilePromise = async (
+      metaDataState: MetadataState,
+      listName: string,
+      isBuiltIn: boolean,
+      setFilePath: Consumer<string>,
+    ) => {
       let filePath = '';
-
-      const stateToPathDeltaEnglish = {
-        'oto-ini': join('external', 'delta_eng_ver5', 'mkototemp.ini'),
-        'list-preview': join('external', 'delta_eng_ver5', 'デルタ式engver5_reclist.txt'),
-        dvcfg: join('external', 'To be added later'),
-      };
-
-      const stateToPathChinese = {
-        'oto-ini': join('external', 'z.cvvc_normal', 'oto.ini'),
-        'list-preview': join('external', 'z.cvvc_normal', 'Reclist.txt'),
-        dvcfg: join('external', 'To be added later'),
-      };
-
-      const stateToCustListEnding = {
-        'oto-ini': join('external', 'oto.ini'),
-        'list-preview': join('external', 'Reclist.txt'),
-        dvcfg: join('external', 'voice.dvcfg'),
-      };
       if (isBuiltIn) {
         switch (listName) {
           case 'デルタ式英語リストver5 (Delta English Ver. 5)':
-            filePath = join(filePath, stateToPathDeltaEnglish[metaDataState]);
+            filePath = join(filePath, DELTA_ENGLISH_STATE_FILEPATH_MAP[metaDataState]);
             break;
           case 'Z式CVVC-Normal (Z Chinese CVVC - Normal)':
-            filePath = join(filePath, stateToPathChinese[metaDataState]);
+            filePath = join(filePath, CVVC_NORMAL_STATE_FILEPATH_MAP[metaDataState]);
             break;
         }
       } else {
-        filePath = join(listName, stateToCustListEnding[metaDataState]);
+        filePath = join(listName, CUST_LIST_STATE_FILEPATH_MAP[metaDataState]);
       }
 
-      return filePath;
-    };
-
-    let isSubscribed = true;
-
-    const otoFilePath = getFilePath('oto-ini', listName, isBuiltIn);
-    const listFilePath = getFilePath('list-preview', listName, isBuiltIn);
-    const dvcfgFilePath = getFilePath('dvcfg', listName, isBuiltIn);
-
-    const listPromise = checkFileExistence(listFilePath);
-    const otoPromise = checkFileExistence(otoFilePath);
-    const dvcfgPromise = checkFileExistence(dvcfgFilePath);
-
-    Promise.all([
-      otoPromise.catch((error) => {
-        return error;
-      }),
-      listPromise.catch((error) => {
-        return error;
-      }),
-      dvcfgPromise.catch((error) => {
-        return error;
-      }),
-    ])
-      .then((responses) => {
-        const states: MetadataState[] = [];
-        if (isSubscribed) {
-          if (responses[0] == 'file') {
-            states.push('list-preview');
-            setRecFilePath(listFilePath);
-          } else {
-            setRecFilePath('');
-          }
-          if (responses[1] == 'file') {
-            states.push('oto-ini');
-            setOtoFilePath(otoFilePath);
-          } else {
-            setOtoFilePath('');
-          }
-          if (responses[2] == 'file') {
-            states.push('dvcfg');
-            setDvcfgFilePath(dvcfgFilePath);
-          } else {
-            setDvcfgFilePath('');
-          }
-          if (states.length == 0) {
-            setMetadataStateIndex(-1);
-          } else {
-            setDropdownStateArray(states);
-            setMetadataStateIndex(0);
-          }
+      const response = checkFileExistence(filePath);
+      const fileExistenceAnswer = await response;
+      if (isSubscribed) {
+        if (fileExistenceAnswer == 'file') {
+          states.push(metaDataState);
+          setFilePath(filePath);
+        } else {
+          setFilePath('');
         }
-      })
-      .catch((error) => {
-        log.error(error);
-        throw error;
-      });
+      }
+    };
+    await Promise.all([
+      getFilePromise('oto-ini', listName, isBuiltIn, setOtoFilePath),
+      getFilePromise('list-preview', listName, isBuiltIn, setRecFilePath),
+      getFilePromise('dvcfg', listName, isBuiltIn, setDvcfgFilePath),
+    ]).catch((error) => {
+      log.error(error);
+      throw error;
+    });
+
+    if (states.length == 0) {
+      setMetadataStateIndex(-1);
+    } else {
+      setDropdownStateArray(states);
+      setMetadataStateIndex(0);
+    }
+
     return () => {
       isSubscribed = false;
     };
@@ -212,8 +190,8 @@ const ConfigureRecordingSetPage: FC<{
             />
           );
         default:
-          log.error(new Error(`Unknown pageState: ${recordingSetState}`));
-          throw new Error(`Unknown pageState: ${recordingSetState}`);
+          log.error(new Error(`Unknown metadata pageState: ${currentState}`));
+          throw new Error(`Unknown metadata pageState: ${currentState} from ${dropDownStates}`);
       }
       break;
 
