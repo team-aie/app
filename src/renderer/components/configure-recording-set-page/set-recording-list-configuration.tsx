@@ -26,15 +26,19 @@ const SetRecordingListConfiguration: FC<SetRecordingListConfigurationProps> = ({
   getFilePath,
 }) => {
   const { t } = useTranslation();
-  useEffect(() => {
-    let cleanupFunc;
-    if (chosenBuiltInList != '') {
-      cleanupFunc = getFilePath(chosenBuiltInList, true);
-    } else {
-      cleanupFunc = getFilePath(chosenCustomListPath, false);
-    }
-    return cleanupFunc;
-  }, [chosenBuiltInList, chosenCustomListPath, getFilePath]);
+  const useUpdateCurrentFilePath = () => {
+    useEffect(() => {
+      let cleanupFunc;
+      if (chosenBuiltInList != '') {
+        cleanupFunc = getFilePath(chosenBuiltInList, true);
+      } else {
+        cleanupFunc = getFilePath(chosenCustomListPath, false);
+      }
+      return cleanupFunc;
+    }, [chosenBuiltInList, chosenCustomListPath, getFilePath]);
+  };
+  useUpdateCurrentFilePath();
+
   return (
     <Fragment>
       <Col xs={'auto'} sm={7} md={7} lg={7} xl={7}>
@@ -43,7 +47,7 @@ const SetRecordingListConfiguration: FC<SetRecordingListConfigurationProps> = ({
             className={'w-100'}
             style={{ paddingRight: '0.75rem' }}
             value={chosenBuiltInList}
-            testId={'test'}
+            testId={'selectReclist'}
             onChange={(e): void => {
               setChosenBuiltInList(e.target.value);
             }}>

@@ -26,17 +26,37 @@ const ConfigureRecordingSetPage: FC<{
   onBack: MouseEventHandler<HTMLElement>;
   onSetSelected: Consumer<RecordingSet>;
 }> = ({ onNext, onBack, onSetSelected }) => {
+  // const [recordingSetState, setRecordingSetState] = useLocalStorage(
+  //   getLSKey('ConfigureRecordingSetPage', 'recordingSetState'),
+  //   'external' as RecordingPageState,
+  // );
   const [recordingSetState, setRecordingSetState] = useState<RecordingPageState>('external');
+  // const [metadataStateIndex = -1, setMetadataStateIndex] = useLocalStorage(
+  //   getLSKey('ConfigureRecordingSetPage', 'metadataStaeIndex'),
+  //   -1,
+  // );
   const [metadataStateIndex, setMetadataStateIndex] = useState<number>(-1);
   const prevState = usePrevious(recordingSetState) ?? 'home';
   const [transition, setTransition] = useState<boolean>(true);
-  const [filePathRec, setFilePathRec] = useState<string>('');
-  const [filePathOto, setFilePathOto] = useState<string>('');
-  const [filePathDvcfg, setFilePathDvcfg] = useState<string>('');
-
+  const [recFilePath, setRecFilePath] = useState<string>('');
+  const [otoFilePath, setOtoFilePath] = useState<string>('');
+  const [dvcfgFilePath, setDvcfgFilePath] = useState<string>('');
   const [dropDownStates, setDropdownStateArray] = useState<MetadataState[]>([]);
 
-  const setDropdownState = () => {
+  // const [transition = true, setTransition] = useLocalStorage(getLSKey('ConfigureRecordingSetPage', 'transition'), true);
+  // const [recFilePath = '', setRecFilePath] = useLocalStorage(getLSKey('ConfigureRecordingSetPage', 'recFilePath'), '');
+  // const [otoFilePath = '', setOtoFilePath] = useLocalStorage(getLSKey('ConfigureRecordingSetPage', 'otoFilePath'), '');
+  // const [dvcfgFilePath = '', setDvcfgFilePath] = useLocalStorage(
+  //   getLSKey('ConfigureRecordingSetPage', 'dvcfgFilePath'),
+  //   '',
+  // );
+
+  // const [dropDownStates = new Array<MetadataState>(), setDropdownStateArray] = useLocalStorage(
+  //   getLSKey('ConfigureRecordingSetPage', 'dropDownStates'),
+  //   new Array<MetadataState>(),
+  // );
+
+  const goToNextDropdownState = () => {
     setMetadataStateIndex((metadataStateIndex + 1) % dropDownStates.length);
   };
   const [chosenBuiltInList = '', rawSetChosenBuiltInList] = useLocalStorage(
@@ -111,21 +131,21 @@ const ConfigureRecordingSetPage: FC<{
         if (isSubscribed) {
           if (responses[0] == 'file') {
             states.push('list-preview');
-            setFilePathRec(listFilePath);
+            setRecFilePath(listFilePath);
           } else {
-            setFilePathRec('');
+            setRecFilePath('');
           }
           if (responses[1] == 'file') {
             states.push('oto-ini');
-            setFilePathOto(otoFilePath);
+            setOtoFilePath(otoFilePath);
           } else {
-            setFilePathOto('');
+            setOtoFilePath('');
           }
           if (responses[2] == 'file') {
             states.push('dvcfg');
-            setFilePathDvcfg(dvcfgFilePath);
+            setDvcfgFilePath(dvcfgFilePath);
           } else {
-            setFilePathDvcfg('');
+            setDvcfgFilePath('');
           }
           if (states.length == 0) {
             setMetadataStateIndex(-1);
@@ -146,22 +166,6 @@ const ConfigureRecordingSetPage: FC<{
 
   switch (recordingSetState) {
     case 'home':
-      return (
-        <ConfigureRecordingSet
-          onNext={onNext}
-          onBack={onBack}
-          onSetSelected={onSetSelected}
-          setRecordingSetState={setRecordingSetState}
-          prevState={prevState}
-          currState={recordingSetState}
-          chosenBuiltInList={chosenBuiltInList}
-          rawSetChosenBuiltInList={rawSetChosenBuiltInList}
-          chosenCustomListPath={chosenCustomListPath}
-          rawSetChosenCustomListPath={rawSetChosenCustomListPath}
-          metaDataIndex={metadataStateIndex}
-          getFilePath={updatePaths}
-        />
-      );
     case 'external':
       return (
         <ConfigureRecordingSet
@@ -187,8 +191,8 @@ const ConfigureRecordingSetPage: FC<{
             pageName="List Preview"
             transition={transition}
             setTransition={setTransition}
-            fileName={filePathRec}
-            setDropDownState={setDropdownState}
+            fileName={recFilePath}
+            setDropDownState={goToNextDropdownState}
           />
         );
       } else if (dropDownStates[metadataStateIndex] == 'oto-ini') {
@@ -198,8 +202,8 @@ const ConfigureRecordingSetPage: FC<{
             pageName="Oto.ini"
             transition={transition}
             setTransition={setTransition}
-            fileName={filePathOto}
-            setDropDownState={setDropdownState}
+            fileName={otoFilePath}
+            setDropDownState={goToNextDropdownState}
           />
         );
       } else if (dropDownStates[metadataStateIndex] == 'dvcfg') {
@@ -209,8 +213,8 @@ const ConfigureRecordingSetPage: FC<{
             pageName="Dvcfg"
             transition={transition}
             setTransition={setTransition}
-            fileName={filePathDvcfg}
-            setDropDownState={setDropdownState}
+            fileName={dvcfgFilePath}
+            setDropDownState={goToNextDropdownState}
           />
         );
       } else {
