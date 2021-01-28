@@ -35,6 +35,7 @@ const SetRecordingListConfiguration: FC<SetRecordingListConfigurationProps> = ({
         cleanupFunc = getFilePath(chosenCustomListPath, false);
       }
       return cleanupFunc;
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [chosenBuiltInList, chosenCustomListPath, getFilePath]);
   };
   useUpdateCurrentFilePath();
