@@ -1,5 +1,5 @@
 import log from 'electron-log';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, Fragment, useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 import { CSSTransition } from 'react-transition-group';
@@ -12,6 +12,14 @@ import downButton from './down-button.svg';
 import switchPageButton from './switch-preview.svg';
 
 import { RecordingPageState } from '.';
+
+/**
+setRecordingSetState: Sets the local pagestate (controls which subpage is displayed)
+transition: boolean to determin whether the animated page in transition has occured
+setTransition: sets transition
+fileName: the name of the metadata file to populate the page with data from
+setDropDownState: sets the built in reclist option
+**/
 
 interface PreviewPageProps {
   setRecordingSetState: Consumer<RecordingPageState>;
@@ -39,46 +47,87 @@ export const PreviewPage: FC<PreviewPageProps> = ({
     timeout: 3000,
     classNames: className,
   };
+
   useEffect(() => {
     let isSubscribed = true;
+
+    const findFile = async () => {
+      const fileExistsResponse = checkFileExistence(fileName);
+      const fileExistsAnswer = await fileExistsResponse;
+      if (fileExistsAnswer) {
+        if (!isSubscribed) {
+          return;
+        }
+        if (fileExistsAnswer != 'file') {
+          setPageText(pageName + ' file does not exist');
+        }
+
+        const fileContentsResponse = readFile(fileName);
+        const fileContents = await fileContentsResponse;
+        if (isSubscribed) {
+          setPageText(fileContents);
+        }
+      }
+    };
+    findFile().catch((error) => {
+      log.error(error);
+      throw error;
+    });
+
     if (!transition) {
       setTransition(true);
     }
-    (async (): Promise<'folder' | 'file' | false> => {
-      return checkFileExistence(fileName);
-    })()
-      .then((result) =>
-        (async (): Promise<string> => {
-          if (result != 'file') {
-            return pageName + ' file does not exist';
-          }
-          if (isSubscribed) {
-            return await readFile(fileName);
-          } else {
-            return 'page closed';
-          }
-        })()
-          .then((fileText) => {
-            if (isSubscribed) {
-              setPageText(fileText);
-            }
-          })
-          .catch((error) => {
-            log.error(error);
-            throw error;
-          }),
-      )
-      .catch((error) => {
-        log.error(error);
-        throw error;
-      });
+
     return () => {
       isSubscribed = false;
     };
   });
 
+  const useFileInformation = () => {
+    useEffect(() => {
+      let isSubscribed = true;
+
+      const findFile = async () => {
+        const fileExistsResponse = checkFileExistence(fileName);
+        const fileExistsAnswer = await fileExistsResponse;
+        if (fileExistsAnswer) {
+          if (!isSubscribed) {
+            return;
+          }
+          if (fileExistsAnswer != 'file') {
+            setPageText(pageName + ' file does not exist');
+          }
+
+          const fileContentsResponse = readFile(fileName);
+          const fileContents = await fileContentsResponse;
+          if (isSubscribed) {
+            setPageText(fileContents);
+          }
+        }
+      };
+      findFile().catch((error) => {
+        log.error(error);
+        throw error;
+      });
+      return () => {
+        isSubscribed = false;
+      };
+    });
+  };
+
+  const useTransition = () => {
+    useEffect(() => {
+      if (!transition) {
+        setTransition(true);
+      }
+    });
+  };
+
+  useFileInformation();
+  useTransition();
+
   return (
-    <div>
+    <Fragment>
       <CSSTransition {...transitionProps}>
         <Container fluid={true}>
           <Col></Col>
@@ -121,6 +170,6 @@ export const PreviewPage: FC<PreviewPageProps> = ({
           <Col></Col>
         </Container>
       </CSSTransition>
-    </div>
+    </Fragment>
   );
 };

@@ -36,21 +36,3 @@ td:empty::after,
 .place-held:empty::after {
   content: '\00a0';
 }
-// Global styles
-div#app {
-  width: 100vw;
-  height: 100vh;
-}
-
-// Unless specified otherwise, all images are not draggable and not selectable
-* {
-  -webkit-user-drag: none;
-  user-select: none;
-}
-
-// https://stackoverflow.com/a/42225797
-td:empty::after,
-.list-group-item:empty::after,
-.place-held:empty::after {
-  content: '\00a0';
-}
