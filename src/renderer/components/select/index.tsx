@@ -4,7 +4,10 @@ import Form from 'react-bootstrap/Form';
 interface StrictSelectProps {
   value: string | number;
   onChange: React.ChangeEventHandler<HTMLSelectElement>;
-  testId?: string; // Used to allow this element to be selected in react-testing-library testing
+  /**
+   * Used to allow this element to be selected in react-testing-library testing
+   */
+  testId?: string;
 }
 
 // FIXME: The following didn't work, so adding properties on an ad-hoc basis

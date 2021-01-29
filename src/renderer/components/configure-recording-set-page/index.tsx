@@ -44,9 +44,9 @@ const ConfigureRecordingSetPage: FC<{
     '',
   );
 
-  const [dropDownStates = new Array<MetadataState>(), setDropdownStateArray] = useLocalStorage(
+  const [dropDownStates = [], setDropdownStateArray] = useLocalStorage<Array<MetadataState>>(
     getLSKey('ConfigureRecordingSetPage', 'dropDownStates'),
-    new Array<MetadataState>(),
+    [],
   );
 
   const goToNextDropdownState = () => {

@@ -13,20 +13,30 @@ import switchPageButton from './switch-preview.svg';
 
 import { RecordingPageState } from '.';
 
-/**
-setRecordingSetState: Sets the local pagestate (controls which subpage is displayed)
-transition: boolean to determin whether the animated page in transition has occured
-setTransition: sets transition
-fileName: the name of the metadata file to populate the page with data from
-setDropDownState: sets the built in reclist option
-**/
-
 interface PreviewPageProps {
+  /**
+   * setRecordingSetState: Sets the local pagestate (controls which subpage is displayed)
+   */
   setRecordingSetState: Consumer<RecordingPageState>;
+  /**
+   * The name to be displayed at the top of the page
+   */
   pageName: string;
+  /**
+   * transition: boolean to determin whether the animated page in transition has occured
+   */
   transition: boolean;
+  /**
+   * setTransition: sets transition
+   */
   setTransition: Consumer<boolean>;
+  /**
+   * fileName: the name of the metadata file to populate the page with data from
+   */
   fileName: string;
+  /**
+   * setDropDownState: sets the built in reclist option
+   **/
   setDropDownState: () => void;
 }
 
@@ -47,41 +57,6 @@ export const PreviewPage: FC<PreviewPageProps> = ({
     timeout: 3000,
     classNames: className,
   };
-
-  useEffect(() => {
-    let isSubscribed = true;
-
-    const findFile = async () => {
-      const fileExistsResponse = checkFileExistence(fileName);
-      const fileExistsAnswer = await fileExistsResponse;
-      if (fileExistsAnswer) {
-        if (!isSubscribed) {
-          return;
-        }
-        if (fileExistsAnswer != 'file') {
-          setPageText(pageName + ' file does not exist');
-        }
-
-        const fileContentsResponse = readFile(fileName);
-        const fileContents = await fileContentsResponse;
-        if (isSubscribed) {
-          setPageText(fileContents);
-        }
-      }
-    };
-    findFile().catch((error) => {
-      log.error(error);
-      throw error;
-    });
-
-    if (!transition) {
-      setTransition(true);
-    }
-
-    return () => {
-      isSubscribed = false;
-    };
-  });
 
   const useFileInformation = () => {
     useEffect(() => {
