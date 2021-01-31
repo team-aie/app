@@ -1,4 +1,4 @@
-import React, { FC, Fragment } from 'react';
+import React, { FC, Fragment, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
@@ -14,6 +14,7 @@ interface SetRecordingListConfigurationProps {
   setChosenBuiltInList: Consumer<string>;
   chosenCustomListPath: string;
   setChosenCustomListPath: Consumer<string>;
+  getFilePath: (listName: string, isBuiltIn: boolean) => void;
 }
 
 const SetRecordingListConfiguration: FC<SetRecordingListConfigurationProps> = ({
@@ -22,8 +23,23 @@ const SetRecordingListConfiguration: FC<SetRecordingListConfigurationProps> = ({
   setChosenBuiltInList,
   chosenCustomListPath,
   setChosenCustomListPath,
+  getFilePath,
 }) => {
   const { t } = useTranslation();
+  const useUpdateCurrentFilePath = () => {
+    useEffect(() => {
+      let cleanupFunc;
+      if (chosenBuiltInList != '') {
+        cleanupFunc = getFilePath(chosenBuiltInList, true);
+      } else {
+        cleanupFunc = getFilePath(chosenCustomListPath, false);
+      }
+      return cleanupFunc;
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [chosenBuiltInList, chosenCustomListPath, getFilePath]);
+  };
+  useUpdateCurrentFilePath();
+
   return (
     <Fragment>
       <Col xs={'auto'} sm={7} md={7} lg={7} xl={7}>
@@ -32,7 +48,10 @@ const SetRecordingListConfiguration: FC<SetRecordingListConfigurationProps> = ({
             className={'w-100'}
             style={{ paddingRight: '0.75rem' }}
             value={chosenBuiltInList}
-            onChange={(e): void => setChosenBuiltInList(e.target.value)}>
+            testId={'selectReclist'}
+            onChange={(e): void => {
+              setChosenBuiltInList(e.target.value);
+            }}>
             <option value={''} />
             {builtInLists.map((builtInList) => (
               <option key={builtInList} value={builtInList}>
