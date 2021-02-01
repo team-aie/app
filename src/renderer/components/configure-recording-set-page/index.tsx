@@ -23,7 +23,7 @@ export type MetadataState = 'list-preview' | 'oto-ini' | 'dvcfg';
 Base page to handle configure-recording-set, dvcfg, oto.ini, and list-preview pages
 */
 const ConfigureRecordingSetPage: FC<{
-  onSelect: MouseEventHandler<HTMLElement>;
+  onSettingsButtonClick: MouseEventHandler<HTMLElement>;
   onNext: MouseEventHandler<HTMLElement>;
   onBack: MouseEventHandler<HTMLElement>;
   onSetSelected: Consumer<RecordingSet>;
