@@ -129,14 +129,14 @@ const AieApp: FC = () => {
       case 'configure-recording-set':
         return (
           <ConfigureRecordingSetPage
-            onSelect={selectSetting}
+            onSettingsButtonClick={selectSetting}
             onNext={simpleOnNext}
             onBack={simpleOnBack}
             onSetSelected={adaptToPrototypeRecordingStudio}
           />
         );
       case 'settings':
-        return <SettingsPage onSelect={selectConfigrue} />;
+        return <SettingsPage onSettingsButtonClick={selectConfigrue} />;
       case 'recording':
         return (
           <RecordingPage
