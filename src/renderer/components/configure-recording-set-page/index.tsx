@@ -1,8 +1,7 @@
 import log from 'electron-log';
-import React, { FC, MouseEventHandler } from 'react';
+import React, { FC } from 'react';
 import { useLocalStorage, usePrevious } from 'react-use';
 
-import { Consumer, RecordingSet } from '../../types';
 import { getLSKey } from '../../utils';
 import { checkPaths } from '../../utils/configure-recording-index-utils';
 
@@ -10,6 +9,7 @@ import { ConfigureRecordingSet } from './configure-recording-set';
 import './show-details.scss';
 import './index.scss';
 import { PreviewPage } from './preview-page';
+import { SetMetaClickProps } from './set-meta-configuration';
 
 /*
  Represents the page states controlled by configure-recording-set.
@@ -22,12 +22,7 @@ export type MetadataState = 'list-preview' | 'oto-ini' | 'dvcfg';
 /*
 Base page to handle configure-recording-set, dvcfg, oto.ini, and list-preview pages
 */
-const ConfigureRecordingSetPage: FC<{
-  onSettingsButtonClick: MouseEventHandler<HTMLElement>;
-  onNext: MouseEventHandler<HTMLElement>;
-  onBack: MouseEventHandler<HTMLElement>;
-  onSetSelected: Consumer<RecordingSet>;
-}> = ({ onNext, onBack, onSetSelected }) => {
+const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({ onSettingsButtonClick, onNext, onBack, onSetSelected }) => {
   const [recordingSetState = 'external' as RecordingPageState, setRecordingSetState] = useLocalStorage(
     getLSKey('ConfigureRecordingSetPage', 'recordingSetStateForConfig'),
     'external' as RecordingPageState,
@@ -80,6 +75,7 @@ const ConfigureRecordingSetPage: FC<{
     case 'external':
       return (
         <ConfigureRecordingSet
+          onSettingsButtonClick={onSettingsButtonClick}
           onNext={onNext}
           onBack={onBack}
           onSetSelected={onSetSelected}
