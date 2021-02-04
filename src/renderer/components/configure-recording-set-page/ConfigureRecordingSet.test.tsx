@@ -29,7 +29,7 @@ const afterTest = () => {
 describe('configureRecordingSetPage', () => {
   it('renders without showDetails button', async () => {
     beforeTest();
-    render(<ConfigureRecordingSetPage onNext={noop} onBack={noop} onSetSelected={noop} />);
+    render(<ConfigureRecordingSetPage onSettingsButtonClick={noop} onNext={noop} onBack={noop} onSetSelected={noop} />);
     let imageButtons = screen.getAllByRole('button');
     expect(imageButtons).toHaveLength(4);
     await flushPromises();
@@ -40,7 +40,7 @@ describe('configureRecordingSetPage', () => {
 
   it('renders showDetails butten when reclist is selected', async () => {
     beforeTest();
-    render(<ConfigureRecordingSetPage onNext={noop} onBack={noop} onSetSelected={noop} />);
+    render(<ConfigureRecordingSetPage onSettingsButtonClick={noop} onNext={noop} onBack={noop} onSetSelected={noop} />);
     let imageButtons = screen.getAllByRole('button');
     expect(imageButtons).toHaveLength(4);
     const recListDropdown = screen.getAllByTestId('selectReclist')[0];
@@ -56,7 +56,7 @@ describe('configureRecordingSetPage', () => {
 
   it('renders list preview page after showDetails button is clicked and then goes to list preview page', async () => {
     beforeTest();
-    render(<ConfigureRecordingSetPage onNext={noop} onBack={noop} onSetSelected={noop} />);
+    render(<ConfigureRecordingSetPage onSettingsButtonClick={noop} onNext={noop} onBack={noop} onSetSelected={noop} />);
     await flushPromises();
 
     let imageButtons = screen.getAllByRole('button');
