@@ -1,0 +1,7 @@
+// Fonts
+$font-family-bootstrap-sans-serif: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+  'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+$font-family-jp-win-sans-serif: Meiryo, 'MS Gothic';
+$font-family-jp-mac-sans-serif: HiraginoSans-W3, HiraginoSansGB-W3;
+$font-family-sans-serif: $font-family-jp-win-sans-serif, $font-family-jp-mac-sans-serif,
+  $font-family-bootstrap-sans-serif;
