@@ -17,9 +17,8 @@ class FileMonitor {
       .on('unlinkDir', (path) => alert(`File ${path} has been removed`));
   }
 
-  close() {
+  public close(): void {
     this.watcher.close();
-    return;
   }
 }
 
