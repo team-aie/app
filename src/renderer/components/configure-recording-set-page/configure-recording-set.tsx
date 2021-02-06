@@ -2,6 +2,7 @@ import log from 'electron-log';
 import React, { FC, Fragment, MouseEventHandler, useContext, useEffect, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
+import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
 import { useTranslation } from 'react-i18next';
 import CSSTransition from 'react-transition-group/CSSTransition';
@@ -27,8 +28,9 @@ import NextButton from '../next-button';
 
 import AddRecordingSetButton from './add-recording-set-button';
 import CreatedRecordingSetList from './created-recording-set-list';
-import SetMetaConfiguration from './set-meta-configuration';
+import { SetMetaConfiguration } from './set-meta-configuration';
 import SetRecordingListConfiguration from './set-recording-list-configuration';
+import settingButton from './settingButton.svg';
 import showDetailButton from './show-detail.svg';
 import { BuiltInRecordingList } from './types';
 
@@ -52,6 +54,7 @@ const BUILT_IN_RECORDING_LISTS: BuiltInRecordingList[] = [
 ];
 
 export const ConfigureRecordingSet: FC<{
+  onSettingsButtonClick: MouseEventHandler<HTMLElement>;
   onNext: MouseEventHandler<HTMLElement>;
   onBack: MouseEventHandler<HTMLElement>;
   onSetSelected: Consumer<RecordingSet>;
@@ -65,6 +68,7 @@ export const ConfigureRecordingSet: FC<{
   metaDataIndex: number;
   getFilePath: (listName: string, isBuiltIn: boolean) => void;
 }> = ({
+  onSettingsButtonClick,
   onNext,
   onBack,
   onSetSelected,
@@ -290,6 +294,15 @@ export const ConfigureRecordingSet: FC<{
                 setRecordingSetState(prevState == 'home' || prevState == 'external' ? 'metadata' : prevState);
               }}
             />
+          </Positional>
+          <Positional position={'top-right'}>
+            <Image
+              style={{ width: '2rem' }}
+              src={settingButton}
+              onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>): void => {
+                setRecordingSetState('external');
+                onSettingsButtonClick(event);
+              }}></Image>
           </Positional>
           <NextButton
             text={t('Start')}

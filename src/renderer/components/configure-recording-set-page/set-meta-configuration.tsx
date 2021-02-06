@@ -1,10 +1,10 @@
-import React, { FC, Fragment } from 'react';
+import React, { FC, Fragment, MouseEventHandler } from 'react';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import { useTranslation } from 'react-i18next';
 
 import { SCALE_KEYS_IN_ORDER, SUPPORTED_OCTAVES_IN_ORDER } from '../../env-and-consts';
-import { Consumer, ScaleKey, SupportedOctave } from '../../types';
+import { Consumer, RecordingSet, ScaleKey, SupportedOctave } from '../../types';
 import { Select } from '../select';
 
 interface SetMetaConfigurationProps {
@@ -16,7 +16,14 @@ interface SetMetaConfigurationProps {
   setChosenName: Consumer<string>;
 }
 
-const SetMetaConfiguration: FC<SetMetaConfigurationProps> = ({
+export interface SetMetaClickProps {
+  onSettingsButtonClick: MouseEventHandler<HTMLElement>;
+  onNext: MouseEventHandler<HTMLElement>;
+  onBack: MouseEventHandler<HTMLElement>;
+  onSetSelected: Consumer<RecordingSet>;
+}
+
+export const SetMetaConfiguration: FC<SetMetaConfigurationProps> = ({
   chosenKey,
   setChosenKey,
   chosenOctave,
@@ -62,5 +69,3 @@ const SetMetaConfiguration: FC<SetMetaConfigurationProps> = ({
     </Fragment>
   );
 };
-
-export default SetMetaConfiguration;
