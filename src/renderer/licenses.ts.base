@@ -1,5 +1,5 @@
 /*
- * This file is generated from licenses.ts.template, changes should be done there instead.
+ * This file is generated from licenses.ts.base, changes should be done there instead.
  */
 
 export interface LicenseInfo {
@@ -8,8 +8,8 @@ export interface LicenseInfo {
   author?: string;
   repository: string | null;
   source: string;
-  license: string;
-  licenseText: string;
+  license: string | null;
+  licenseText: string | null;
 }
 
 const LICENSES: LicenseInfo[] = __LICENSE_CONTENT_HERE__;
