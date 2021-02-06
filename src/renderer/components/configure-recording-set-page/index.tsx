@@ -1,4 +1,3 @@
-import chokidar from 'chokidar';
 import log from 'electron-log';
 import React, { FC } from 'react';
 import { useLocalStorage, usePrevious } from 'react-use';

@@ -49,51 +49,6 @@ export const createFolder = async (filePath: string): Promise<void> => {
 export const parentFolderName = path.dirname;
 export const filename = path.basename;
 
-const testArray = [
-  'C:/Users/lil4/Desktop/Senior_Project/Recording Project/sample/R2',
-  'C:/Users/lil4/Desktop/Senior_Project/Recording Project/sample/aie.config.json',
-  'C:/Users/lil4/Desktop/Senior_Project/Recording Project/sample/R1',
-];
-
-setTimeout(() => {
-  // alert('Hello, World!');
-  testArray.pop();
-  testArray.push('C:/Users/lil4/Desktop/Senior_Project/Recording Project/sample/R3');
-  console.log(testArray);
-}, 25000);
-
-// Use chokidar to moniter file/folder changes
-// export function FileMonitor(filePath: string) {
-//   const [ignoredarray, setIgnored] = useState(testArray);
-
-//   useEffect((): void => {
-//     (async () => {
-//       watcher = chokidar.watch(filePath, {
-//         ignored: [/(^|[/\\])\../, ...ignoredarray],
-//         persistent: true,
-//       });
-//     })().catch(console.error);
-//   }, [ignoredarray]);
-
-//   setIgnored(testArray);
-
-//   let watcher = chokidar.watch(filePath, {
-//     ignored: [/(^|[/\\])\../, ...testArray],
-//     persistent: true,
-//   });
-
-//   const log = console.log.bind(console);
-//   watcher
-//     .on('add', (path) => log(`File ${path} has been added`))
-//     .on('change', (path) => alert(`File ${path} has been changed`))
-//     .on('unlink', (path) => alert(`File ${path} has been removed`))
-//     .on('addDir', (path) => log(`File ${path} has been added`))
-//     .on('changeDir', (path) => alert(`File ${path} has been changed`))
-//     .on('unlinkDir', (path) => alert(`File ${path} has been removed`));
-
-//   return;
-// }
-
 // New Methods
 export const checkFileExistence = async (filePath: string): Promise<'folder' | 'file' | false> => {
   if (!fs.existsSync(filePath)) {

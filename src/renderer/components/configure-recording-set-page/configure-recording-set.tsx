@@ -1,3 +1,4 @@
+import chokidar from 'chokidar';
 import log from 'electron-log';
 import React, { FC, Fragment, MouseEventHandler, useContext, useEffect, useState } from 'react';
 import Col from 'react-bootstrap/Col';
@@ -21,6 +22,7 @@ import {
   readFile,
   writeFile,
 } from '../../utils';
+import FileMonitor from '../../utils/FileMonitor';
 import BackButton from '../back-button';
 import { Positional } from '../helper-components';
 import ImageButton from '../image-button';
@@ -36,6 +38,12 @@ import { BuiltInRecordingList } from './types';
 
 import './show-details.scss';
 import { RecordingPageState } from '.';
+
+let fileMonitor = chokidar.watch('', {
+  ignored: /(^|[/\\])\../,
+  persistent: true,
+});
+let watchedPath = '';
 
 interface ProjectFile extends RecordingProject {
   name: string;
@@ -107,6 +115,11 @@ export const ConfigureRecordingSet: FC<{
         const configFilePath = join(rootPath, PROJECT_CONFIG_FILENAME);
 
         const fileExistence = await checkFileExistence(configFilePath);
+
+        //add fileMonitor here
+        watchedPath = rootPath;
+        fileMonitor = new FileMonitor(watchedPath);
+
         if (!fileExistence) {
           setProjectFile(DUMMY_PROJECT_FILE);
         } else if (fileExistence === 'folder') {
@@ -164,8 +177,10 @@ export const ConfigureRecordingSet: FC<{
   const removeRecordingSet = async (setToDelete: RecordingSet): Promise<void> => {
     const willDelete = confirm(`Are you sure you want to delete ${setToDelete.name}?`);
     if (willDelete) {
+      fileMonitor.close();
       const newSets = recordingSets.filter((x) => x !== setToDelete);
       setRecordingSets(newSets);
+      fileMonitor = new FileMonitor(watchedPath);
 
       if (recordingSets[selectedRecordingSetIndex] === setToDelete) {
         setSelectedRecordingSetIndex(-1);
