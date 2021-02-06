@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { RecordingProjectContext } from '../../contexts';
 import { Consumer, RecordingProject } from '../../types';
 import { ensureFolderExists, filename, openFilePicker } from '../../utils';
-import { watchfile } from '../../utils/fs-utils';
+import FileMonitor from '../../utils/FileMonitor';
 import BackButton from '../back-button';
 
 import knownProjects from './known-projects';
@@ -26,7 +26,7 @@ const ProjectRow: FC<ProjectRowProps> = ({ project, onClick, selected }) => {
   return (
     <tr
       onClick={(): void => project && onClick(project)}
-      style={selected || hovered ? { textDecoration: 'underline' } : undefined}
+      style={selected || hovered ? { filter: 'invert(1)', textDecoration: 'underline' } : undefined}
       onMouseEnter={(): void => setHovered(true)}
       onMouseOut={(): void => setHovered(false)}>
       <td className={'border-bottom'}>{project && project.name}</td>
@@ -77,6 +77,22 @@ const OpenProjectPage: FC<{ onNext: Consumer<void>; onBack: MouseEventHandler<HT
       `${t('Please select a folder to save voice samples.')}`,
     );
 
+    //add new folder path into file
+    // IgnoredArray.push(folderPath);
+
+    // console.log('filepath is: ' + filePath);
+
+    // ignoredArray.push('C:/Users/lil4/Desktop/Senior_Project/Recording Project/sample/R3');
+
+    // const fileMonitor = new FileMonitor(folderPath, ignoredArray);
+    // fileMonitor.close();
+
+    // setTimeout(() => {
+    //   alert('Hello, World!');
+    //   // ignoredArray.push(folderPath);
+    //   const fileMonitor = new FileMonitor(folderPath, ignoredArray);
+    // }, 15000);
+
     if (!folderPath) {
       return;
     }
@@ -89,8 +105,6 @@ const OpenProjectPage: FC<{ onNext: Consumer<void>; onBack: MouseEventHandler<HT
       name: filename(folderPath),
       rootPath: folderPath,
     };
-
-    watchfile(folderPath);
 
     return selectProject(project);
   };
