@@ -19,6 +19,7 @@ class FileMonitor {
 
   close() {
     this.watcher.close();
+    return;
   }
 }
 
