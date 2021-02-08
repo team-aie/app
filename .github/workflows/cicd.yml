@@ -12,10 +12,10 @@ jobs:
       - name: Legacy Checkout Source Code
         uses: actions/checkout@v1
       - run: git tag -l
-      - name: Use Node.js 14.15.1
+      - name: Use Node.js 14.15.4
         uses: actions/setup-node@v1
         with:
-          node-version: 14.15.1
+          node-version: 14.15.4
       - name: Detect New Version
         id: find-new-version
         run: |
@@ -38,10 +38,10 @@ jobs:
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v2
-      - name: Use Node.js 14.15.1
+      - name: Use Node.js 14.15.4
         uses: actions/setup-node@v1
         with:
-          node-version: 14.15.1
+          node-version: 14.15.4
       - name: Download Version Number
         uses: actions/download-artifact@v1
         with:
@@ -96,10 +96,10 @@ jobs:
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v2
-      - name: Use Node.js 14.15.1
+      - name: Use Node.js 14.15.4
         uses: actions/setup-node@v1
         with:
-          node-version: 14.15.1
+          node-version: 14.15.4
       - name: Download Version Number
         uses: actions/download-artifact@v1
         with:
@@ -150,10 +150,10 @@ jobs:
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v2
-      - name: Use Node.js 14.15.1
+      - name: Use Node.js 14.15.4
         uses: actions/setup-node@v1
         with:
-          node-version: 14.15.1
+          node-version: 14.15.4
       - name: Download Version Number
         uses: actions/download-artifact@v1
         with:
