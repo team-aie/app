@@ -1,4 +1,3 @@
-import chokidar from 'chokidar';
 import log from 'electron-log';
 import React, { FC, Fragment, MouseEventHandler, useContext, useEffect, useState } from 'react';
 import Col from 'react-bootstrap/Col';
@@ -39,10 +38,8 @@ import { BuiltInRecordingList } from './types';
 import './show-details.scss';
 import { RecordingPageState } from '.';
 
-let fileMonitor = chokidar.watch('', {
-  ignored: /(^|[/\\])\../,
-  persistent: true,
-});
+//this part needs to be in the component
+let fileMonitor: FileMonitor;
 let watchedPath = '';
 
 interface ProjectFile extends RecordingProject {
@@ -97,6 +94,9 @@ export const ConfigureRecordingSet: FC<{
     DUMMY_PROJECT_FILE,
   );
 
+  // let fileMonitor: FileMonitor;
+  // let watchedPath = '';
+
   const [canWrite, setCanWrite] = useState(false);
 
   const [recordingSets = [], setRecordingSets] = useLocalStorage<RecordingSet[]>(
@@ -119,6 +119,8 @@ export const ConfigureRecordingSet: FC<{
         //add fileMonitor here
         watchedPath = rootPath;
         fileMonitor = new FileMonitor(watchedPath);
+        fileMonitor.watch(['add']);
+        fileMonitor.watch(['unlink']);
 
         if (!fileExistence) {
           setProjectFile(DUMMY_PROJECT_FILE);
