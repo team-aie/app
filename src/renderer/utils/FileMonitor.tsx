@@ -2,14 +2,18 @@ import chokidar from 'chokidar';
 import { Subject } from 'rxjs';
 
 class FileMonitor {
+  //The main functionality of the file monitor is to report selected type of events using the Observable called subject
   folderPath: string;
   events: Array<string>;
+  eventsWatching: Array<string>;
   watcher: chokidar.FSWatcher;
   subject: any;
+
   constructor(folderPath: string) {
     this.subject = new Subject();
     this.folderPath = folderPath;
     this.events = [];
+    this.eventsWatching = [];
     this.watcher = chokidar.watch(this.folderPath, {
       ignored: /(^|[/\\])\../,
       followSymlinks: false,
@@ -18,18 +22,11 @@ class FileMonitor {
   }
 
   //Input: array of events
-  //List of possible events:
-  //unlink: files being deleted
-  //change: files being changed
-  //add: files being added
-  //error: error occured
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  UNSAFE_componentWillMount() {
-    this.watch = this.watch.bind(this);
-  }
   public watch(events: Array<string>): void {
     this.events.push(...events);
-    if (this.events.includes('unlink')) {
+    //unlink: files being deleted
+    if (this.events.includes('unlink') && !this.eventsWatching.includes('unlink')) {
+      this.eventsWatching.push('unlink');
       this.watcher
         .on('unlink', (path) => {
           //alert(`File ${path} has been removed`);
@@ -40,7 +37,9 @@ class FileMonitor {
           this.subject.next(['unlinkDir', `${path}`]);
         });
     }
-    if (this.events.includes('add')) {
+    //add: files being added
+    if (this.events.includes('add') && !this.eventsWatching.includes('add')) {
+      this.eventsWatching.push('add');
       this.watcher
         .on('add', (path) => {
           //alert(`File ${path} has been added`);
@@ -51,12 +50,27 @@ class FileMonitor {
           this.subject.next(['addDir', `${path}`]);
         });
     }
-    if (this.events.includes('change')) {
-      this.watcher.on('change', (path) => alert(`File ${path} has been changed`));
+    //change: files being changed
+    if (this.events.includes('change') && !this.eventsWatching.includes('change')) {
+      this.eventsWatching.push('change');
+      this.watcher.on('change', (path) => {
+        //alert(`File ${path} has been changed`);
+        this.subject.next(['change', `${path}`]);
+      });
     }
-    if (this.events.includes('error')) {
-      this.watcher.on('error', (error) => alert(`Error happened ${error}`));
+    //error: errors occured
+    if (this.events.includes('error') && !this.eventsWatching.includes('error')) {
+      this.eventsWatching.push('error');
+      this.watcher.on('error', (error) => {
+        //alert(`Error happened ${error}`);
+        this.subject.next(['error', `${error}`]);
+      });
     }
+  }
+  //public watchOnce(events: Array<string>): void {}
+  public removeEvents(event: string): void {
+    const newValue = this.events.filter((e) => e !== event);
+    this.events = newValue;
   }
   public close(): void {
     this.watcher.close();
