@@ -119,9 +119,16 @@ export const ConfigureRecordingSet: FC<{
         //add fileMonitor here
         watchedPath = rootPath;
         fileMonitor = new FileMonitor(watchedPath);
-        fileMonitor.watch(['add']);
-        fileMonitor.watch(['unlink']);
-
+        //fileMonitor.watch(['unlink']);
+        fileMonitor.watch(['add', 'unlink']);
+        fileMonitor.subject.subscribe({
+          next: (x: any) => {
+            console.log('Received', x);
+          },
+        });
+        //fileMonitor.watch(['unlink']).subscribe((x: any) => {
+        //  console.log('Subscriber B', x);
+        //});
         if (!fileExistence) {
           setProjectFile(DUMMY_PROJECT_FILE);
         } else if (fileExistence === 'folder') {
@@ -179,10 +186,10 @@ export const ConfigureRecordingSet: FC<{
   const removeRecordingSet = async (setToDelete: RecordingSet): Promise<void> => {
     const willDelete = confirm(`Are you sure you want to delete ${setToDelete.name}?`);
     if (willDelete) {
-      fileMonitor.close();
+      //fileMonitor.close();
       const newSets = recordingSets.filter((x) => x !== setToDelete);
       setRecordingSets(newSets);
-      fileMonitor = new FileMonitor(watchedPath);
+      //fileMonitor = new FileMonitor(watchedPath);
 
       if (recordingSets[selectedRecordingSetIndex] === setToDelete) {
         setSelectedRecordingSetIndex(-1);
