@@ -4,24 +4,28 @@ import { Subject } from 'rxjs';
 class FileMonitor {
   //The main functionality of the file monitor is to report selected type of events using the Observable called subject
   folderPath: string;
+  ignoredPath: string;
   events: Array<string>;
   eventsWatching: Array<string>;
   watcher: chokidar.FSWatcher;
   subject: any;
 
-  constructor(folderPath: string) {
+  //construct with the folder path that you want to monitor and ignoredPath that the watcher will ignore
+  constructor(folderPath: string, ignoredPath: string) {
     this.subject = new Subject();
     this.folderPath = folderPath;
+    this.ignoredPath = ignoredPath;
     this.events = [];
     this.eventsWatching = [];
     this.watcher = chokidar.watch(this.folderPath, {
-      ignored: /(^|[/\\])\../,
+      ignored: [/(^|[/\\])\../, this.ignoredPath],
       followSymlinks: false,
       persistent: true,
     });
   }
 
   //Input: array of events
+  //note that the events can be added to the watcher but CANNOT be removed from watcher
   public watch(events: Array<string>): void {
     this.events.push(...events);
     //unlink: files being deleted
@@ -67,11 +71,14 @@ class FileMonitor {
       });
     }
   }
-  //public watchOnce(events: Array<string>): void {}
+
+  //used to remove the events from events array, but it will not affect the watcher
   public removeEvents(event: string): void {
     const newValue = this.events.filter((e) => e !== event);
     this.events = newValue;
+    this.eventsWatching = this.eventsWatching.filter((e) => e !== event);
   }
+
   public close(): void {
     this.watcher.close();
   }
