@@ -9,8 +9,8 @@ class FileMonitor implements Monitor {
    *
    * */
   private folderPath: string;
-  private events: Array<Event>;
-  private eventsWatching: Array<Event>;
+  private events: Event[];
+  private eventsWatching: Event[];
   private subject: Subject<[Event, string]>;
   private addWatcher: chokidar.FSWatcher;
   private addDirWatcher: chokidar.FSWatcher;
@@ -60,7 +60,7 @@ class FileMonitor implements Monitor {
     });
   }
 
-  watch(events: Array<Event>): void {
+  watch(events: Event[]): void {
     /**
      * Start watcher on events input.
      *
@@ -83,7 +83,7 @@ class FileMonitor implements Monitor {
     }
   }
 
-  unwatch(events: Array<Event>): void {
+  unwatch(events: Event[]): void {
     /**
      * Stop watcher on events input.
      *
@@ -160,7 +160,7 @@ class FileMonitor implements Monitor {
     }
   }
 
-  private unwatchHelper(events: Array<Event>, eventToUnwatch: Event, watcher: chokidar.FSWatcher): void {
+  private unwatchHelper(events: Event[], eventToUnwatch: Event, watcher: chokidar.FSWatcher): void {
     if (events.includes(eventToUnwatch)) {
       this.events = this.events.filter((e) => e !== eventToUnwatch);
       this.eventsWatching = this.eventsWatching.filter((e) => e !== eventToUnwatch);
@@ -186,11 +186,11 @@ class FileMonitor implements Monitor {
     });
   }
 
-  getEvents(): Array<Event> {
+  getEvents(): Event[] {
     return this.events;
   }
 
-  getEventsWatching(): Array<Event> {
+  getEventsWatching(): Event[] {
     return this.eventsWatching;
   }
 
