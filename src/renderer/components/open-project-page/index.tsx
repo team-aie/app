@@ -25,7 +25,7 @@ const ProjectRow: FC<ProjectRowProps> = ({ project, onClick, selected }) => {
   return (
     <tr
       onClick={(): void => project && onClick(project)}
-      style={selected || hovered ? { textDecoration: 'underline' } : undefined}
+      style={selected || hovered ? { filter: 'invert(1)', textDecoration: 'underline' } : undefined}
       onMouseEnter={(): void => setHovered(true)}
       onMouseOut={(): void => setHovered(false)}>
       <td className={'border-bottom'}>{project && project.name}</td>
