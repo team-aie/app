@@ -1,11 +1,5 @@
 @import '../../../base-variables';
-
-// Bootstrap Variables
-$font-family-sans-serif: 'Source Han Sans SC', sans-serif;
-
-// Fonts
-@import '~node-source-han-sans-sc/SourceHanSansSC-Regular-otf.css';
-@import '~node-source-han-sans-sc/SourceHanSansSC-ExtraLight-otf.css';
+@import '../../locale-variables';
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';

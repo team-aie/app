@@ -1,0 +1,7 @@
+// Fonts
+$font-family-bootstrap-sans-serif: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+  'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+$font-family-zh-win-sans-serif: 'Microsoft YaHei';
+$font-family-zh-mac-sans-serif: PingFangSC-Regular, PingFangTC-Regular;
+$font-family-sans-serif: $font-family-zh-win-sans-serif, $font-family-zh-mac-sans-serif,
+  $font-family-bootstrap-sans-serif;
