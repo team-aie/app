@@ -1,9 +1,11 @@
 import chokidar from 'chokidar';
 import { Subject } from 'rxjs';
 
-type Event = 'unlink' | 'unlinkDir' | 'add' | 'addDir' | 'change' | 'error';
+import { Event, Monitor } from './Monitor';
 
-class FileMonitor {
+// type Event = 'unlink' | 'unlinkDir' | 'add' | 'addDir' | 'change' | 'error';
+
+class FileMonitor implements Monitor {
   //The main functionality of the file monitor is to report selected type of events using the Observable called subject
   private folderPath: string;
   //ignoredPath: string;
