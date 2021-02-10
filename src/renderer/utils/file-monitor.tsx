@@ -3,11 +3,11 @@ import { Subject } from 'rxjs';
 
 import { Event, Monitor } from './types';
 
-class FileMonitor implements Monitor {
+export class FileMonitor implements Monitor {
   /**
    * The main functionality of the file monitor is to report selected type of events using the Observable called subject
    *
-   * */
+   */
   private folderPath: string;
   private events: Event[];
   private eventsWatching: Event[];
@@ -19,16 +19,17 @@ class FileMonitor implements Monitor {
   private changeWatcher: chokidar.FSWatcher;
   private errorWatcher: chokidar.FSWatcher;
 
+  /**
+   * @param folderPath - the array of file directories that needs to be watched
+   *
+   */
   constructor(folderPath: string) {
-    /**
-     * @param folderPath - the array of file directories that needs to be watched
-     *
-     * */
     this.subject = new Subject();
     this.folderPath = folderPath;
     this.events = [];
     this.eventsWatching = [];
     this.addWatcher = chokidar.watch(this.folderPath, {
+      // ignore dotfiles, from chokidar official document:https://github.com/paulmillr/chokidar
       ignored: [/(^|[/\\])\../],
       followSymlinks: false,
       persistent: true,
@@ -60,14 +61,14 @@ class FileMonitor implements Monitor {
     });
   }
 
+  /**
+   * Start watcher on events input.
+   *
+   * @param events - the array of events that needs to be watched
+   * @returns void
+   *
+   */
   watch(events: Event[]): void {
-    /**
-     * Start watcher on events input.
-     *
-     * @param events - the array of events that needs to be watched
-     * @returns void
-     *
-     */
     this.events.push(...events);
     this.watchHelper('add', this.addWatcher);
     this.watchHelper('addDir', this.addDirWatcher);
@@ -83,14 +84,14 @@ class FileMonitor implements Monitor {
     }
   }
 
+  /**
+   * Stop watcher on events input.
+   *
+   * @param events - the array of events that no longer needs to be watched
+   * @returns void
+   *
+   */
   unwatch(events: Event[]): void {
-    /**
-     * Stop watcher on events input.
-     *
-     * @param events - the array of events that no longer needs to be watched
-     * @returns void
-     *
-     */
     this.unwatchHelper(events, 'add', this.addWatcher);
     this.unwatchHelper(events, 'addDir', this.addDirWatcher);
     this.unwatchHelper(events, 'unlink', this.unlinkWatcher);
@@ -99,15 +100,15 @@ class FileMonitor implements Monitor {
     this.unwatchHelper(events, 'error', this.errorWatcher);
   }
 
+  /**
+   * Stop watching on the events input of filepaths input
+   *
+   * @param eventsToIgnore - the array of events that no longer needs to be watched
+   * @param ignoredFilepath - the array of filepaths that no longer needs to be watched
+   * @returns void
+   *
+   */
   ignoreFiles(eventsToIgnore: Event[], ignoredFilepath: Array<string>): void {
-    /**
-     * Stop watching on the events input of filepaths input
-     *
-     * @param eventsToIgnore - the array of events that no longer needs to be watched
-     * @param ignoredFilepath - the array of filepaths that no longer needs to be watched
-     * @returns void
-     *
-     */
     if (eventsToIgnore.includes('add')) {
       this.ignoreHelper('add', ignoredFilepath, this.addWatcher);
     }
@@ -198,5 +199,3 @@ class FileMonitor implements Monitor {
     return this.subject;
   }
 }
-
-export { FileMonitor };
