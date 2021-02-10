@@ -3,11 +3,11 @@ import { Subject } from 'rxjs';
 
 import { Event, Monitor } from './types';
 
+/**
+ * The main functionality of the file monitor is to report selected type of events using the Observable called subject
+ *
+ */
 export class FileMonitor implements Monitor {
-  /**
-   * The main functionality of the file monitor is to report selected type of events using the Observable called subject
-   *
-   */
   private folderPath: string;
   private events: Event[];
   private eventsWatching: Event[];

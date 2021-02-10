@@ -1,12 +1,9 @@
 import fs, { promises as fsp } from 'fs';
 import path from 'path';
 
-// import chokidar from 'chokidar';
 import { OpenDialogOptions, remote } from 'electron';
 import log from 'electron-log';
-// import { useEffect, useState } from 'react';
 
-// import FileMonitor from './FileMonitor';
 import { bestEffortDecode } from './buffer-decoders';
 import { ensureLF } from './string-utils';
 
