@@ -24,7 +24,7 @@ jobs:
             | sed 's/[v]//g' > NEXT_VERSION
       - run: cat NEXT_VERSION
       - name: Upload Version Number
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2.2.2
         with:
           # We add ".zip" to the artifact name because GitHub puts artifacts into zip files before uploading
           name: NEXT_VERSION.zip
@@ -69,22 +69,22 @@ jobs:
       - name: Package Production App
         run: npm run dist:win -- -p never
       - name: Upload Packaged App
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2.2.2
         with:
           name: aie-setup-${{ steps.find-new-version.outputs.new_release_version }}.exe.zip
           path: dist/aie-setup-${{ steps.find-new-version.outputs.new_release_version }}.exe
       - name: Upload Packaged Zip
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2.2.2
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}-win.zip.zip
           path: dist/aie-${{ steps.find-new-version.outputs.new_release_version }}-win.zip
       - name: Upload Blockmap
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2.2.2
         with:
           name: aie-setup-${{ steps.find-new-version.outputs.new_release_version }}.exe.blockmap.zip
           path: dist/aie-setup-${{ steps.find-new-version.outputs.new_release_version }}.exe.blockmap
       - name: Upload AutoUpdate Metadata
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2.2.2
         with:
           name: latest.yml.zip
           path: dist/latest.yml
@@ -123,22 +123,22 @@ jobs:
       - name: Package Production App
         run: npm run dist:macos -- -p never
       - name: Upload Packaged App
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2.2.2
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}.dmg.zip
           path: dist/aie-${{ steps.find-new-version.outputs.new_release_version }}.dmg
       - name: Upload Packaged Zip
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2.2.2
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}-mac.zip.zip
           path: dist/aie-${{ steps.find-new-version.outputs.new_release_version }}-mac.zip
       - name: Upload Blockmap
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2.2.2
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}.dmg.blockmap.zip
           path: dist/aie-${{ steps.find-new-version.outputs.new_release_version }}.dmg.blockmap
       - name: Upload AutoUpdate Metadata
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2.2.2
         with:
           name: latest-mac.yml.zip
           path: dist/latest-mac.yml
@@ -177,17 +177,17 @@ jobs:
       - name: Package Production App
         run: npm run dist:linux -- -p never
       - name: Upload Packaged App
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2.2.2
         with:
           name: aie.AppImage.zip
           path: dist/aie.AppImage
       - name: Upload Packaged Zip
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2.2.2
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}.zip.zip
           path: dist/aie-${{ steps.find-new-version.outputs.new_release_version }}.zip
       - name: Upload AutoUpdate Metadata
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2.2.2
         with:
           name: latest-linux.yml.zip
           path: dist/latest-linux.yml
