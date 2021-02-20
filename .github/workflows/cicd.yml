@@ -43,7 +43,7 @@ jobs:
         with:
           node-version: 14.15.4
       - name: Download Version Number
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.8
         with:
           name: NEXT_VERSION.zip
       - name: Find New Version
@@ -101,7 +101,7 @@ jobs:
         with:
           node-version: 14.15.4
       - name: Download Version Number
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.8
         with:
           name: NEXT_VERSION.zip
       - name: Find New Version
@@ -155,7 +155,7 @@ jobs:
         with:
           node-version: 14.15.4
       - name: Download Version Number
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.8
         with:
           name: NEXT_VERSION.zip
       - name: Find New Version
@@ -204,7 +204,7 @@ jobs:
           # https://github.com/semantic-release/git/issues/196#issuecomment-601310576
           persist-credentials: false
       - name: Download Version Number
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.8
         with:
           name: NEXT_VERSION.zip
       - name: Find New Version
@@ -216,51 +216,51 @@ jobs:
       - name: Prepare Dist Folder
         run: mkdir dist
       - name: Download Packaged App for Windows
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.8
         with:
           name: aie-setup-${{ steps.find-new-version.outputs.new_release_version }}.exe.zip
       - name: Download Packaged Zip for Windows
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.8
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}-win.zip.zip
       - name: Download Blockmap for Windows
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.8
         with:
           name: aie-setup-${{ steps.find-new-version.outputs.new_release_version }}.exe.blockmap.zip
       - name: Download AutoUpdate Metadata for Windows
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.8
         with:
           name: latest.yml.zip
       - name: Download Packaged App for macOS
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.8
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}.dmg.zip
       - name: Download Packaged Zip for macOS
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.8
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}-mac.zip.zip
       - name: Download Blockmap for macOS
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.8
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}.dmg.blockmap.zip
       - name: Download AutoUpdate Metadata for macOS
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.8
         with:
           name: latest-mac.yml.zip
       - name: Download Packaged App for macOS
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.8
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}.dmg.zip
       - name: Download Packaged App for Linux
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.8
         with:
           name: aie.AppImage.zip
       - name: Download Packaged Zip for Linux
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.8
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}.zip.zip
       - name: Download AutoUpdate Metadata for Linux
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.8
         with:
           name: latest-linux.yml.zip
       - name: Move Files to Dist Folder
