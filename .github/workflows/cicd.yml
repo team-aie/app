@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v1
       - run: git tag -l
       - name: Use Node.js 14.15.4
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2.1.4
         with:
           node-version: 14.15.4
       - name: Detect New Version
@@ -39,7 +39,7 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v2
       - name: Use Node.js 14.15.4
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2.1.4
         with:
           node-version: 14.15.4
       - name: Download Version Number
@@ -97,7 +97,7 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v2
       - name: Use Node.js 14.15.4
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2.1.4
         with:
           node-version: 14.15.4
       - name: Download Version Number
@@ -151,7 +151,7 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v2
       - name: Use Node.js 14.15.4
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2.1.4
         with:
           node-version: 14.15.4
       - name: Download Version Number
