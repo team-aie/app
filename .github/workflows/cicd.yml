@@ -42,10 +42,8 @@ jobs:
         uses: actions/setup-node@v2.1.4
         with:
           node-version: 14.15.4
-      - name: Download Version Number
-        uses: actions/download-artifact@v1
-        with:
-          name: NEXT_VERSION.zip
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v2.0.8
       - name: Find New Version
         id: find-new-version
         run: |
@@ -100,10 +98,8 @@ jobs:
         uses: actions/setup-node@v2.1.4
         with:
           node-version: 14.15.4
-      - name: Download Version Number
-        uses: actions/download-artifact@v1
-        with:
-          name: NEXT_VERSION.zip
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v2.0.8
       - name: Find New Version
         id: find-new-version
         run: |
@@ -154,10 +150,8 @@ jobs:
         uses: actions/setup-node@v2.1.4
         with:
           node-version: 14.15.4
-      - name: Download Version Number
-        uses: actions/download-artifact@v1
-        with:
-          name: NEXT_VERSION.zip
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v2.0.8
       - name: Find New Version
         id: find-new-version
         run: |
@@ -203,10 +197,8 @@ jobs:
         with:
           # https://github.com/semantic-release/git/issues/196#issuecomment-601310576
           persist-credentials: false
-      - name: Download Version Number
-        uses: actions/download-artifact@v1
-        with:
-          name: NEXT_VERSION.zip
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v2.0.8
       - name: Find New Version
         id: find-new-version
         run: |
@@ -215,54 +207,6 @@ jobs:
           echo "::set-output name=new_release_version::${NEW_RELEASE_VERSION}"
       - name: Prepare Dist Folder
         run: mkdir dist
-      - name: Download Packaged App for Windows
-        uses: actions/download-artifact@v1
-        with:
-          name: aie-setup-${{ steps.find-new-version.outputs.new_release_version }}.exe.zip
-      - name: Download Packaged Zip for Windows
-        uses: actions/download-artifact@v1
-        with:
-          name: aie-${{ steps.find-new-version.outputs.new_release_version }}-win.zip.zip
-      - name: Download Blockmap for Windows
-        uses: actions/download-artifact@v1
-        with:
-          name: aie-setup-${{ steps.find-new-version.outputs.new_release_version }}.exe.blockmap.zip
-      - name: Download AutoUpdate Metadata for Windows
-        uses: actions/download-artifact@v1
-        with:
-          name: latest.yml.zip
-      - name: Download Packaged App for macOS
-        uses: actions/download-artifact@v1
-        with:
-          name: aie-${{ steps.find-new-version.outputs.new_release_version }}.dmg.zip
-      - name: Download Packaged Zip for macOS
-        uses: actions/download-artifact@v1
-        with:
-          name: aie-${{ steps.find-new-version.outputs.new_release_version }}-mac.zip.zip
-      - name: Download Blockmap for macOS
-        uses: actions/download-artifact@v1
-        with:
-          name: aie-${{ steps.find-new-version.outputs.new_release_version }}.dmg.blockmap.zip
-      - name: Download AutoUpdate Metadata for macOS
-        uses: actions/download-artifact@v1
-        with:
-          name: latest-mac.yml.zip
-      - name: Download Packaged App for macOS
-        uses: actions/download-artifact@v1
-        with:
-          name: aie-${{ steps.find-new-version.outputs.new_release_version }}.dmg.zip
-      - name: Download Packaged App for Linux
-        uses: actions/download-artifact@v1
-        with:
-          name: aie.AppImage.zip
-      - name: Download Packaged Zip for Linux
-        uses: actions/download-artifact@v1
-        with:
-          name: aie-${{ steps.find-new-version.outputs.new_release_version }}.zip.zip
-      - name: Download AutoUpdate Metadata for Linux
-        uses: actions/download-artifact@v1
-        with:
-          name: latest-linux.yml.zip
       - name: Move Files to Dist Folder
         run: mv *.zip/* dist
       - name: Run Semantic Release
