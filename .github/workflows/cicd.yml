@@ -42,15 +42,13 @@ jobs:
         uses: actions/setup-node@v2.1.4
         with:
           node-version: 14.15.4
-      - name: Download Version Number
+      - name: Download All Artifacts
         uses: actions/download-artifact@v2.0.8
-        with:
-          name: NEXT_VERSION.zip
       - name: Find New Version
         id: find-new-version
         run: |
-          NEW_RELEASE_VERSION=$(cat NEXT_VERSION)
-          rm NEXT_VERSION
+          NEW_RELEASE_VERSION=$(cat NEXT_VERSION.zip/NEXT_VERSION)
+          rm -r NEXT_VERSION.zip
           echo "::set-output name=new_release_version::${NEW_RELEASE_VERSION}"
       - name: Use New Version
         run: npm version --allow-same-version --no-git-tag-version ${{ steps.find-new-version.outputs.new_release_version }}
@@ -100,15 +98,13 @@ jobs:
         uses: actions/setup-node@v2.1.4
         with:
           node-version: 14.15.4
-      - name: Download Version Number
+      - name: Download All Artifacts
         uses: actions/download-artifact@v2.0.8
-        with:
-          name: NEXT_VERSION.zip
       - name: Find New Version
         id: find-new-version
         run: |
-          NEW_RELEASE_VERSION=$(cat NEXT_VERSION)
-          rm NEXT_VERSION
+          NEW_RELEASE_VERSION=$(cat NEXT_VERSION.zip/NEXT_VERSION)
+          rm -r NEXT_VERSION.zip
           echo "::set-output name=new_release_version::${NEW_RELEASE_VERSION}"
       - name: Use New Version
         run: npm version --allow-same-version --no-git-tag-version ${{ steps.find-new-version.outputs.new_release_version }}
@@ -154,15 +150,13 @@ jobs:
         uses: actions/setup-node@v2.1.4
         with:
           node-version: 14.15.4
-      - name: Download Version Number
+      - name: Download All Artifacts
         uses: actions/download-artifact@v2.0.8
-        with:
-          name: NEXT_VERSION.zip
       - name: Find New Version
         id: find-new-version
         run: |
-          NEW_RELEASE_VERSION=$(cat NEXT_VERSION)
-          rm NEXT_VERSION
+          NEW_RELEASE_VERSION=$(cat NEXT_VERSION.zip/NEXT_VERSION)
+          rm -r NEXT_VERSION.zip
           echo "::set-output name=new_release_version::${NEW_RELEASE_VERSION}"
       - name: Use New Version
         run: npm version --allow-same-version --no-git-tag-version ${{ steps.find-new-version.outputs.new_release_version }}
@@ -194,6 +188,7 @@ jobs:
 
   create-release:
     name: Semantic Release
+    if: github.ref == 'refs/heads/master'
     needs: [build-win, build-macos, build-linux]
     runs-on: ubuntu-latest
     steps:
@@ -202,24 +197,19 @@ jobs:
         with:
           # https://github.com/semantic-release/git/issues/196#issuecomment-601310576
           persist-credentials: false
-      - name: Prepare Dist Folder
-        run: mkdir dist
       - name: Download All Artifacts
         uses: actions/download-artifact@v2.0.8
-      - name: Display structure of downloaded files
-        run: ls -R
       - name: Find New Version
         id: find-new-version
         run: |
           NEW_RELEASE_VERSION=$(cat NEXT_VERSION.zip/NEXT_VERSION)
-          rm -rf NEXT_VERSION.zip
+          rm -r NEXT_VERSION.zip
           echo "::set-output name=new_release_version::${NEW_RELEASE_VERSION}"
+      - name: Prepare Dist Folder
+        run: mkdir dist
       - name: Move Files to Dist Folder
-        run: cp *.zip/* dist
-      - name: Display structure of downloaded files
-        run: ls -R
+        run: mv *.zip/* dist
       - name: Run Semantic Release
-        if: github.ref == 'refs/heads/master'
         uses: cycjimmy/semantic-release-action@v2
         with:
           extra_plugins: '@semantic-release/git'
