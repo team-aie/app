@@ -49,8 +49,8 @@ jobs:
       - name: Find New Version
         id: find-new-version
         run: |
-          NEW_RELEASE_VERSION=$(cat NEXT_VERSION.zip/NEXT_VERSION)
-          rm -r NEXT_VERSION.zip
+          NEW_RELEASE_VERSION=$(cat NEXT_VERSION)
+          rm NEXT_VERSION
           echo "::set-output name=new_release_version::${NEW_RELEASE_VERSION}"
       - name: Use New Version
         run: npm version --allow-same-version --no-git-tag-version ${{ steps.find-new-version.outputs.new_release_version }}
@@ -107,8 +107,8 @@ jobs:
       - name: Find New Version
         id: find-new-version
         run: |
-          NEW_RELEASE_VERSION=$(cat NEXT_VERSION.zip/NEXT_VERSION)
-          rm -r NEXT_VERSION.zip
+          NEW_RELEASE_VERSION=$(cat NEXT_VERSION)
+          rm NEXT_VERSION
           echo "::set-output name=new_release_version::${NEW_RELEASE_VERSION}"
       - name: Use New Version
         run: npm version --allow-same-version --no-git-tag-version ${{ steps.find-new-version.outputs.new_release_version }}
@@ -161,8 +161,8 @@ jobs:
       - name: Find New Version
         id: find-new-version
         run: |
-          NEW_RELEASE_VERSION=$(cat NEXT_VERSION.zip/NEXT_VERSION)
-          rm -r NEXT_VERSION.zip
+          NEW_RELEASE_VERSION=$(cat NEXT_VERSION)
+          rm NEXT_VERSION
           echo "::set-output name=new_release_version::${NEW_RELEASE_VERSION}"
       - name: Use New Version
         run: npm version --allow-same-version --no-git-tag-version ${{ steps.find-new-version.outputs.new_release_version }}
@@ -194,7 +194,6 @@ jobs:
 
   create-release:
     name: Semantic Release
-    if: github.ref == 'refs/heads/master'
     needs: [build-win, build-macos, build-linux]
     runs-on: ubuntu-latest
     steps:
@@ -203,69 +202,24 @@ jobs:
         with:
           # https://github.com/semantic-release/git/issues/196#issuecomment-601310576
           persist-credentials: false
-      - name: Download Version Number
+      - name: Prepare Dist Folder
+        run: mkdir dist
+      - name: Download All Artifacts
         uses: actions/download-artifact@v2.0.8
-        with:
-          name: NEXT_VERSION.zip
+      - name: Display structure of downloaded files
+        run: ls -R
       - name: Find New Version
         id: find-new-version
         run: |
-          NEW_RELEASE_VERSION=$(cat NEXT_VERSION.zip/NEXT_VERSION)
-          rm -r NEXT_VERSION.zip
+          NEW_RELEASE_VERSION=$(cat NEXT_VERSION/NEXT_VERSION)
+          rm -rf NEXT_VERSION
           echo "::set-output name=new_release_version::${NEW_RELEASE_VERSION}"
-      - name: Prepare Dist Folder
-        run: mkdir dist
-      - name: Download Packaged App for Windows
-        uses: actions/download-artifact@v2.0.8
-        with:
-          name: aie-setup-${{ steps.find-new-version.outputs.new_release_version }}.exe.zip
-      - name: Download Packaged Zip for Windows
-        uses: actions/download-artifact@v2.0.8
-        with:
-          name: aie-${{ steps.find-new-version.outputs.new_release_version }}-win.zip.zip
-      - name: Download Blockmap for Windows
-        uses: actions/download-artifact@v2.0.8
-        with:
-          name: aie-setup-${{ steps.find-new-version.outputs.new_release_version }}.exe.blockmap.zip
-      - name: Download AutoUpdate Metadata for Windows
-        uses: actions/download-artifact@v2.0.8
-        with:
-          name: latest.yml.zip
-      - name: Download Packaged App for macOS
-        uses: actions/download-artifact@v2.0.8
-        with:
-          name: aie-${{ steps.find-new-version.outputs.new_release_version }}.dmg.zip
-      - name: Download Packaged Zip for macOS
-        uses: actions/download-artifact@v2.0.8
-        with:
-          name: aie-${{ steps.find-new-version.outputs.new_release_version }}-mac.zip.zip
-      - name: Download Blockmap for macOS
-        uses: actions/download-artifact@v2.0.8
-        with:
-          name: aie-${{ steps.find-new-version.outputs.new_release_version }}.dmg.blockmap.zip
-      - name: Download AutoUpdate Metadata for macOS
-        uses: actions/download-artifact@v2.0.8
-        with:
-          name: latest-mac.yml.zip
-      - name: Download Packaged App for macOS
-        uses: actions/download-artifact@v2.0.8
-        with:
-          name: aie-${{ steps.find-new-version.outputs.new_release_version }}.dmg.zip
-      - name: Download Packaged App for Linux
-        uses: actions/download-artifact@v2.0.8
-        with:
-          name: aie.AppImage.zip
-      - name: Download Packaged Zip for Linux
-        uses: actions/download-artifact@v2.0.8
-        with:
-          name: aie-${{ steps.find-new-version.outputs.new_release_version }}.zip.zip
-      - name: Download AutoUpdate Metadata for Linux
-        uses: actions/download-artifact@v2.0.8
-        with:
-          name: latest-linux.yml.zip
       - name: Move Files to Dist Folder
-        run: mv *.zip/* dist
+        run: cp *.zip/* dist
+      - name: Display structure of downloaded files
+        run: ls -R
       - name: Run Semantic Release
+        if: github.ref == 'refs/heads/master'
         uses: cycjimmy/semantic-release-action@v2
         with:
           extra_plugins: '@semantic-release/git'
