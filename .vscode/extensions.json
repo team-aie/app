@@ -1,6 +1,8 @@
 {
   "recommendations": [
     "dbaeumer.vscode-eslint",
-    "donjayamanne.githistory"
+    "donjayamanne.githistory",
+    "mervin.markdown-formatter",
+    "stkb.rewrap"
   ]
 }
