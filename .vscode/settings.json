@@ -3,11 +3,6 @@
   "editor.renderWhitespace": "boundary",
   "editor.tabCompletion": "on",
   "editor.acceptSuggestionOnEnter": "on",
-  "editor.quickSuggestions": {
-    "other": true,
-    "comments": true,
-    "strings": true,
-  },
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true,
   },
@@ -16,4 +11,11 @@
   "files.autoSave": "afterDelay",
   // Need to match `printWidth` in .prettierrc.js.
   "rewrap.wrappingColumn": 120,
+  "[markdown]": {
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": true,
+      "strings": true,
+    },
+  }
 }
