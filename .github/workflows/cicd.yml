@@ -211,8 +211,8 @@ jobs:
       - name: Find New Version
         id: find-new-version
         run: |
-          NEW_RELEASE_VERSION=$(cat NEXT_VERSION/NEXT_VERSION)
-          rm -rf NEXT_VERSION
+          NEW_RELEASE_VERSION=$(cat NEXT_VERSION.zip/NEXT_VERSION)
+          rm -rf NEXT_VERSION.zip
           echo "::set-output name=new_release_version::${NEW_RELEASE_VERSION}"
       - name: Move Files to Dist Folder
         run: cp *.zip/* dist
