@@ -85,7 +85,7 @@
     "electron-webpack": "^2.8.2",
     "electron-webpack-eslint": "^6.0.0",
     "electron-webpack-ts": "^4.0.1",
-    "eslint": "^7.4.0",
+    "eslint": "^7.20.0",
     "eslint-config-prettier": "^7.0.0",
     "eslint-plugin-import": "<2.21.0",
     "eslint-plugin-jest": "^24.1.5",
