@@ -121,11 +121,11 @@ const OpenProjectPage: FC<{
           <Button
             variant={'outline-secondary'}
             style={{ width: '100%' }}
-            onClick={(): void => {
+            onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>): void => {
               for (let i = 0; i < reservedStates.length; i++) {
                 localStorage.setItem(reservedStates[i], localStorage.getItem(reservedStates[i]));
               }
-              onRecordingButtonClick();
+              onRecordingButtonClick(event);
             }}>
             {t('Resume ')}
           </Button>
