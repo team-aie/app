@@ -10,6 +10,7 @@ import './show-details.scss';
 import './index.scss';
 import { PreviewPage } from './preview-page';
 import { SetMetaClickProps } from './set-meta-configuration';
+import { BuiltInRecordingList } from './types';
 
 /*
  Represents the page states controlled by configure-recording-set.
@@ -48,7 +49,7 @@ const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({ onSettingsButtonClic
   const goToNextDropdownState = () => {
     setMetadataStateIndex((metadataStateIndex + 1) % dropDownStates.length);
   };
-  const [chosenBuiltInList = '', rawSetChosenBuiltInList] = useLocalStorage(
+  const [chosenBuiltInList = '', rawSetChosenBuiltInList] = useLocalStorage<BuiltInRecordingList | ''>(
     getLSKey('ConfigureRecordingSetPage', 'chosenBuiltInList'),
     '',
   );
@@ -129,7 +130,6 @@ const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({ onSettingsButtonClic
           log.error(new Error(`Unknown metadata pageState: ${currentState}`));
           throw new Error(`Unknown metadata pageState: ${currentState} from ${dropDownStates}`);
       }
-      break;
 
     default: {
       const error = new Error(`Unknown pageState: ${recordingSetState}`);

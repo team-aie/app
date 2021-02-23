@@ -1,5 +1,7 @@
 import { PartialObserver, Subscription } from 'rxjs';
 
+import { BuiltInRecordingList } from '../components/configure-recording-set-page/types';
+
 export type PageState = 'welcome' | 'open-project' | 'configure-recording-set' | 'settings' | 'recording';
 
 export type ScaleKey = 'C' | 'D' | 'E' | 'F' | 'G' | 'A' | 'B';
@@ -11,21 +13,23 @@ export interface RecordingProject {
   lastAccessTime?: Date;
 }
 
+export type RecordingList =
+  | {
+      type: 'built-in';
+      name: BuiltInRecordingList;
+    }
+  | {
+      type: 'custom-file';
+      filePath: string;
+    };
+
 export interface RecordingSet {
   name: string;
   scale: {
     key: ScaleKey;
     octave: SupportedOctave;
   };
-  recordingList:
-    | {
-        type: 'built-in';
-        name: string;
-      }
-    | {
-        type: 'custom-file';
-        filePath: string;
-      };
+  recordingList: RecordingList;
   items?: RecordingItem[];
 }
 

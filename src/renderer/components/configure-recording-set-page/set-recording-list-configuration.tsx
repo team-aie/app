@@ -8,10 +8,12 @@ import { Consumer } from '../../types';
 import { filename, openFilePicker } from '../../utils';
 import { Select } from '../select';
 
+import { BuiltInRecordingList } from './types';
+
 interface SetRecordingListConfigurationProps {
   builtInLists: string[];
   chosenBuiltInList: string;
-  setChosenBuiltInList: Consumer<string>;
+  setChosenBuiltInList: Consumer<BuiltInRecordingList | ''>;
   chosenCustomListPath: string;
   setChosenCustomListPath: Consumer<string>;
   getFilePath: (listName: string, isBuiltIn: boolean) => void;
@@ -50,7 +52,7 @@ const SetRecordingListConfiguration: FC<SetRecordingListConfigurationProps> = ({
             value={chosenBuiltInList}
             testId={'selectReclist'}
             onChange={(e): void => {
-              setChosenBuiltInList(e.target.value);
+              setChosenBuiltInList(e.target.value as BuiltInRecordingList);
             }}>
             <option value={''} />
             {builtInLists.map((builtInList) => (

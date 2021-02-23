@@ -61,8 +61,8 @@ export const ConfigureRecordingSet: FC<{
   setRecordingSetState: Consumer<RecordingPageState>;
   prevState: RecordingPageState;
   currState: RecordingPageState;
-  chosenBuiltInList: string;
-  rawSetChosenBuiltInList: React.Dispatch<React.SetStateAction<string | undefined>>;
+  chosenBuiltInList: BuiltInRecordingList | '';
+  rawSetChosenBuiltInList: Consumer<BuiltInRecordingList | ''>;
   chosenCustomListPath: string;
   rawSetChosenCustomListPath: React.Dispatch<React.SetStateAction<string | undefined>>;
   metaDataIndex: number;
@@ -140,7 +140,7 @@ export const ConfigureRecordingSet: FC<{
   );
   const [chosenName = '', setChosenName] = useLocalStorage(getLSKey('ConfigureRecordingSetPage', 'chosenName'), '');
 
-  const setChosenBuiltInList = (name: string): void => {
+  const setChosenBuiltInList = (name: BuiltInRecordingList | ''): void => {
     rawSetChosenBuiltInList(name);
     if (name) {
       rawSetChosenCustomListPath('');
