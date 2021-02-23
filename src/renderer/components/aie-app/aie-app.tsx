@@ -98,12 +98,15 @@ export const AieApp: FC = () => {
     const simpleOnBack = (): void => changePage(false);
     const goToSettingsPage = (): void => setPageStateIndex(4);
     const goToConfigureRecordingSetPage = (): void => setPageStateIndex(2);
+    const goToRecordingPage = (): void => setPageStateIndex(3);
 
     switch (pageState) {
       case 'welcome':
         return <WelcomePage onNext={simpleOnNext} />;
       case 'open-project':
-        return <OpenProjectPage onNext={simpleOnNext} onBack={simpleOnBack} />;
+        return (
+          <OpenProjectPage onRecordingButtonClick={goToRecordingPage} onNext={simpleOnNext} onBack={simpleOnBack} />
+        );
       case 'configure-recording-set':
         return (
           <ConfigureRecordingSetPage

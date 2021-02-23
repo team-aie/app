@@ -10,14 +10,55 @@ import { RecordingProjectContext } from '../../contexts';
 import { Consumer, RecordingProject } from '../../types';
 import { ensureFolderExists, filename, openFilePicker } from '../../utils';
 import BackButton from '../back-button';
+import { Positional } from '../helper-components';
 
 import knownProjects from './known-projects';
 import { ProjectRow } from './project-row';
 
-export const OpenProjectPage: FC<{ onNext: Consumer<void>; onBack: MouseEventHandler<HTMLElement> }> = ({
-  onNext,
-  onBack,
-}) => {
+interface ProjectRowProps {
+  project: RecordingProject | undefined;
+  onClick: Consumer<RecordingProject>;
+  selected: boolean;
+}
+const reservedStates = [
+  'AieApp$keyOctave',
+  'AieApp$projectFolder',
+  'AieApp$recordingProject',
+  'AieApp$recordingSet',
+  'AieApp$recordingList',
+  'AieApp$pageStateIndex',
+  'ConfigureRecordingSetPage$recordingSets',
+  'ConfigureRecordingSetPage$projectFile',
+  'RecordingPage$index',
+];
+
+const ProjectRow: FC<ProjectRowProps> = ({ project, onClick, selected }) => {
+  const { theme } = useContext(ThemeContext);
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <tr
+      onClick={(): void => project && onClick(project)}
+      style={
+        selected || hovered
+          ? { filter: (theme === SupportedTheme.LIGHT && 'invert(1)') || undefined, textDecoration: 'underline' }
+          : undefined
+      }
+      onMouseEnter={(): void => setHovered(true)}
+      onMouseOut={(): void => setHovered(false)}>
+      <td className={'border-bottom'}>{project && project.name}</td>
+      <td className={'border-bottom'} align={'right'}>
+        {project && project.lastAccessTime && project.lastAccessTime.toLocaleString()}
+      </td>
+    </tr>
+  );
+};
+
+const OpenProjectPage: FC<{
+  onRecordingButtonClick: MouseEventHandler<HTMLElement>;
+  onNext: Consumer<void>;
+  onBack: MouseEventHandler<HTMLElement>;
+}> = ({ onRecordingButtonClick, onNext, onBack }) => {
   const { t } = useTranslation();
   const [projects, setProjects] = useState<RecordingProject[]>([]);
   {
@@ -75,6 +116,23 @@ export const OpenProjectPage: FC<{ onNext: Consumer<void>; onBack: MouseEventHan
 
   return (
     <Fragment>
+      <Positional position={'top-right'}>
+        <Row style={{ marginTop: '0.75rem' }}>
+          <Button
+            variant={'outline-secondary'}
+            style={{ width: '100%' }}
+            onClick={(): void => {
+              for (let i = 0; i < reservedStates.length; i++) {
+                localStorage.setItem(reservedStates[i], localStorage.getItem(reservedStates[i]));
+              }
+              onRecordingButtonClick();
+            }}>
+            {t('Resume ')}
+          </Button>
+        </Row>
+
+        {/* <Image style={{ width: '2rem' }} src={settingButton} onClick={onRecordingButtonClick}></Image> */}
+      </Positional>
       <BackButton onBack={onBack} />
       <Container style={{ height: '100%' }} className={'d-flex justify-content-center align-items-center'}>
         <Col xs={'auto'} sm={10} md={10} lg={10} xl={10}>
