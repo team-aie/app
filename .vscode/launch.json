@@ -7,10 +7,10 @@
       "name": "Launch Program",
       "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron-webpack",
       "args": [
-        "dev"
+        "dev",
       ],
       "timeout": 60000,
-      "sourceMaps": true
+      "sourceMaps": true,
     },
     {
       "type": "node",
@@ -18,11 +18,11 @@
       "name": "Launch Program with Std",
       "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron-webpack",
       "args": [
-        "dev"
+        "dev",
       ],
       "timeout": 60000,
       "sourceMaps": true,
-      "outputCapture": "std"
-    }
+      "outputCapture": "std",
+    },
   ]
 }
