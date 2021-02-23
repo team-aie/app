@@ -63,7 +63,7 @@
     "rxjs": "^6.5.5",
     "sanitize-filename": "^1.6.3",
     "source-map-support": "^0.5.19",
-    "wavesurfer.js": "^4.0.1",
+    "wavesurfer.js": "^4.5.0",
     "z.cvvc_normal": "file:external/z.cvvc_normal"
   },
   "devDependencies": {
