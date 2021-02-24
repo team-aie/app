@@ -1,3 +1,4 @@
+import { remote } from 'electron';
 import React, { CSSProperties, FC, Fragment, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
@@ -6,6 +7,10 @@ import { useTranslation } from 'react-i18next';
 
 import { version } from '../../../../package.json';
 import LICENSES, { LicenseInfo } from '../../licenses';
+
+const openDevTool = (): void => {
+  remote.getCurrentWindow().webContents.openDevTools({ mode: 'detach' });
+};
 
 type LicenseTextModalProps = LicenseInfo;
 
@@ -77,7 +82,7 @@ const LicenseDisclosure: FC<{ triggerStyle?: CSSProperties }> = ({ triggerStyle 
           <Modal.Title>{t('About')}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>
+          <p onClick={openDevTool}>
             {t('Version')} {version}
           </p>
           <h5>Open-Source Licenses</h5>
