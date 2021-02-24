@@ -3,7 +3,7 @@ import React, { FC, Fragment, ReactElement } from 'react';
 import Col from 'react-bootstrap/Col';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 
-import ConfigureRecordingSetPage from './components/configure-recording-set-page';
+import { ConfigureRecordingSetPage } from './components/configure-recording-set-page';
 import { Positional } from './components/helper-components';
 import LicenseDisclosure from './components/license-disclosure';
 import LocaleSelector from './components/locale-selector';

@@ -8,8 +8,7 @@ import ImageButton from '../image-button';
 
 import downButton from './down-button.svg';
 import switchPageButton from './switch-preview.svg';
-
-import { RecordingPageState } from '.';
+import { RecordingPageState } from './types';
 
 interface PreviewPageProps {
   /**

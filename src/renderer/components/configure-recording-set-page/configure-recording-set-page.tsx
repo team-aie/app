@@ -11,20 +11,17 @@ import './show-details.scss';
 import './index.scss';
 import { PreviewPage } from './preview-page';
 import { SetMetaClickProps } from './set-meta-configuration';
-import { BuiltInRecordingList } from './types';
-
-/**
- * Represents the page states controlled by configure-recording-set.
- *
- * 'external' represents pages external from this system. It's used to determine which transition should be used for the entering home page.
- */
-export type RecordingPageState = 'home' | 'external' | 'metadata';
-export type MetadataState = 'list-preview' | 'oto-ini' | 'dvcfg';
+import { BuiltInRecordingList, MetadataState, RecordingPageState } from './types';
 
 /**
  * Base page to handle configure-recording-set, dvcfg, oto.ini, and list-preview pages.
  */
-const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({ onSettingsButtonClick, onNext, onBack, onSetSelected }) => {
+export const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({
+  onSettingsButtonClick,
+  onNext,
+  onBack,
+  onSetSelected,
+}) => {
   const [recordingSetState = 'external' as RecordingPageState, setRecordingSetState] = useLocalStorage(
     getLSKey('ConfigureRecordingSetPage', 'recordingSetStateForConfig'),
     'external' as RecordingPageState,
@@ -164,5 +161,3 @@ const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({ onSettingsButtonClic
     }
   }
 };
-
-export default ConfigureRecordingSetPage;

@@ -7,7 +7,7 @@ import { mocked } from 'ts-jest/utils';
 
 import recordingListDataService from '../../services/recording-list-data-service';
 
-import ConfigureRecordingSetPage from './index';
+import { ConfigureRecordingSetPage } from './configure-recording-set-page';
 
 jest.mock('../../services/recording-list-data-service');
 
