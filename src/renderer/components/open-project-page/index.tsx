@@ -10,6 +10,7 @@ import { RecordingProjectContext } from '../../contexts';
 import { Consumer, RecordingProject } from '../../types';
 import { ensureFolderExists, filename, openFilePicker } from '../../utils';
 import BackButton from '../back-button';
+import { Positional } from '../helper-components';
 
 import knownProjects from './known-projects';
 
@@ -18,6 +19,18 @@ interface ProjectRowProps {
   onClick: Consumer<RecordingProject>;
   selected: boolean;
 }
+
+const reservedStates = [
+  'AieApp$keyOctave',
+  'AieApp$projectFolder',
+  'AieApp$recordingProject',
+  'AieApp$recordingSet',
+  'AieApp$recordingList',
+  'AieApp$pageStateIndex',
+  'ConfigureRecordingSetPage$recordingSets',
+  'ConfigureRecordingSetPage$projectFile',
+  'RecordingPage$index',
+];
 
 const ProjectRow: FC<ProjectRowProps> = ({ project, onClick, selected }) => {
   const [hovered, setHovered] = useState(false);
@@ -36,10 +49,11 @@ const ProjectRow: FC<ProjectRowProps> = ({ project, onClick, selected }) => {
   );
 };
 
-const OpenProjectPage: FC<{ onNext: Consumer<void>; onBack: MouseEventHandler<HTMLElement> }> = ({
-  onNext,
-  onBack,
-}) => {
+const OpenProjectPage: FC<{
+  onRecordingButtonClick: MouseEventHandler<HTMLElement>;
+  onNext: Consumer<void>;
+  onBack: MouseEventHandler<HTMLElement>;
+}> = ({ onRecordingButtonClick, onNext, onBack }) => {
   const { t } = useTranslation();
   const [projects, setProjects] = useState<RecordingProject[]>([]);
   {
@@ -97,6 +111,21 @@ const OpenProjectPage: FC<{ onNext: Consumer<void>; onBack: MouseEventHandler<HT
 
   return (
     <Fragment>
+      <Positional position={'top-right'}>
+        <Row style={{ marginTop: '0.75rem' }}>
+          <Button
+            variant={'outline-secondary'}
+            style={{ width: '100%' }}
+            onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>): void => {
+              for (let i = 0; i < reservedStates.length; i++) {
+                localStorage.setItem(reservedStates[i], localStorage.getItem(reservedStates[i]));
+              }
+              onRecordingButtonClick(event);
+            }}>
+            {t('Resume ')}
+          </Button>
+        </Row>
+      </Positional>
       <BackButton onBack={onBack} />
       <Container style={{ height: '100%' }} className={'d-flex justify-content-center align-items-center'}>
         <Col xs={'auto'} sm={10} md={10} lg={10} xl={10}>
