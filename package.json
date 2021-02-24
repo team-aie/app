@@ -59,7 +59,7 @@
     "react-dom": "^17.0.1",
     "react-i18next": "^11.8.7",
     "react-transition-group": "^4.4.1",
-    "react-use": "^15.3.2",
+    "react-use": "^17.1.1",
     "rxjs": "^6.5.5",
     "sanitize-filename": "^1.6.3",
     "source-map-support": "^0.5.19",
@@ -72,6 +72,7 @@
     "@types/audiobuffer-to-wav": "^1.0.0",
     "@types/dom-mediacapture-record": "^1.0.7",
     "@types/jest": "^26.0.4",
+    "@types/js-cookie": "^2.2.6",
     "@types/react-dom": "^17.0.0",
     "@types/react-test-renderer": "^17.0.1",
     "@types/react-transition-group": "^4.4.1",
@@ -108,5 +109,10 @@
     "typescript": "^4.1.2",
     "webpack": "^4.44.2",
     "webpack-license-plugin": "^4.1.2"
+  },
+  "//": {
+    "devDependencies": {
+      "@types/js-cookie": "Required because react-use@17.1.1 uses `js-cookie`, leading to TSC errors"
+    }
   }
 }
