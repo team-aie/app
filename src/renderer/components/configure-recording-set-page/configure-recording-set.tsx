@@ -31,7 +31,7 @@ import CreatedRecordingSetList from './created-recording-set-list';
 import { SetMetaConfiguration } from './set-meta-configuration';
 import SetRecordingListConfiguration from './set-recording-list-configuration';
 import settingButton from './settingButton.svg';
-import showDetailButton from './show-detail.svg';
+import showDetailsButton from './show-detail.svg';
 import { BuiltInRecordingList } from './types';
 
 import './show-details.scss';
@@ -285,15 +285,18 @@ export const ConfigureRecordingSet: FC<ConfigureRecordingSetProps> = ({
       </CSSTransition>
       <CSSTransition {...transitionProps}>
         <div>
-          <Positional position="bottom-center" style={{ visibility: metaDataIndex == -1 ? 'hidden' : 'visible' }}>
-            <ImageButton
-              src={showDetailButton}
-              width="7rem"
-              onClick={(): void => {
-                setRecordingSetState(prevState == 'home' || prevState == 'external' ? 'metadata' : prevState);
-              }}
-            />
-          </Positional>
+          {metaDataIndex >= 0 && (
+            <Positional position="bottom-center">
+              <ImageButton
+                src={showDetailsButton}
+                testId="show-details-button"
+                width="7rem"
+                onClick={(): void => {
+                  setRecordingSetState(prevState == 'home' || prevState == 'external' ? 'metadata' : prevState);
+                }}
+              />
+            </Positional>
+          )}
           <Positional position={'top-right'}>
             <Image
               style={{ width: '2rem' }}

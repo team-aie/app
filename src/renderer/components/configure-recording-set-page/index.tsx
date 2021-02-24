@@ -60,19 +60,17 @@ const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({ onSettingsButtonClic
   const useSubscribeToRecordingListSelection = () => {
     useAsync(async () => {
       if (chosenCustomListPath) {
-        setListData(
-          await recordingListDataService.readData({
-            type: 'custom-file',
-            filePath: chosenCustomListPath,
-          }),
-        );
+        const nextListData = await recordingListDataService.readData({
+          type: 'custom-file',
+          filePath: chosenCustomListPath,
+        });
+        setListData(nextListData);
       } else if (chosenBuiltInList) {
-        setListData(
-          await recordingListDataService.readData({
-            type: 'built-in',
-            name: chosenBuiltInList,
-          }),
-        );
+        const nextListData = await recordingListDataService.readData({
+          type: 'built-in',
+          name: chosenBuiltInList,
+        });
+        setListData(nextListData);
       } else {
         setListData(undefined);
       }

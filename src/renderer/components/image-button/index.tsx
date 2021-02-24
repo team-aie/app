@@ -5,11 +5,15 @@ interface ImageButtonProps {
   onClick?: MouseEventHandler<HTMLElement>;
   src: string;
   width: string;
+  /**
+   * Used to allow this element to be selected in react-testing-library testing.
+   */
+  testId?: string;
 }
 
-const ImageButton: FC<ImageButtonProps> = ({ onClick, src, width }) => {
+const ImageButton: FC<ImageButtonProps> = ({ onClick, src, width, testId }) => {
   return (
-    <button onClick={onClick} className={'image-button'}>
+    <button data-testid={testId} onClick={onClick} className={'image-button'}>
       <Image src={src} style={{ width }} />
     </button>
   );
