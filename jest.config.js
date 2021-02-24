@@ -19,4 +19,6 @@ module.exports = {
     TextEncoder,
     TextDecoder,
   },
+  resetMocks: true,
+  resetModules: true,
 };

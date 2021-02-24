@@ -44,8 +44,6 @@ describe('ConfigureRecordingSetPage', () => {
       type: 'built-in',
       name: 'デルタ式英語リストver5 (Delta English Ver. 5)',
     });
-
-    readDataMock.mockReset();
   });
 
   it('renders list preview page after showDetails button is clicked and then goes to list preview page', async () => {
@@ -66,7 +64,5 @@ describe('ConfigureRecordingSetPage', () => {
     await screen.findByText('listContent');
 
     expect(recordingListDataService.readData).toHaveBeenCalledTimes(1);
-
-    readDataMock.mockReset();
   });
 });
