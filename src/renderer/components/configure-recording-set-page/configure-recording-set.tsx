@@ -53,7 +53,7 @@ const BUILT_IN_RECORDING_LISTS: BuiltInRecordingList[] = [
   'Z式CVVC-Normal (Z Chinese CVVC - Normal)',
 ];
 
-export const ConfigureRecordingSet: FC<{
+interface ConfigureRecordingSetProps {
   onSettingsButtonClick: MouseEventHandler<HTMLElement>;
   onNext: MouseEventHandler<HTMLElement>;
   onBack: MouseEventHandler<HTMLElement>;
@@ -66,8 +66,9 @@ export const ConfigureRecordingSet: FC<{
   chosenCustomListPath: string;
   rawSetChosenCustomListPath: React.Dispatch<React.SetStateAction<string | undefined>>;
   metaDataIndex: number;
-  getFilePath: (listName: string, isBuiltIn: boolean) => void;
-}> = ({
+}
+
+export const ConfigureRecordingSet: FC<ConfigureRecordingSetProps> = ({
   onSettingsButtonClick,
   onNext,
   onBack,
@@ -80,7 +81,6 @@ export const ConfigureRecordingSet: FC<{
   chosenCustomListPath,
   rawSetChosenCustomListPath,
   metaDataIndex,
-  getFilePath,
 }) => {
   const { t } = useTranslation();
   const { recordingProject } = useContext(RecordingProjectContext);
@@ -249,7 +249,6 @@ export const ConfigureRecordingSet: FC<{
                 setChosenBuiltInList={setChosenBuiltInList}
                 chosenCustomListPath={chosenCustomListPath}
                 setChosenCustomListPath={setChosenCustomListPath}
-                getFilePath={getFilePath}
               />
               <Col xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'}>
                 <AddRecordingSetButton
@@ -302,7 +301,8 @@ export const ConfigureRecordingSet: FC<{
               onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>): void => {
                 setRecordingSetState('external');
                 onSettingsButtonClick(event);
-              }}></Image>
+              }}
+            />
           </Positional>
           <NextButton
             text={t('Start')}

@@ -85,7 +85,7 @@ module.exports = (config) => {
      * For raw-loader. See {@link https://webpack.electron.build/modifying-webpack-configurations#configure-raw-loader}.
      */
     config.module.rules.push({
-      test: /\.txt$/,
+      test: /\.(txt|ini)$/,
       use: 'raw-loader',
     });
   }

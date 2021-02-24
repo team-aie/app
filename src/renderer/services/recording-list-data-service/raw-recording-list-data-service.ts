@@ -50,6 +50,7 @@ const createRecordingListData = async (
 ): Promise<RecordingListData> => {
   const recordingItems = await lineByLineParser.parse(listContent);
   return {
+    listContent,
     recordingItems,
     otoIni,
     voiceDvcfg,

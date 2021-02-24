@@ -1,4 +1,4 @@
-import React, { FC, Fragment, useEffect } from 'react';
+import React, { FC, Fragment } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
@@ -16,7 +16,6 @@ interface SetRecordingListConfigurationProps {
   setChosenBuiltInList: Consumer<BuiltInRecordingList | ''>;
   chosenCustomListPath: string;
   setChosenCustomListPath: Consumer<string>;
-  getFilePath: (listName: string, isBuiltIn: boolean) => void;
 }
 
 const SetRecordingListConfiguration: FC<SetRecordingListConfigurationProps> = ({
@@ -25,22 +24,8 @@ const SetRecordingListConfiguration: FC<SetRecordingListConfigurationProps> = ({
   setChosenBuiltInList,
   chosenCustomListPath,
   setChosenCustomListPath,
-  getFilePath,
 }) => {
   const { t } = useTranslation();
-  const useUpdateCurrentFilePath = () => {
-    useEffect(() => {
-      let cleanupFunc;
-      if (chosenBuiltInList != '') {
-        cleanupFunc = getFilePath(chosenBuiltInList, true);
-      } else {
-        cleanupFunc = getFilePath(chosenCustomListPath, false);
-      }
-      return cleanupFunc;
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [chosenBuiltInList, chosenCustomListPath, getFilePath]);
-  };
-  useUpdateCurrentFilePath();
 
   return (
     <Fragment>

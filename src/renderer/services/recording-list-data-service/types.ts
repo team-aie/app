@@ -1,6 +1,7 @@
 import { RecordingItem, RecordingList } from '../../types';
 
 export interface RecordingListData {
+  listContent: string;
   recordingItems: RecordingItem[];
   otoIni?: string;
   voiceDvcfg?: string;
