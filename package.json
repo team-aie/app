@@ -59,7 +59,7 @@
     "react-dom": "^17.0.1",
     "react-i18next": "^11.8.7",
     "react-transition-group": "^4.4.1",
-    "react-use": "^15.3.2",
+    "react-use": "^17.1.1",
     "rxjs": "^6.5.5",
     "sanitize-filename": "^1.6.3",
     "source-map-support": "^0.5.19",
