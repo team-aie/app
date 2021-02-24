@@ -32,10 +32,9 @@ import { SetMetaConfiguration } from './set-meta-configuration';
 import SetRecordingListConfiguration from './set-recording-list-configuration';
 import settingButton from './settingButton.svg';
 import showDetailsButton from './show-detail.svg';
-import { BuiltInRecordingList } from './types';
+import { BuiltInRecordingList, RecordingPageState } from './types';
 
 import './show-details.scss';
-import { RecordingPageState } from '.';
 
 interface ProjectFile extends RecordingProject {
   name: string;

@@ -8,6 +8,7 @@ describe('back button', () => {
     expect.hasAssertions();
 
     const tree = renderer.create(<BackButton />).toJSON();
+
     expect(tree).toMatchInlineSnapshot(`
       <div
         className="position-absolute p-0 d-flex justify-content-start align-items-center container"

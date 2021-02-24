@@ -10,6 +10,7 @@ describe('imageButton', () => {
     expect.hasAssertions();
 
     const tree = renderer.create(<ImageButton src={backButton} width="1rem" />).toJSON();
+
     expect(tree).toMatchInlineSnapshot(`
       <button
         className="image-button"
