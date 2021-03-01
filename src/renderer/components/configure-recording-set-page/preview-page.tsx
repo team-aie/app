@@ -1,17 +1,14 @@
-import log from 'electron-log';
 import React, { FC, Fragment, useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 import { CSSTransition } from 'react-transition-group';
 
 import { Consumer } from '../../types';
-import { checkFileExistence, readFile } from '../../utils';
 import ImageButton from '../image-button';
 
 import downButton from './down-button.svg';
 import switchPageButton from './switch-preview.svg';
-
-import { RecordingPageState } from '.';
+import { RecordingPageState } from './types';
 
 interface PreviewPageProps {
   /**
@@ -31,9 +28,9 @@ interface PreviewPageProps {
    */
   setTransition: Consumer<boolean>;
   /**
-   * fileName: the name of the metadata file to populate the page with data from
+   * Content to be previewed in the body of the page.
    */
-  fileName: string;
+  previewContent: string;
   /**
    * setDropDownState: sets the built in reclist option
    **/
@@ -45,49 +42,16 @@ export const PreviewPage: FC<PreviewPageProps> = ({
   pageName,
   transition,
   setTransition,
-  fileName,
+  previewContent,
   setDropDownState,
 }) => {
   const [className, setClassName] = useState<string>('slide-down');
-  const [pageText, setPageText] = useState<string>(pageName + ' not availible');
 
   const transitionProps = {
     in: transition,
     appear: true,
     timeout: 3000,
     classNames: className,
-  };
-
-  const useFileInformation = () => {
-    useEffect(() => {
-      let isSubscribed = true;
-
-      const findFile = async () => {
-        const fileExistsResponse = checkFileExistence(fileName);
-        const fileExistsAnswer = await fileExistsResponse;
-        if (fileExistsAnswer) {
-          if (!isSubscribed) {
-            return;
-          }
-          if (fileExistsAnswer != 'file') {
-            setPageText(pageName + ' file does not exist');
-          }
-
-          const fileContentsResponse = readFile(fileName);
-          const fileContents = await fileContentsResponse;
-          if (isSubscribed) {
-            setPageText(fileContents);
-          }
-        }
-      };
-      findFile().catch((error) => {
-        log.error(error);
-        throw error;
-      });
-      return () => {
-        isSubscribed = false;
-      };
-    });
   };
 
   const useTransition = () => {
@@ -98,14 +62,13 @@ export const PreviewPage: FC<PreviewPageProps> = ({
     });
   };
 
-  useFileInformation();
   useTransition();
 
   return (
     <Fragment>
       <CSSTransition {...transitionProps}>
         <Container fluid={true}>
-          <Col></Col>
+          <Col />
           <Col>
             <Row className="d-flex justify-content-center">
               <ImageButton
@@ -126,7 +89,7 @@ export const PreviewPage: FC<PreviewPageProps> = ({
                     maxHeight: 'calc(100vh - 75px)',
                     overflowY: 'scroll',
                   }}>
-                  <pre>{pageText}</pre>
+                  <pre>{previewContent}</pre>
                 </Row>
               </Col>
               <Col sm="auto" className="d-flex justify-content-center">
@@ -142,7 +105,7 @@ export const PreviewPage: FC<PreviewPageProps> = ({
               </Col>
             </Row>
           </Col>
-          <Col></Col>
+          <Col />
         </Container>
       </CSSTransition>
     </Fragment>

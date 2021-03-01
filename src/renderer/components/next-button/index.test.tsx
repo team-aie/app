@@ -10,6 +10,7 @@ describe('next button', () => {
     expect.hasAssertions();
 
     const tree = renderer.create(<NextButton onClick={noOp()} disabled />).toJSON();
+
     expect(tree).toMatchInlineSnapshot(`
       <div
         className="position-absolute p-0 d-flex justify-content-end align-items-center container"

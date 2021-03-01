@@ -10,6 +10,7 @@ import { ensureLF } from './string-utils';
 // Direct Imports
 export const join = path.join;
 export const relative = path.relative;
+export const dirname = path.dirname;
 
 // Aliases
 export async function readFile(filePath: string, rawBuffer?: false): Promise<string>;

@@ -3,8 +3,7 @@ import React, { FC, Fragment, ReactElement } from 'react';
 import Col from 'react-bootstrap/Col';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 
-import ConfigureRecordingSetPage from './components/configure-recording-set-page';
-import { BuiltInRecordingList } from './components/configure-recording-set-page/types';
+import { ConfigureRecordingSetPage } from './components/configure-recording-set-page';
 import { Positional } from './components/helper-components';
 import LicenseDisclosure from './components/license-disclosure';
 import LocaleSelector from './components/locale-selector';
@@ -15,8 +14,9 @@ import StyleSwitcher from './components/style-switcher';
 import WelcomePage from './components/welcome-page';
 import { LocaleContext, RecordingProjectContext, ThemeContext } from './contexts';
 import { PAGE_STATES_IN_ORDER } from './env-and-consts';
+import recordingListDataService from './services/recording-list-data-service';
 import { RecordingItem, RecordingProject, RecordingSet, ScaleKey, SupportedOctave, SupportedTheme } from './types';
-import { getLSKey, join, lineByLineParser, readFile, useLocale } from './utils';
+import { getLSKey, join, useLocale } from './utils';
 
 const { length: numStates } = PAGE_STATES_IN_ORDER;
 
@@ -95,23 +95,7 @@ const AieApp: FC = () => {
         recordingList,
       } = recordingSet;
       setKeyOctave([newKey, newOctave]);
-      if (recordingList.type === 'built-in') {
-        const builtInListName = recordingList.name as BuiltInRecordingList;
-        switch (builtInListName) {
-          case 'デルタ式英語リストver5 (Delta English Ver. 5)':
-            import('delta_eng_ver5/デルタ式engver5_reclist.txt')
-              .then((content) => lineByLineParser.parse(content.default))
-              .then(setRecordingList);
-            break;
-          case 'Z式CVVC-Normal (Z Chinese CVVC - Normal)':
-            import('z.cvvc_normal/Reclist.txt')
-              .then((content) => lineByLineParser.parse(content.default))
-              .then(setRecordingList);
-            break;
-        }
-      } else {
-        readFile(recordingList.filePath).then(lineByLineParser.parse).then(setRecordingList);
-      }
+      recordingListDataService.readData(recordingList).then(({ recordingItems }) => setRecordingList(recordingItems));
     }
   };
 

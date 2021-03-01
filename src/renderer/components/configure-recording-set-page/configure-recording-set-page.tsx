@@ -1,44 +1,37 @@
 import log from 'electron-log';
-import React, { FC } from 'react';
-import { useLocalStorage, usePrevious } from 'react-use';
+import React, { FC, useEffect } from 'react';
+import { useAsync, useLocalStorage, usePrevious } from 'react-use';
 
+import recordingListDataService from '../../services/recording-list-data-service';
+import { RecordingListData } from '../../services/recording-list-data-service/types';
 import { getLSKey } from '../../utils';
-import { checkPaths } from '../../utils/configure-recording-index-utils';
 
 import { ConfigureRecordingSet } from './configure-recording-set';
 import './show-details.scss';
 import './index.scss';
 import { PreviewPage } from './preview-page';
 import { SetMetaClickProps } from './set-meta-configuration';
+import { BuiltInRecordingList, MetadataState, RecordingPageState } from './types';
 
-/*
- Represents the page states controlled by configure-recording-set.
- 'external' represents pages external from this system
-  - it's used to determine which transition should be used for the entering home page
-*/
-export type RecordingPageState = 'home' | 'external' | 'metadata';
-export type MetadataState = 'list-preview' | 'oto-ini' | 'dvcfg';
-
-/*
-Base page to handle configure-recording-set, dvcfg, oto.ini, and list-preview pages
-*/
-const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({ onSettingsButtonClick, onNext, onBack, onSetSelected }) => {
+/**
+ * Base page to handle configure-recording-set, dvcfg, oto.ini, and list-preview pages.
+ */
+export const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({
+  onSettingsButtonClick,
+  onNext,
+  onBack,
+  onSetSelected,
+}) => {
   const [recordingSetState = 'external' as RecordingPageState, setRecordingSetState] = useLocalStorage(
     getLSKey('ConfigureRecordingSetPage', 'recordingSetStateForConfig'),
     'external' as RecordingPageState,
   );
   const [metadataStateIndex = -1, setMetadataStateIndex] = useLocalStorage(
-    getLSKey('ConfigureRecordingSetPage', 'metadataStaeIndex'),
+    getLSKey('ConfigureRecordingSetPage', 'metadataStateIndex'),
     -1,
   );
   const prevState = usePrevious(recordingSetState) ?? 'home';
   const [transition = true, setTransition] = useLocalStorage(getLSKey('ConfigureRecordingSetPage', 'transition'), true);
-  const [recFilePath = '', setRecFilePath] = useLocalStorage(getLSKey('ConfigureRecordingSetPage', 'recFilePath'), '');
-  const [otoFilePath = '', setOtoFilePath] = useLocalStorage(getLSKey('ConfigureRecordingSetPage', 'otoFilePath'), '');
-  const [dvcfgFilePath = '', setDvcfgFilePath] = useLocalStorage(
-    getLSKey('ConfigureRecordingSetPage', 'dvcfgFilePath'),
-    '',
-  );
 
   const [dropDownStates = [], setDropdownStateArray] = useLocalStorage<Array<MetadataState>>(
     getLSKey('ConfigureRecordingSetPage', 'dropDownStates'),
@@ -48,7 +41,7 @@ const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({ onSettingsButtonClic
   const goToNextDropdownState = () => {
     setMetadataStateIndex((metadataStateIndex + 1) % dropDownStates.length);
   };
-  const [chosenBuiltInList = '', rawSetChosenBuiltInList] = useLocalStorage(
+  const [chosenBuiltInList = '', rawSetChosenBuiltInList] = useLocalStorage<BuiltInRecordingList | ''>(
     getLSKey('ConfigureRecordingSetPage', 'chosenBuiltInList'),
     '',
   );
@@ -57,17 +50,49 @@ const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({ onSettingsButtonClic
     '',
   );
 
-  const updatePaths = (listName: string, isBuiltIn: boolean) => {
-    return checkPaths(
-      listName,
-      isBuiltIn,
-      setOtoFilePath,
-      setRecFilePath,
-      setDvcfgFilePath,
-      setMetadataStateIndex,
-      setDropdownStateArray,
-    );
+  const [listData, setListData] = useLocalStorage<RecordingListData | undefined>(
+    getLSKey('ConfigureRecordingSetPage', 'listData'),
+  );
+
+  const useSubscribeToRecordingListSelection = () => {
+    useAsync(async () => {
+      if (chosenCustomListPath) {
+        const nextListData = await recordingListDataService.readData({
+          type: 'custom-file',
+          filePath: chosenCustomListPath,
+        });
+        setListData(nextListData);
+      } else if (chosenBuiltInList) {
+        const nextListData = await recordingListDataService.readData({
+          type: 'built-in',
+          name: chosenBuiltInList,
+        });
+        setListData(nextListData);
+      } else {
+        setListData(undefined);
+      }
+    }, [chosenBuiltInList, chosenCustomListPath, setListData]);
+
+    useEffect(() => {
+      if (listData) {
+        const { otoIni, voiceDvcfg } = listData;
+        const nextDropDownStates: MetadataState[] = [
+          'list-preview',
+          ...(otoIni ? ['oto-ini' as MetadataState] : []),
+          ...(voiceDvcfg ? ['dvcfg' as MetadataState] : []),
+        ];
+        setDropdownStateArray(nextDropDownStates);
+        setMetadataStateIndex(0);
+      } else {
+        setDropdownStateArray([]);
+        setMetadataStateIndex(-1);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [listData, setDropdownStateArray]);
   };
+
+  useSubscribeToRecordingListSelection();
+
   const currentState = dropDownStates[metadataStateIndex];
 
   switch (recordingSetState) {
@@ -87,7 +112,6 @@ const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({ onSettingsButtonClic
           chosenCustomListPath={chosenCustomListPath}
           rawSetChosenCustomListPath={rawSetChosenCustomListPath}
           metaDataIndex={metadataStateIndex}
-          getFilePath={updatePaths}
         />
       );
     case 'metadata':
@@ -99,7 +123,7 @@ const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({ onSettingsButtonClic
               pageName="List Preview"
               transition={transition}
               setTransition={setTransition}
-              fileName={recFilePath}
+              previewContent={listData?.listContent ?? ''}
               setDropDownState={goToNextDropdownState}
             />
           );
@@ -110,7 +134,7 @@ const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({ onSettingsButtonClic
               pageName="Oto.ini"
               transition={transition}
               setTransition={setTransition}
-              fileName={otoFilePath}
+              previewContent={listData?.otoIni ?? ''}
               setDropDownState={goToNextDropdownState}
             />
           );
@@ -121,7 +145,7 @@ const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({ onSettingsButtonClic
               pageName="Dvcfg"
               transition={transition}
               setTransition={setTransition}
-              fileName={dvcfgFilePath}
+              previewContent={listData?.voiceDvcfg ?? ''}
               setDropDownState={goToNextDropdownState}
             />
           );
@@ -129,7 +153,6 @@ const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({ onSettingsButtonClic
           log.error(new Error(`Unknown metadata pageState: ${currentState}`));
           throw new Error(`Unknown metadata pageState: ${currentState} from ${dropDownStates}`);
       }
-      break;
 
     default: {
       const error = new Error(`Unknown pageState: ${recordingSetState}`);
@@ -138,5 +161,3 @@ const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({ onSettingsButtonClic
     }
   }
 };
-
-export default ConfigureRecordingSetPage;
