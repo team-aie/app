@@ -31,11 +31,10 @@ import CreatedRecordingSetList from './created-recording-set-list';
 import { SetMetaConfiguration } from './set-meta-configuration';
 import SetRecordingListConfiguration from './set-recording-list-configuration';
 import settingButton from './settingButton.svg';
-import showDetailButton from './show-detail.svg';
-import { BuiltInRecordingList } from './types';
+import showDetailsButton from './show-detail.svg';
+import { BuiltInRecordingList, RecordingPageState } from './types';
 
 import './show-details.scss';
-import { RecordingPageState } from '.';
 
 interface ProjectFile extends RecordingProject {
   name: string;
@@ -53,7 +52,7 @@ const BUILT_IN_RECORDING_LISTS: BuiltInRecordingList[] = [
   'Z式CVVC-Normal (Z Chinese CVVC - Normal)',
 ];
 
-export const ConfigureRecordingSet: FC<{
+interface ConfigureRecordingSetProps {
   onSettingsButtonClick: MouseEventHandler<HTMLElement>;
   onNext: MouseEventHandler<HTMLElement>;
   onBack: MouseEventHandler<HTMLElement>;
@@ -61,13 +60,14 @@ export const ConfigureRecordingSet: FC<{
   setRecordingSetState: Consumer<RecordingPageState>;
   prevState: RecordingPageState;
   currState: RecordingPageState;
-  chosenBuiltInList: string;
-  rawSetChosenBuiltInList: React.Dispatch<React.SetStateAction<string | undefined>>;
+  chosenBuiltInList: BuiltInRecordingList | '';
+  rawSetChosenBuiltInList: Consumer<BuiltInRecordingList | ''>;
   chosenCustomListPath: string;
   rawSetChosenCustomListPath: React.Dispatch<React.SetStateAction<string | undefined>>;
   metaDataIndex: number;
-  getFilePath: (listName: string, isBuiltIn: boolean) => void;
-}> = ({
+}
+
+export const ConfigureRecordingSet: FC<ConfigureRecordingSetProps> = ({
   onSettingsButtonClick,
   onNext,
   onBack,
@@ -80,7 +80,6 @@ export const ConfigureRecordingSet: FC<{
   chosenCustomListPath,
   rawSetChosenCustomListPath,
   metaDataIndex,
-  getFilePath,
 }) => {
   const { t } = useTranslation();
   const { recordingProject } = useContext(RecordingProjectContext);
@@ -140,7 +139,7 @@ export const ConfigureRecordingSet: FC<{
   );
   const [chosenName = '', setChosenName] = useLocalStorage(getLSKey('ConfigureRecordingSetPage', 'chosenName'), '');
 
-  const setChosenBuiltInList = (name: string): void => {
+  const setChosenBuiltInList = (name: BuiltInRecordingList | ''): void => {
     rawSetChosenBuiltInList(name);
     if (name) {
       rawSetChosenCustomListPath('');
@@ -249,7 +248,6 @@ export const ConfigureRecordingSet: FC<{
                 setChosenBuiltInList={setChosenBuiltInList}
                 chosenCustomListPath={chosenCustomListPath}
                 setChosenCustomListPath={setChosenCustomListPath}
-                getFilePath={getFilePath}
               />
               <Col xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'}>
                 <AddRecordingSetButton
@@ -286,15 +284,18 @@ export const ConfigureRecordingSet: FC<{
       </CSSTransition>
       <CSSTransition {...transitionProps}>
         <div>
-          <Positional position="bottom-center" style={{ visibility: metaDataIndex == -1 ? 'hidden' : 'visible' }}>
-            <ImageButton
-              src={showDetailButton}
-              width="7rem"
-              onClick={(): void => {
-                setRecordingSetState(prevState == 'home' || prevState == 'external' ? 'metadata' : prevState);
-              }}
-            />
-          </Positional>
+          {metaDataIndex >= 0 && (
+            <Positional position="bottom-center">
+              <ImageButton
+                src={showDetailsButton}
+                testId="show-details-button"
+                width="7rem"
+                onClick={(): void => {
+                  setRecordingSetState(prevState == 'home' || prevState == 'external' ? 'metadata' : prevState);
+                }}
+              />
+            </Positional>
+          )}
           <Positional position={'top-right'}>
             <Image
               style={{ width: '2rem' }}
@@ -302,7 +303,8 @@ export const ConfigureRecordingSet: FC<{
               onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>): void => {
                 setRecordingSetState('external');
                 onSettingsButtonClick(event);
-              }}></Image>
+              }}
+            />
           </Positional>
           <NextButton
             text={t('Start')}

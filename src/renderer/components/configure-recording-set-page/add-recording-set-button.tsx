@@ -4,11 +4,13 @@ import { useTranslation } from 'react-i18next';
 
 import { Consumer, RecordingSet, ScaleKey, SupportedOctave } from '../../types';
 
+import { BuiltInRecordingList } from './types';
+
 interface AddRecordingSetButtonProps {
   chosenKey: ScaleKey;
   chosenOctave: SupportedOctave;
   chosenName: string;
-  chosenBuiltInList: string;
+  chosenBuiltInList: BuiltInRecordingList | '';
   chosenCustomListPath: string;
   existingSets: RecordingSet[];
   addRecordingSet: Consumer<RecordingSet>;
