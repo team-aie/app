@@ -26,17 +26,6 @@
   },
   "keywords": [],
   "author": "team-aie",
-  "contributors": [
-    {
-      "name": "Iluminar"
-    },
-    {
-      "name": "Xinxex"
-    },
-    {
-      "name": "Kar Ash"
-    }
-  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/team-aie/app/issues"
