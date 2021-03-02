@@ -21,6 +21,7 @@ jobs:
       - name: Detect New Version
         id: find-new-version
         run: |
+          # This does not only install two dependencies - it will install all, but it doens't run postinstall.
           npm i -D conventional-changelog-angular conventional-recommended-bump
           npx conventional-recommended-bump --verbose -p angular
           npm version --allow-same-version --no-git-tag-version $(npx conventional-recommended-bump -p angular) \
