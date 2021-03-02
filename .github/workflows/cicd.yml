@@ -20,6 +20,7 @@ jobs:
         id: find-new-version
         run: |
           npm i -D conventional-changelog-angular conventional-recommended-bump
+          npx conventional-recommended-bump --verbose -p angular
           npm version --allow-same-version --no-git-tag-version $(npx conventional-recommended-bump -p angular) \
             | sed 's/[v]//g' > NEXT_VERSION
       - run: cat NEXT_VERSION
