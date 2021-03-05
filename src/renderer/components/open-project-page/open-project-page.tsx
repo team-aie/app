@@ -117,29 +117,6 @@ const OpenProjectPage: FC<ProjectRowProps> = ({ onRecordingButtonClick, onNext, 
 
   return (
     <Fragment>
-      <Positional position={'top-right'}>
-        <Row style={{ marginTop: '0.75rem' }}>
-          <Button
-            variant={'outline-secondary'}
-            style={{ width: '100%' }}
-            onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>): void => {
-              reservedStateValues = reservedStates.map((state) => localStorage.getItem(state));
-              // console.log('index' + reservedStateValues.indexOf(null));
-              if (
-                reservedStateValues.indexOf(null) > -1 &&
-                reservedStateValues.indexOf(null) != reservedStates.length + 1
-              ) {
-                alert('Previous records not found');
-              } else {
-                onRecordingButtonClick(event);
-              }
-            }}>
-            {t('Resume ')}
-          </Button>
-        </Row>
-
-        {/* <Image style={{ width: '2rem' }} src={settingButton} onClick={onRecordingButtonClick}></Image> */}
-      </Positional>
       <BackButton onBack={onBack} />
       <Container style={{ height: '100%' }} className={'d-flex justify-content-center align-items-center'}>
         <Col xs={'auto'} sm={10} md={10} lg={10} xl={10}>
@@ -179,6 +156,24 @@ const OpenProjectPage: FC<ProjectRowProps> = ({ onRecordingButtonClick, onNext, 
                   style={{ width: '100%' }}
                   onClick={(): Promise<void> => createOrOpenProject(false)}>
                   {t('Open')}
+                </Button>
+              </Row>
+              <Row style={{ marginTop: '0.75rem' }}>
+                <Button
+                  variant={'outline-secondary'}
+                  style={{ width: '100%' }}
+                  onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>): void => {
+                    reservedStateValues = reservedStates.map((state) => localStorage.getItem(state));
+                    if (
+                      reservedStateValues.indexOf(null) > -1 &&
+                      reservedStateValues.indexOf(null) != reservedStates.length + 1
+                    ) {
+                      alert('Previous records not found');
+                    } else {
+                      onRecordingButtonClick(event);
+                    }
+                  }}>
+                  {t('Resume ')}
                 </Button>
               </Row>
             </Col>

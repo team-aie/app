@@ -162,7 +162,7 @@ if (!isFirstInstance) {
     if (!isDevelopment) {
       log.info('Cleaning local storage on session creation');
 
-      reservedStateValues = reservedStates.map((state)=>localStorage.getItem(state));
+      reservedStateValues = reservedStates.map((state) => localStorage.getItem(state));
       session.clearStorageData({ storages: ['localstorage'] }).catch(log.error);
       for (let i = 0; i < reservedStates.length; i++) {
         localStorage.setItem(reservedStates[i], reservedStateValues[i]);
