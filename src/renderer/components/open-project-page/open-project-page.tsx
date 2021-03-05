@@ -16,10 +16,15 @@ import knownProjects from './known-projects';
 import { ProjectRow } from './project-row';
 
 interface ProjectRowProps {
+  onRecordingButtonClick: MouseEventHandler<HTMLElement>;
+  onNext: Consumer<void>;
+  onBack: MouseEventHandler<HTMLElement>;
   project: RecordingProject | undefined;
   onClick: Consumer<RecordingProject>;
   selected: boolean;
 }
+
+let reservedStateValues = [];
 const reservedStates = [
   'AieApp$keyOctave',
   'AieApp$projectFolder',
@@ -54,11 +59,7 @@ const ProjectRow: FC<ProjectRowProps> = ({ project, onClick, selected }) => {
   );
 };
 
-const OpenProjectPage: FC<{
-  onRecordingButtonClick: MouseEventHandler<HTMLElement>;
-  onNext: Consumer<void>;
-  onBack: MouseEventHandler<HTMLElement>;
-}> = ({ onRecordingButtonClick, onNext, onBack }) => {
+const OpenProjectPage: FC<ProjectRowProps> = ({ onRecordingButtonClick, onNext, onBack }) => {
   const { t } = useTranslation();
   const [projects, setProjects] = useState<RecordingProject[]>([]);
   {
@@ -122,10 +123,16 @@ const OpenProjectPage: FC<{
             variant={'outline-secondary'}
             style={{ width: '100%' }}
             onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>): void => {
-              for (let i = 0; i < reservedStates.length; i++) {
-                localStorage.setItem(reservedStates[i], localStorage.getItem(reservedStates[i]));
+              reservedStateValues = reservedStates.map((state) => localStorage.getItem(state));
+              // console.log('index' + reservedStateValues.indexOf(null));
+              if (
+                reservedStateValues.indexOf(null) > -1 &&
+                reservedStateValues.indexOf(null) != reservedStates.length + 1
+              ) {
+                alert('Previous records not found');
+              } else {
+                onRecordingButtonClick(event);
               }
-              onRecordingButtonClick(event);
             }}>
             {t('Resume ')}
           </Button>

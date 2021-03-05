@@ -13,7 +13,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 
 const isFirstInstance = app.requestSingleInstanceLock();
 
-const tempt = [];
+const reservedStateValues = [];
 const reservedStates = [
   'AieApp$keyOctave',
   'AieApp$projectFolder',
@@ -161,12 +161,11 @@ if (!isFirstInstance) {
   app.on('session-created', (session) => {
     if (!isDevelopment) {
       log.info('Cleaning local storage on session creation');
-      for (let i = 0; i < reservedStates.length; i++) {
-        tempt.push(localStorage.getItem(reservedStates[i]));
-      }
+
+      reservedStateValues = reservedStates.map((state)=>localStorage.getItem(state));
       session.clearStorageData({ storages: ['localstorage'] }).catch(log.error);
       for (let i = 0; i < reservedStates.length; i++) {
-        localStorage.setItem(reservedStates[i], tempt[i]);
+        localStorage.setItem(reservedStates[i], reservedStateValues[i]);
       }
     }
   });
