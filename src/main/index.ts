@@ -5,6 +5,8 @@ import { initialize as electronRemoteInitialize } from '@electron/remote/dist/sr
 import { BrowserWindow, Menu, MenuItemConstructorOptions, app, shell } from 'electron';
 import log from 'electron-log';
 
+import { AssertionError } from '../common/errors';
+
 import autoUpdater from './auto-updater';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -80,13 +82,15 @@ if (!isFirstInstance) {
   // Keep a global reference of the window object, if you don't, the window will
   // be closed automatically when the JavaScript object is garbage collected.
   let mainWindow: BrowserWindow | null;
+  // Tracks whether the user has initiated quitting on macOS.
+  let quitting = false;
 
   const createWindow = (): void => {
     // Create the browser window.
     const osPlatform = process.platform;
     log.info('Platform:', osPlatform);
     log.info('isDevelopment:', isDevelopment);
-    mainWindow = new BrowserWindow({
+    const newWindow = new BrowserWindow({
       width: 800,
       height: 600,
       minWidth: 400,
@@ -101,18 +105,18 @@ if (!isFirstInstance) {
       },
     });
 
-    initializeOrHideMenuBar(mainWindow, osPlatform);
+    initializeOrHideMenuBar(newWindow, osPlatform);
 
     if (isDevelopment) {
-      mainWindow.webContents.openDevTools({
+      newWindow.webContents.openDevTools({
         mode: 'undocked',
       });
     }
 
     if (isDevelopment) {
-      mainWindow.loadURL(`http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`);
+      newWindow.loadURL(`http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`);
     } else {
-      mainWindow.loadURL(
+      newWindow.loadURL(
         formatUrl({
           pathname: path.join(__dirname, 'index.html'),
           protocol: 'file',
@@ -121,13 +125,24 @@ if (!isFirstInstance) {
       );
     }
 
-    // Emitted when the window is closed.
-    mainWindow.on('closed', () => {
-      // Dereference the window object, usually you would store windows
-      // in an array if your app supports multi windows, this is the time
-      // when you should delete the corresponding element.
-      mainWindow = null;
+    newWindow.on('close', (e) => {
+      if (process.platform === 'darwin' && !quitting) {
+        e.preventDefault();
+        newWindow.hide();
+      }
     });
+
+    // Emitted when the window is closed.
+    newWindow.on('closed', () => {
+      if (mainWindow === newWindow) {
+        // Dereference the window object, usually you would store windows
+        // in an array if your app supports multi windows, this is the time
+        // when you should delete the corresponding element.
+        mainWindow = null;
+      }
+    });
+
+    mainWindow = newWindow;
   };
 
   app.on('session-created', (session) => {
@@ -158,10 +173,15 @@ if (!isFirstInstance) {
   });
 
   app.on('activate', () => {
-    // On OS X it's common to re-create a window in the app when the dock startButton is clicked and there are no other windows open.
     if (mainWindow === null) {
-      createWindow();
+      throw new AssertionError('Main window will never be null');
+    } else {
+      mainWindow.show();
     }
+  });
+
+  app.on('before-quit', () => {
+    quitting = true;
   });
 
   /**
