@@ -6,7 +6,7 @@ import useLocalStorage from 'react-use/lib/useLocalStorage';
 import { PAGE_STATES_IN_ORDER } from '../../../common/env-and-consts';
 import { LocaleContext, RecordingProjectContext, ThemeContext } from '../../contexts';
 import recordingListDataService from '../../services/recording-list-data-service';
-import { RecordingItem, RecordingProject, RecordingSet, ScaleKey, SupportedOctave, SupportedTheme } from '../../types';
+import { RecordingItem, RecordingProject, RecordingSet, ScaleKey, SupportedOctave } from '../../types';
 import { getLSKey, join, useLocale } from '../../utils';
 import ConfigureRecordingSetPage from '../configure-recording-set-page';
 import { Positional } from '../helper-components';
@@ -18,6 +18,8 @@ import { RecordingVisualization } from '../recording-page/recording-visualizatio
 import SettingsPage from '../settings-page';
 import StyleSwitcher from '../style-switcher';
 import WelcomePage from '../welcome-page';
+
+import { useTheme } from './hooks';
 
 const { length: numStates } = PAGE_STATES_IN_ORDER;
 const CONFIGURE_RECORDING_PAGE_INDEX = 2;
@@ -37,7 +39,7 @@ const BottomRightDisplay: FC = () => (
 
 export const AieApp: FC = () => {
   const [locale, setLocale] = useLocale();
-  const [theme = SupportedTheme.LIGHT, setTheme] = useLocalStorage(getLSKey('AieApp', 'theme'), SupportedTheme.LIGHT);
+  const [theme, setTheme] = useTheme();
   const [pageStateIndex = 0, setPageStateIndex] = useLocalStorage(getLSKey('AieApp', 'pageStateIndex'), 0);
   const pageState = PAGE_STATES_IN_ORDER[pageStateIndex];
   function changePage(isNext: boolean): void {
