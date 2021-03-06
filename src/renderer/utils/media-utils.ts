@@ -16,7 +16,7 @@ export const acquireAudioInputStream = async (deviceId: string): Promise<MediaSt
 
   for (let attemptCount = 0; attemptCount < ACQUIRE_PERMISSION_RETRIES; attemptCount++) {
     try {
-      // askForMediaAccess() is only for macOS
+      // `askForMediaAccess()` is only for macOS
       const microphoneApproved =
         (systemPreferences.askForMediaAccess && (await systemPreferences.askForMediaAccess('microphone'))) || true;
       if (microphoneApproved) {

@@ -12,19 +12,19 @@ import { RecordingPageState } from './types';
 
 interface PreviewPageProps {
   /**
-   * setRecordingSetState: Sets the local pagestate (controls which subpage is displayed)
+   * Sets the local {@link RecordingPageState} (controls which subpage is displayed).
    */
   setRecordingSetState: Consumer<RecordingPageState>;
   /**
-   * The name to be displayed at the top of the page
+   * Name to be displayed at the top of the page.
    */
   pageName: string;
   /**
-   * transition: boolean to determin whether the animated page in transition has occured
+   * Whether the animated page in transition has occurred.
    */
   transition: boolean;
   /**
-   * setTransition: sets transition
+   * Sets whether the UI is in transition.
    */
   setTransition: Consumer<boolean>;
   /**
@@ -32,8 +32,8 @@ interface PreviewPageProps {
    */
   previewContent: string;
   /**
-   * setDropDownState: sets the built in reclist option
-   **/
+   * Sets the built in recording list option.
+   */
   setDropDownState: () => void;
 }
 
