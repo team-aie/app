@@ -10,6 +10,17 @@ module.exports = {
     es2020: true,
   },
   rules: {
+    'capitalized-comments': [
+      'error',
+      'always',
+      {
+        ignorePattern: 'noinspection',
+        ignoreConsecutiveComments: true,
+      },
+    ],
+    // TODO: This is needed because prettier does not format code comments. Remove after it does.
+    // See also: https://github.com/prettier/prettier/issues/265.
+    'max-len': ['error', { code: 120 }],
     'no-console': isCi ? 'error' : 'warn',
     'no-debugger': isCi ? 'error' : 'warn',
     'object-shorthand': ['error', 'always'],
