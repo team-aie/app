@@ -5,7 +5,7 @@ const fsp = fs.promises;
 const path = require('path');
 
 const LicensePlugin = require('webpack-license-plugin');
-const { exec } = require('child_process');
+const { execFile } = require('child_process');
 
 const WAIT_FOR_OTHERS_SECONDS = 10;
 
@@ -74,7 +74,7 @@ module.exports = async (env) => {
 
           return new Promise((resolve, reject) => {
             // Use eslint to format the JSON string into JavaScript
-            exec(`eslint ${licenseTsPath} --fix`, (err, stdout, stderr) => {
+            execFile('eslint', [licenseTsPath, '--fix'], (err, stdout, stderr) => {
               if (stdout) {
                 process.stdout.write(stdout);
               }

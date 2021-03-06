@@ -1,6 +1,8 @@
 # aie
 
 ![CI/CD](https://github.com/team-aie/app/workflows/CI/CD/badge.svg)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/team-aie/app.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/team-aie/app/alerts/)
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/team-aie/app.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/team-aie/app/context:javascript)
 
 A cross-platform audio recorder designed for recording using recording lists (a.k.a. reclists). Recording lists are
 lists of symbols that denote phonemes to be recorded by human voice suppliers. They are frequently used in the
