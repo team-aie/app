@@ -2,6 +2,9 @@ import path from 'path';
 
 import { readFile } from './fs-utils';
 
+// Mock the remote module to prevent import failure.
+jest.mock('@electron/remote', () => ({ dialog: jest.fn() }));
+
 const ENCODING_LINE_ENDING_MAP = {
   lf: ['utf-8', 'utf-8-bom', 'utf-16be', 'utf-16be-bom', 'utf-16le', 'utf-16le-bom'],
   crlf: ['utf-8', 'utf-8-bom', 'utf-16be', 'utf-16be-bom', 'utf-16le', 'utf-16le-bom', 'shift_jis'],
