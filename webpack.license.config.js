@@ -74,8 +74,8 @@ module.exports = async (env) => {
           await fsp.writeFile(licenseTsPath, fileContent);
 
           return new Promise((resolve, reject) => {
-            // Use eslint to format the JSON string into JavaScript
-            execFile('eslint', [licenseTsPath, '--fix'], (err, stdout, stderr) => {
+            // Use prettier to format the JSON string into prettier TypeScript.
+            execFile('npx', ['prettier', '-w', licenseTsPath], (err, stdout, stderr) => {
               if (stdout) {
                 process.stdout.write(stdout);
               }
