@@ -1,7 +1,8 @@
 import fs, { promises as fsp } from 'fs';
 import path from 'path';
 
-import { OpenDialogOptions, remote } from 'electron';
+import { dialog } from '@electron/remote';
+import { OpenDialogOptions } from 'electron';
 import log from 'electron-log';
 
 import { bestEffortDecode } from './buffer-decoders';
@@ -124,7 +125,7 @@ export async function openFilePicker(
       properties.push('openDirectory');
   }
 
-  const { canceled, filePaths } = await remote.dialog.showOpenDialog({
+  const { canceled, filePaths } = await dialog.showOpenDialog({
     title,
     message,
     properties,
