@@ -2,13 +2,14 @@ import sanitize from 'sanitize-filename';
 
 import { RecordingItem, RecordingListParser } from '../types';
 
+import { ensureLF } from './string-utils';
+
 class LineByLineParser implements RecordingListParser {
   public async parse(content: string): Promise<RecordingItem[]> {
     const displayTextSet = new Set();
     const fileSystemNameMap: { [key: string]: number } = {};
     let endingIndex = Number.MAX_VALUE;
-    return content
-      .replace('\r', '')
+    return ensureLF(content)
       .split('\n')
       .map((line): string => line.trim())
       .filter((item, i): boolean => {
