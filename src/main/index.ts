@@ -1,6 +1,7 @@
 import * as path from 'path';
 import { format as formatUrl } from 'url';
 
+import { initialize as electronRemoteInitialize } from '@electron/remote/dist/src/main';
 import { BrowserWindow, Menu, MenuItemConstructorOptions, app, shell } from 'electron';
 import log from 'electron-log';
 
@@ -175,6 +176,8 @@ if (!isFirstInstance) {
       mainWindow.focus();
     }
   });
+
+  electronRemoteInitialize();
 
   if (module.hot) {
     module.hot.accept();

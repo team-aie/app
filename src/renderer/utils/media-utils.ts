@@ -1,4 +1,4 @@
-import { remote } from 'electron';
+import { systemPreferences } from '@electron/remote';
 import log from 'electron-log';
 
 import { ACQUIRE_PERMISSION_RETRIES } from '../env-and-consts';
@@ -18,9 +18,7 @@ export const acquireAudioInputStream = async (deviceId: string): Promise<MediaSt
     try {
       // askForMediaAccess() is only for macOS
       const microphoneApproved =
-        (remote.systemPreferences.askForMediaAccess &&
-          (await remote.systemPreferences.askForMediaAccess('microphone'))) ||
-        true;
+        (systemPreferences.askForMediaAccess && (await systemPreferences.askForMediaAccess('microphone'))) || true;
       if (microphoneApproved) {
         return await navigator.mediaDevices.getUserMedia(constraint);
       } else {

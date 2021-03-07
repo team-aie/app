@@ -10,6 +10,8 @@ import recordingListDataService from '../../services/recording-list-data-service
 import { ConfigureRecordingSetPage } from './configure-recording-set-page';
 
 jest.mock('../../services/recording-list-data-service');
+// Mock the remote module to prevent import failure.
+jest.mock('@electron/remote', () => ({ dialog: jest.fn() }));
 
 describe('ConfigureRecordingSetPage', () => {
   it('renders without showDetails button', async () => {
