@@ -29,7 +29,7 @@ export class FileMonitor implements Monitor {
     this.events = [];
     this.eventsWatching = [];
     this.addWatcher = chokidar.watch(this.folderPath, {
-      // ignore dotfiles, from chokidar official document:https://github.com/paulmillr/chokidar
+      // Ignore dotfiles, from chokidar official document:https://github.com/paulmillr/chokidar
       ignored: [/(^|[/\\])\../],
       followSymlinks: false,
       persistent: true,
@@ -75,7 +75,7 @@ export class FileMonitor implements Monitor {
     this.watchHelper('unlink', this.unlinkWatcher);
     this.watchHelper('unlinkDir', this.unlinkDirWatcher);
     this.watchHelper('change', this.changeWatcher);
-    // error: errors occured
+
     if (this.events.includes('error') && !this.eventsWatching.includes('error')) {
       this.eventsWatching.push('error');
       this.errorWatcher.on('error', (error) => {

@@ -61,7 +61,8 @@ export default class WebpackImportBackend implements BackendModule<WebpackImport
 
   create(languages: string[], namespace: string, key: string, fallbackValue: string): void {
     log.info(
-      `WebpackImportBackend.create: languages: ${languages}; namespace: ${namespace}; key: ${key}; fallbackValue: ${fallbackValue}`,
+      `WebpackImportBackend.create: languages: ${languages}; namespace: ${namespace}; ` +
+        `key: ${key}; fallbackValue: ${fallbackValue}`,
     );
 
     if (isDevelopment) {
@@ -116,7 +117,8 @@ export default class WebpackImportBackend implements BackendModule<WebpackImport
   read(language: string, namespace: string, callback: ReadCallback): void {
     log.info(`WebpackImportBackend.read: language: ${language}; namespace: ${namespace}`);
     loadLanguageFile(language, namespace)
-      // We don't have to use ".default" but this can make TypeScript check better, since it doesn't add the content of JSON to the imported object
+      // We don't have to use ".default" but this can make TypeScript check better, since it doesn't add the content of
+      // JSON to the imported object
       .then((translations) => callback(null, translations.default))
       .catch((error) => callback(error, false));
   }
