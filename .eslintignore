@@ -1,2 +1,5 @@
 dist/
 coverage/
+
+# This generated file will often trigger unfixable eslint errors such as `max-len`.
+src/renderer/licenses.ts

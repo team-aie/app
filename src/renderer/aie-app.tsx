@@ -30,13 +30,7 @@ const BottomRightDisplay: FC = () => (
     </Col>
   </Positional>
 );
-// const TopRightDisplay: FC = () => (
-//   <Positional position={'top-right'}>
-//     <Col xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'}>
-//       <StyleSwitcher triggerStyle={{ fontSize: '75%' }} />
-//     </Col>
-//   </Positional>
-// );
+
 const AieApp: FC = () => {
   const [locale, setLocale] = useLocale();
   const [theme = SupportedTheme.LIGHT, setTheme] = useLocalStorage(getLSKey('AieApp', 'theme'), SupportedTheme.LIGHT);

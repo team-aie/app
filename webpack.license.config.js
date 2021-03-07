@@ -48,8 +48,9 @@ module.exports = async (env) => {
       replenishDefaultLicenseTexts: true,
       additionalFiles: {
         /**
-         * We found that due to multiple entry points, the plugin generates the file multiple times at the same file location,
-         * overwriting previous entries' results. Therefore, we use it as a hook and are collecting the metadata manually.
+         * We found that due to multiple entry points, the plugin generates the file multiple times at the same file
+         * location, overwriting previous entries' results. Therefore, we use it as a hook and are collecting the
+         * metadata manually.
          */
         _hook: (packages) => {
           // eslint-disable-next-line no-console
@@ -73,8 +74,8 @@ module.exports = async (env) => {
           await fsp.writeFile(licenseTsPath, fileContent);
 
           return new Promise((resolve, reject) => {
-            // Use eslint to format the JSON string into JavaScript
-            execFile('eslint', [licenseTsPath, '--fix'], (err, stdout, stderr) => {
+            // Use prettier to format the JSON string into prettier TypeScript.
+            execFile('npx', ['prettier', '-w', licenseTsPath], (err, stdout, stderr) => {
               if (stdout) {
                 process.stdout.write(stdout);
               }
@@ -101,8 +102,7 @@ module.exports = async (env) => {
               repository: null,
               source: 'https://registry.npmjs.org/electron/-/electron-8.2.3.tgz',
               license: 'MIT',
-              licenseText:
-                'Copyright (c) 2013-2019 GitHub Inc.\n\nPermission is hereby granted, free of charge, to any person obtaining\na copy of this software and associated documentation files (the\n"Software"), to deal in the Software without restriction, including\nwithout limitation the rights to use, copy, modify, merge, publish,\ndistribute, sublicense, and/or sell copies of the Software, and to\npermit persons to whom the Software is furnished to do so, subject to\nthe following conditions:\n\nThe above copyright notice and this permission notice shall be\nincluded in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,\nEXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\nMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND\nNONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE\nLIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION\nOF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION\nWITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n',
+              licenseText: 'Copyright (c) 2013-2019 GitHub Inc.',
             },
           ]);
         });

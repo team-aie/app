@@ -27,31 +27,6 @@ export const RecordingVisualization: FC<RecordingVisualizationProps> = ({ prevSt
   const waveformImageRef = useRef<HTMLImageElement>(null);
   const spectrogramContainerRef = useRef<HTMLDivElement>(null);
   const spectrogramImageRef = useRef<HTMLImageElement>(null);
-  // const rerender = useUpdate();
-
-  // useEffect(() => {
-  //   const [waveformContainer, waveformImage, spectrogramContainer, spectrogramImage] = [
-  //     waveformContainerRef.current,
-  //     waveformImageRef.current,
-  //     spectrogramContainerRef.current,
-  //     spectrogramImageRef.current,
-  //   ];
-  //
-  //   if (waveformContainer && waveformImage && spectrogramContainer && spectrogramImage) {
-  //     const waveformCanvases = waveformContainer.getElementsByTagName('canvas');
-  //     if (waveformCanvases.length) {
-  //       log.silly('Updating waveform image');
-  //       const waveform: HTMLCanvasElement = waveformCanvases[waveformCanvases.length - 1];
-  //       waveformImage.src = waveform.toDataURL();
-  //     }
-  //     const spectrogramCanvases = spectrogramContainer.getElementsByTagName('canvas');
-  //     if (spectrogramCanvases.length) {
-  //       log.silly('Updating spectrogram image');
-  //       const spectrogram: HTMLCanvasElement = spectrogramCanvases[spectrogramCanvases.length - 1];
-  //       spectrogramImage.src = spectrogram.toDataURL();
-  //     }
-  //   }
-  // });
 
   useEffect(() => {
     const waveSurfer = WaveSurfer.create({
@@ -83,13 +58,11 @@ export const RecordingVisualization: FC<RecordingVisualizationProps> = ({ prevSt
     if (waveformContainer && waveformImage && spectrogramContainer && spectrogramImage) {
       const waveformCanvases = waveformContainer.getElementsByTagName('canvas');
       if (waveformCanvases.length) {
-        // log.silly('Updating waveform image');
         const waveform: HTMLCanvasElement = waveformCanvases[waveformCanvases.length - 1];
         waveformImage.src = waveform.toDataURL();
       }
       const spectrogramCanvases = spectrogramContainer.getElementsByTagName('canvas');
       if (spectrogramCanvases.length) {
-        // log.silly('Updating spectrogram image');
         const spectrogram: HTMLCanvasElement = spectrogramCanvases[spectrogramCanvases.length - 1];
         spectrogramImage.src = spectrogram.toDataURL();
       }
@@ -104,71 +77,6 @@ export const RecordingVisualization: FC<RecordingVisualizationProps> = ({ prevSt
 
     let cancelled = false;
 
-    // TODO Performance hit is too strong, will need to investigate further
-    // let loopStarted = false;
-    // if (state === 'recording' && prevState !== 'recording') {
-    //   if (audioInputStream) {
-    //     const context = new AudioContext();
-    //     const source = context.createMediaStreamSource(audioInputStream);
-    //     const processor = context.createScriptProcessor(16384 / 2);
-    //
-    //     source.connect(processor);
-    //     processor.connect(context.destination);
-    //
-    //     let audioBuffer: AudioBuffer | null;
-    //     const onAudioData = (e: AudioProcessingEvent): void => {
-    //       log.debug(`audioprocess handler called, is processing cancelled: ${cancelled}`);
-    //       if (cancelled) {
-    //         processor.removeEventListener('audioprocess', onAudioData);
-    //         audioBuffer = null;
-    //         context.close().catch(log.error);
-    //       } else {
-    //         const { inputBuffer } = e;
-    //         const { numberOfChannels, length, sampleRate } = inputBuffer;
-    //         const previousLength = audioBuffer ? audioBuffer.length : 0;
-    //         if (!audioBuffer) {
-    //           log.info('Creating initial buffer');
-    //           audioBuffer = context.createBuffer(numberOfChannels, length, sampleRate);
-    //         } else {
-    //           log.info('Reallocating new buffer');
-    //           const newAudioBuffer = context.createBuffer(numberOfChannels, audioBuffer.length + length, sampleRate);
-    //           for (let i = 0; i < numberOfChannels; i++) {
-    //             newAudioBuffer.getChannelData(i).set(audioBuffer.getChannelData(i), 0);
-    //           }
-    //           audioBuffer = newAudioBuffer;
-    //         }
-    //         log.info('Copying new audio data');
-    //         for (let i = 0; i < numberOfChannels; i++) {
-    //           audioBuffer.getChannelData(i).set(inputBuffer.getChannelData(i), previousLength);
-    //         }
-    //
-    //         if (!loopStarted) {
-    //           let lastBufferLength = audioBuffer.length;
-    //           const updateCanvas = (): void => {
-    //             const newBufferLength = audioBuffer?.length || 0;
-    //             if (!cancelled && audioBuffer) {
-    //               if (newBufferLength > lastBufferLength) {
-    //                 log.info('Updating canvas');
-    //                 const blob = new Blob([new Uint8Array(Buffer.from(toWav(audioBuffer)))]);
-    //                 wavesurfer.loadBlob(blob);
-    //                 lastBufferLength = newBufferLength;
-    //               } else {
-    //                 log.info(
-    //                   `lastBufferLength is ${lastBufferLength} and newBufferLength is ${newBufferLength}, not updating`,
-    //                 );
-    //               }
-    //               setTimeout(updateCanvas, 10);
-    //             }
-    //           };
-    //           setTimeout(updateCanvas, 10);
-    //           loopStarted = true;
-    //         }
-    //       }
-    //     };
-    //
-    //     processor.addEventListener('audioprocess', onAudioData);
-    //   }
-    // } else if (filePath) {
     if (state !== 'recording') {
       const filePathToRead = filePath || join(__static, 'empty.wav');
       (async (): Promise<void> => {
