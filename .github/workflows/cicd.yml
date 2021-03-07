@@ -168,10 +168,7 @@ jobs:
       - run: npm run lint
       - run: npm run compile
       - run: npm run test
-      - name: Fast Package App
-        run: npm run dist:linux -- -p never
-        env:
-          FAST_PACKAGING: true
+      # We don't need to run fast package because we never compress files for AppImage.
       - name: Package Production App
         run: npm run dist:linux -- -p never
       - name: Upload Packaged App

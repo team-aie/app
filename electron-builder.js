@@ -1,10 +1,14 @@
+/* eslint-disable no-console */
 'use strict';
 
 const isCi = process.env.CI === 'true';
+console.info('isCi:', isCi);
+const isLinuxOnlyBuild = process.argv.includes('-l');
+console.info('isLinuxOnlyBuild:', isLinuxOnlyBuild);
 const isFastPackaging = process.env.FAST_PACKAGING === 'true';
+console.info('isFastPackaging:', isFastPackaging);
 
-const compression = isFastPackaging || !isCi ? 'store' : 'maximum';
-// eslint-disable-next-line no-console
+const compression = isFastPackaging || isLinuxOnlyBuild || !isCi ? 'store' : 'maximum';
 console.info(`Compression level: ${compression}`);
 
 module.exports = {
