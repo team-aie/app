@@ -6,8 +6,8 @@ import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 import { useTranslation } from 'react-i18next';
 
-import { RecordingProjectContext } from '../../contexts';
-import { Consumer, RecordingProject } from '../../types';
+import { RecordingProjectContext, ThemeContext } from '../../contexts';
+import { Consumer, RecordingProject, SupportedTheme } from '../../types';
 import { ensureFolderExists, filename, openFilePicker } from '../../utils';
 import BackButton from '../back-button';
 
@@ -20,12 +20,17 @@ interface ProjectRowProps {
 }
 
 const ProjectRow: FC<ProjectRowProps> = ({ project, onClick, selected }) => {
+  const { theme } = useContext(ThemeContext);
   const [hovered, setHovered] = useState(false);
 
   return (
     <tr
       onClick={(): void => project && onClick(project)}
-      style={selected || hovered ? { filter: 'invert(1)', textDecoration: 'underline' } : undefined}
+      style={
+        selected || hovered
+          ? { filter: (theme === SupportedTheme.LIGHT && 'invert(1)') || undefined, textDecoration: 'underline' }
+          : undefined
+      }
       onMouseEnter={(): void => setHovered(true)}
       onMouseOut={(): void => setHovered(false)}>
       <td className={'border-bottom'}>{project && project.name}</td>

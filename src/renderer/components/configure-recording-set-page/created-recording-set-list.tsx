@@ -1,10 +1,11 @@
-import React, { CSSProperties, FC, useState } from 'react';
+import React, { CSSProperties, FC, useContext, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Row from 'react-bootstrap/Row';
 
-import { Consumer, RecordingSet } from '../../types';
+import { ThemeContext } from '../../contexts';
+import { Consumer, RecordingSet, SupportedTheme } from '../../types';
 import { filename, naiveSerialize } from '../../utils';
 import ImageButton from '../image-button';
 
@@ -27,11 +28,17 @@ const CreatedRecordingSetListItem: FC<CreatedRecordingSetListItemProps> = ({
   setSelectedRecordingSetIndex,
   index,
 }) => {
+  const { theme } = useContext(ThemeContext);
   const [hovered, setHovered] = useState(false);
+
   return (
     <Container
       fluid={true}
-      style={hovered || selected ? { filter: 'invert(1)', textDecoration: 'underline' } : undefined}
+      style={
+        hovered || selected
+          ? { filter: (theme === SupportedTheme.LIGHT && 'invert(1)') || undefined, textDecoration: 'underline' }
+          : undefined
+      }
       onMouseEnter={(): void => setHovered(true)}
       onMouseLeave={(): void => setHovered(false)}
       onClick={(): void => {
@@ -50,7 +57,8 @@ const CreatedRecordingSetListItem: FC<CreatedRecordingSetListItemProps> = ({
               removeRecordingSet(recordingSet);
             }}
             src={deleteButton}
-            width="1rem"></ImageButton>
+            width="1rem"
+          />
         </Col>
       </Row>
     </Container>
