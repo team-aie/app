@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import { ScaleKey, SupportedOctave } from '../../types';
 import ImageButton from '../image-button';
+import { TextButton } from '../text-button';
 
 import playRecordedItem from './play-recorded-item.svg';
 import playScale from './play-scale.svg';
@@ -30,54 +31,30 @@ export const RecordingControls: FC<RecordingControlsProps> = ({
   octave,
 }) => {
   const { t } = useTranslation();
+
   return (
     <Fragment>
       <Row>
         <Col />
         <Col xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'}>
-          <ImageButton
-            onClick={(): void => {
-              toggleRecord();
-            }}
-            src={recordButton}
-            width="6rem"></ImageButton>
+          <ImageButton onClick={toggleRecord} src={recordButton} width="6rem" />
         </Col>
         <Col className={'d-flex flex-column justify-content-center'}>
           <Row>
-            <span
-              onClick={(): void => {
-                goToPrevious();
-              }}>
-              {t('previous')}
-            </span>
+            <TextButton onClick={goToPrevious}>{t('previous')}</TextButton>
           </Row>
           <Row>
-            <ImageButton
-              onClick={(): void => {
-                togglePlay();
-              }}
-              src={playRecordedItem}
-              width="3rem"></ImageButton>
+            <ImageButton onClick={togglePlay} src={playRecordedItem} width="3rem" />
           </Row>
           <Row>
-            <span
-              onClick={(): void => {
-                goToNext();
-              }}>
-              {t('next')}
-            </span>
+            <TextButton onClick={goToNext}>{t('next')}</TextButton>
           </Row>
         </Col>
       </Row>
       <Row className={'d-flex justify-content-center mt-3'}>
         {t('Scale')} - {scaleKey}
         {octave}
-        <ImageButton
-          onClick={(): void => {
-            togglePlayScale();
-          }}
-          src={playScale}
-          width="2rem"></ImageButton>
+        <ImageButton onClick={togglePlayScale} src={playScale} width="2rem" />
       </Row>
     </Fragment>
   );

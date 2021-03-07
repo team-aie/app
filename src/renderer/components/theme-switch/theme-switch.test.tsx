@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import * as SnapshotRenderer from 'react-test-renderer';
+import { create as createTree } from 'react-test-renderer';
 import { mocked } from 'ts-jest/utils';
 
 import { SupportedTheme } from '../../types';
@@ -29,7 +29,7 @@ describe('ThemeSwitch', () => {
       setTheme: jest.fn(),
     });
 
-    const tree = SnapshotRenderer.create(<ThemeSwitch />).toJSON();
+    const tree = createTree(<ThemeSwitch />).toJSON();
 
     expect(tree).toMatchInlineSnapshot(`
       <button

@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as renderer from 'react-test-renderer';
+import React from 'react';
+import { create as createTree } from 'react-test-renderer';
 
 import BackButton from '.';
 
@@ -7,7 +7,7 @@ describe('back button', () => {
   it('should render correctly', () => {
     expect.hasAssertions();
 
-    const tree = renderer.create(<BackButton />).toJSON();
+    const tree = createTree(<BackButton />).toJSON();
 
     expect(tree).toMatchInlineSnapshot(`
       <div

@@ -1,5 +1,5 @@
 import React from 'react';
-import * as renderer from 'react-test-renderer';
+import { create as createTree } from 'react-test-renderer';
 
 import { noOp } from '../../env-and-consts';
 
@@ -9,7 +9,7 @@ describe('next button', () => {
   it('should render correctly', () => {
     expect.hasAssertions();
 
-    const tree = renderer.create(<NextButton onClick={noOp()} disabled />).toJSON();
+    const tree = createTree(<NextButton onClick={noOp()} disabled />).toJSON();
 
     expect(tree).toMatchInlineSnapshot(`
       <div

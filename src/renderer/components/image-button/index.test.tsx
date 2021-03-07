@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as renderer from 'react-test-renderer';
+import React from 'react';
+import { create as createTree } from 'react-test-renderer';
 
 import backButton from './back-button.svg';
 
@@ -9,7 +9,7 @@ describe('imageButton', () => {
   it('should render correctly', () => {
     expect.hasAssertions();
 
-    const tree = renderer.create(<ImageButton src={backButton} width="1rem" />).toJSON();
+    const tree = createTree(<ImageButton src={backButton} width="1rem" />).toJSON();
 
     expect(tree).toMatchInlineSnapshot(`
       <button
