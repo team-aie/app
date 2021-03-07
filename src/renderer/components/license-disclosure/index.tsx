@@ -1,12 +1,14 @@
 import { getCurrentWindow } from '@electron/remote';
-import React, { CSSProperties, FC, Fragment, useState } from 'react';
+import React, { CSSProperties, FC, Fragment, useContext, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Table from 'react-bootstrap/Table';
 import { useTranslation } from 'react-i18next';
 
 import { version } from '../../../../package.json';
+import { ThemeContext } from '../../contexts';
 import LICENSES, { LicenseInfo } from '../../licenses';
+import { SupportedTheme } from '../../types';
 
 const openDevTool = (): void => {
   getCurrentWindow().webContents.openDevTools({ mode: 'detach' });
@@ -70,11 +72,16 @@ const LicenseDetails: FC<LicenseTextModalProps> = ({ name, version, author, repo
 
 const LicenseDisclosure: FC<{ triggerStyle?: CSSProperties }> = ({ triggerStyle }) => {
   const { t } = useTranslation();
+  const { theme } = useContext(ThemeContext);
   const [showModal, setShowModal] = useState(false);
   const hideLicenseDisclosure = (): void => setShowModal(false);
   return (
     <Fragment>
-      <a href={'#'} className={'alert-light'} style={triggerStyle} onClick={(): void => setShowModal(true)}>
+      <a
+        href={'#'}
+        className={theme === SupportedTheme.LIGHT ? 'alert-light' : 'alert-dark'}
+        style={triggerStyle}
+        onClick={(): void => setShowModal(true)}>
         {t('About')}
       </a>
       <Modal show={showModal} onHide={hideLicenseDisclosure} centered size={'xl'}>
