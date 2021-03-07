@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next';
 
 import { Positional } from '../helper-components';
 import ImageButton from '../image-button';
+import { ThemeSwitch } from '../theme-switch';
 
 import startButton from './start-button-img.svg';
-import StyleButton from './style-button';
 
 const WelcomePage: FC<{ onNext: MouseEventHandler<HTMLElement> }> = ({ onNext }) => {
   const { t } = useTranslation();
@@ -29,7 +29,7 @@ const WelcomePage: FC<{ onNext: MouseEventHandler<HTMLElement> }> = ({ onNext })
         <span>{t('Link Start')}</span>
       </Row>
       <Positional position={'top-right'}>
-        <StyleButton />
+        <ThemeSwitch />
       </Positional>
     </Container>
   );

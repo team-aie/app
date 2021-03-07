@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import * as renderer from 'react-test-renderer';
 
 import { noOp } from '../../env-and-consts';

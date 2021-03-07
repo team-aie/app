@@ -24,7 +24,7 @@ describe('back button', () => {
         >
           <img
             className=""
-            src="test-file-stub"
+            src="renderer/components/back-button/back-button.svg"
             style={
               Object {
                 "width": "1rem",

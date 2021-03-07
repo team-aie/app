@@ -4,7 +4,7 @@ import Image from 'react-bootstrap/Image';
 interface ImageButtonProps {
   onClick?: MouseEventHandler<HTMLElement>;
   src: string;
-  width: string;
+  width?: string;
   /**
    * Used to allow this element to be selected in react-testing-library testing.
    */
