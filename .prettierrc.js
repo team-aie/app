@@ -8,4 +8,6 @@ module.exports = {
   singleQuote: true,
   tabWidth: 2,
   trailingComma: 'all',
+  // Enable prettier to wrap lines in Markdown files.
+  proseWrap: 'always',
 };
