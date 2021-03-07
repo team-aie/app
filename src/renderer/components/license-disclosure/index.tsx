@@ -1,4 +1,4 @@
-import { remote } from 'electron';
+import { getCurrentWindow } from '@electron/remote';
 import React, { CSSProperties, FC, Fragment, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
@@ -9,7 +9,7 @@ import { version } from '../../../../package.json';
 import LICENSES, { LicenseInfo } from '../../licenses';
 
 const openDevTool = (): void => {
-  remote.getCurrentWindow().webContents.openDevTools({ mode: 'detach' });
+  getCurrentWindow().webContents.openDevTools({ mode: 'detach' });
 };
 
 type LicenseTextModalProps = LicenseInfo;
