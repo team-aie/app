@@ -2,7 +2,6 @@ import log from 'electron-log';
 import React, { FC, Fragment, MouseEventHandler, useContext, useEffect, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
-import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
 import { useTranslation } from 'react-i18next';
 import CSSTransition from 'react-transition-group/CSSTransition';
@@ -27,10 +26,10 @@ import ImageButton from '../image-button';
 import NextButton from '../next-button';
 
 import AddRecordingSetButton from './add-recording-set-button';
+import { AudioSettingButton } from './audio-setting-button';
 import CreatedRecordingSetList from './created-recording-set-list';
 import { SetMetaConfiguration } from './set-meta-configuration';
 import SetRecordingListConfiguration from './set-recording-list-configuration';
-import settingButton from './settingButton.svg';
 import showDetailsButton from './show-detail.svg';
 import { BuiltInRecordingList, RecordingPageState } from './types';
 
@@ -297,10 +296,8 @@ export const ConfigureRecordingSet: FC<ConfigureRecordingSetProps> = ({
             </Positional>
           )}
           <Positional position={'top-right'}>
-            <Image
-              style={{ width: '2rem' }}
-              src={settingButton}
-              onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>): void => {
+            <AudioSettingButton
+              onClick={(event) => {
                 setRecordingSetState('external');
                 onSettingsButtonClick(event);
               }}
