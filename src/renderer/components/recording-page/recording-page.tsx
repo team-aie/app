@@ -1,7 +1,6 @@
 import log from 'electron-log';
 import React, { FC, Fragment, MouseEventHandler, useState } from 'react';
 import Container from 'react-bootstrap/Container';
-// import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
 import useEffectOnce from 'react-use/lib/useEffectOnce';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
@@ -17,7 +16,6 @@ import { useHotKeyHandlers, useRecordingPageLifeCycle, useWatchingProjectFileSta
 import { RecordingControls } from './recording-controls';
 import { RecordingItemIndicator } from './recording-item-indicator';
 import { RecordingVisualization } from './recording-visualization';
-// import settingButton from './settingButton.svg';
 import { State } from './types';
 
 interface RecordingPageProps {
@@ -33,12 +31,6 @@ export const RecordingPage: FC<RecordingPageProps> = ({ onBack, recordingItems, 
   const prevState = usePrevious(state);
   log.info(`prevState`, prevState, `state`, state);
   const [index = 0, setIndex] = useLocalStorage(getLSKey('RecordingPage', 'index'), 0);
-
-  // for (let i = 0; i < localStorage.length; i++) {
-  //   if (localStorage.key(i).substring(0, 1) != 'F') {
-  //     localStorage.setItem('F' + localStorage.key(i), localStorage.getItem(localStorage.key(i)));
-  //   }
-  // }
 
   useEffectOnce(() => {
     mediaService.switchOnAudioInput();
