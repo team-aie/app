@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+const { join } = require('path');
+
 module.exports = {
   root: false,
   extends: [
@@ -20,7 +23,9 @@ module.exports = {
   parserOptions: {
     sourceType: 'module',
     jsx: true,
-    tsconfigRootDir: '..',
+    // Cannot use purely relative path here.
+    // See: https://github.com/typescript-eslint/typescript-eslint/issues/251#issuecomment-567365174.
+    tsconfigRootDir: join(__dirname, '..'),
   },
   env: {
     browser: true,
