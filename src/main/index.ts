@@ -13,7 +13,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 
 const isFirstInstance = app.requestSingleInstanceLock();
 
-const reservedStateValues = [];
+let reservedStateValues = [];
 const reservedStates = [
   'AieApp$keyOctave',
   'AieApp$projectFolder',
