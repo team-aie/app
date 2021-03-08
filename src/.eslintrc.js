@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+const { join } = require('path');
+
 module.exports = {
   root: false,
   extends: [
@@ -20,7 +23,7 @@ module.exports = {
   parserOptions: {
     sourceType: 'module',
     jsx: true,
-    tsconfigRootDir: '..',
+    tsconfigRootDir: join(__dirname, '..'),
   },
   env: {
     browser: true,
