@@ -1,26 +1,25 @@
 import React from 'react';
 import { create as createTree } from 'react-test-renderer';
 
-import backButton from './back-button.svg';
+import { AudioSettingButton } from './audio-setting-button';
 
-import ImageButton from '.';
-
-describe('imageButton', () => {
+describe('AudioSettingButton', () => {
   it('should render correctly', () => {
-    expect.hasAssertions();
+    expect.assertions(1);
 
-    const tree = createTree(<ImageButton src={backButton} width="1rem" />).toJSON();
+    const tree = createTree(<AudioSettingButton onClick={jest.fn()} />).toJSON();
 
     expect(tree).toMatchInlineSnapshot(`
       <button
         className="image-button"
+        onClick={[MockFunction]}
       >
         <img
           className=""
-          src="renderer/components/image-button/back-button.svg"
+          src="renderer/components/configure-recording-set-page/audio-setting-button-light.svg"
           style={
             Object {
-              "width": "1rem",
+              "width": "2em",
             }
           }
         />
