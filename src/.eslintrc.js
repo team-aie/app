@@ -23,6 +23,8 @@ module.exports = {
   parserOptions: {
     sourceType: 'module',
     jsx: true,
+    // Cannot use purely relative path here.
+    // See: https://github.com/typescript-eslint/typescript-eslint/issues/251#issuecomment-567365174.
     tsconfigRootDir: join(__dirname, '..'),
   },
   env: {
