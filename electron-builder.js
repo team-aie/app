@@ -19,9 +19,6 @@ module.exports = {
   files: [
     '**/*',
     // According to doc, some default ignored files are automatically added, so we only need to add our ignores
-    '!node_modules/node-source-han-sans',
-    '!node_modules/node-source-han-sans-sc',
-    '!node_modules/semantic-ui-css',
   ],
   mac: {
     identity: null,
