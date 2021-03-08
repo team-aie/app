@@ -87,7 +87,7 @@ export const SettingsPage: FC<{
             style={{ width: '8rem' }}
             variant={'outline-primary'}
             active={!muted}>
-            {muted ? 'Test Audio' : 'Mute'}
+            {muted ? t('Test Audio') : t('Mute')}
           </Button>
         </Row>
       </Container>

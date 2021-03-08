@@ -1,5 +1,6 @@
 import log from 'electron-log';
 import React, { FC, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAsync, useLocalStorage, usePrevious } from 'react-use';
 
 import recordingListDataService from '../../services/recording-list-data-service';
@@ -22,6 +23,8 @@ export const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({
   onBack,
   onSetSelected,
 }) => {
+  const { t } = useTranslation();
+
   const [recordingSetState = 'external' as RecordingPageState, setRecordingSetState] = useLocalStorage(
     getLSKey('ConfigureRecordingSetPage', 'recordingSetStateForConfig'),
     'external' as RecordingPageState,
@@ -120,7 +123,7 @@ export const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({
           return (
             <PreviewPage
               setRecordingSetState={setRecordingSetState}
-              pageName="List Preview"
+              pageName={t('List Preview')}
               transition={transition}
               setTransition={setTransition}
               previewContent={listData?.listContent ?? ''}
@@ -131,7 +134,7 @@ export const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({
           return (
             <PreviewPage
               setRecordingSetState={setRecordingSetState}
-              pageName="Oto.ini"
+              pageName={t('Oto.ini')}
               transition={transition}
               setTransition={setTransition}
               previewContent={listData?.otoIni ?? ''}
@@ -142,7 +145,7 @@ export const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({
           return (
             <PreviewPage
               setRecordingSetState={setRecordingSetState}
-              pageName="Dvcfg"
+              pageName={t('Voice.dvcfg')}
               transition={transition}
               setTransition={setTransition}
               previewContent={listData?.voiceDvcfg ?? ''}
