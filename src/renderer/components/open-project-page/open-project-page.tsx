@@ -5,12 +5,12 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 import { useTranslation } from 'react-i18next';
+import { useEffectOnce } from 'react-use';
 
 import { RecordingProjectContext } from '../../contexts';
 import { Consumer, RecordingProject } from '../../types';
 import { ensureFolderExists, filename, openFilePicker } from '../../utils';
 import BackButton from '../back-button';
-import { Positional } from '../helper-components';
 
 import knownProjects from './known-projects';
 import { ProjectRow } from './project-row';
@@ -36,6 +36,20 @@ const reservedStates = [
   'ConfigureRecordingSetPage$projectFile',
   'RecordingPage$index',
 ];
+
+const ResumeCheck: FC<ProjectRowProps> = ({ onRecordingButtonClick }) => {
+  useEffectOnce(() => {
+    reservedStateValues = reservedStates.map((state) => localStorage.getItem(state));
+    if (!(reservedStateValues.indexOf(null) > -1 && reservedStateValues.indexOf(null) != reservedStates.length + 1)) {
+      if (confirm('Do you want to resume your progress?')) {
+        onRecordingButtonClick();
+      } else {
+        console.log('not resume');
+      }
+    }
+  });
+  return null;
+};
 
 const ProjectRow: FC<ProjectRowProps> = ({ project, onClick, selected }) => {
   const { theme } = useContext(ThemeContext);
@@ -117,6 +131,7 @@ const OpenProjectPage: FC<ProjectRowProps> = ({ onRecordingButtonClick, onNext, 
 
   return (
     <Fragment>
+      <ResumeCheck onRecordingButtonClick={onRecordingButtonClick} />
       <BackButton onBack={onBack} />
       <Container style={{ height: '100%' }} className={'d-flex justify-content-center align-items-center'}>
         <Col xs={'auto'} sm={10} md={10} lg={10} xl={10}>
@@ -156,24 +171,6 @@ const OpenProjectPage: FC<ProjectRowProps> = ({ onRecordingButtonClick, onNext, 
                   style={{ width: '100%' }}
                   onClick={(): Promise<void> => createOrOpenProject(false)}>
                   {t('Open')}
-                </Button>
-              </Row>
-              <Row style={{ marginTop: '0.75rem' }}>
-                <Button
-                  variant={'outline-secondary'}
-                  style={{ width: '100%' }}
-                  onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>): void => {
-                    reservedStateValues = reservedStates.map((state) => localStorage.getItem(state));
-                    if (
-                      reservedStateValues.indexOf(null) > -1 &&
-                      reservedStateValues.indexOf(null) != reservedStates.length + 1
-                    ) {
-                      alert('Previous records not found');
-                    } else {
-                      onRecordingButtonClick(event);
-                    }
-                  }}>
-                  {t('Resume ')}
                 </Button>
               </Row>
             </Col>
