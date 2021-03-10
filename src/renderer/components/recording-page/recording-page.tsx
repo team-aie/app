@@ -55,18 +55,6 @@ export const RecordingPage: FC<RecordingPageProps> = ({ onBack, recordingItems, 
   log.info(recordingState);
   return (
     <Fragment>
-      {/* <Image
-        style={{ width: '2rem' }}
-        src={settingButton}
-        onClick={(): void => {
-          for (let i = 0; i < reservedStates.length; i++) {
-            stored.push(localStorage.getItem(reservedStates[i]));
-          }
-          localStorage.clear();
-          for (let i = 0; i < reservedStates.length; i++) {
-            localStorage.setItem(reservedStates[i], stored[i]);
-          }
-        }}></Image> */}
       <BackButton onBack={onBack} />
       <Container className={'h-100 d-flex flex-column justify-content-center'}>
         <Row>

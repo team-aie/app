@@ -126,13 +126,6 @@ if (!isFirstInstance) {
     }
 
     if (isDevelopment) {
-      newWindow.webContents.executeJavaScript('({...localStorage});', true).then((localStorage) => {
-        log.info(localStorage);
-        localStorage.clear();
-      });
-    }
-
-    if (isDevelopment) {
       newWindow.loadURL(`http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`);
     } else {
       newWindow.loadURL(
@@ -169,13 +162,15 @@ if (!isFirstInstance) {
     if (!isDevelopment) {
       log.info('Cleaning local storage on session creation');
 
-      mainWindow.webContents.executeJavaScript('({...localStorage});', true).then((localStorage) => {
-        reservedStateValues = reservedStates.map((state) => localStorage.getItem(state));
-        session.clearStorageData({ storages: ['localstorage'] }).catch(log.error);
-        for (let i = 0; i < reservedStates.length; i++) {
-          localStorage.setItem(reservedStates[i], reservedStateValues[i]);
-        }
-      });
+      if (mainWindow != null) {
+        mainWindow.webContents.executeJavaScript('({...localStorage});', true).then((localStorage) => {
+          reservedStateValues = reservedStates.map((state) => localStorage.getItem(state));
+          session.clearStorageData({ storages: ['localstorage'] }).catch(log.error);
+          for (let i = 0; i < reservedStates.length; i++) {
+            localStorage.setItem(reservedStates[i], reservedStateValues[i]);
+          }
+        });
+      }
     }
   });
 

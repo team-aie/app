@@ -16,12 +16,15 @@ import knownProjects from './known-projects';
 import { ProjectRow } from './project-row';
 
 interface ProjectRowProps {
-  onRecordingButtonClick: MouseEventHandler<HTMLElement>;
-  onNext: Consumer<void>;
-  onBack: MouseEventHandler<HTMLElement>;
   project: RecordingProject | undefined;
   onClick: Consumer<RecordingProject>;
   selected: boolean;
+}
+
+interface OpenProjectPageProps {
+  onResume: Consumer<void>;
+  onNext: Consumer<void>;
+  onBack: MouseEventHandler<HTMLElement>;
 }
 
 let reservedStateValues = [];
@@ -37,14 +40,12 @@ const reservedStates = [
   'RecordingPage$index',
 ];
 
-const ResumeCheck: FC<ProjectRowProps> = ({ onRecordingButtonClick }) => {
+const ResumeCheck: FC<OpenProjectPageProps> = ({ onResume }) => {
   useEffectOnce(() => {
     reservedStateValues = reservedStates.map((state) => localStorage.getItem(state));
     if (!(reservedStateValues.indexOf(null) > -1 && reservedStateValues.indexOf(null) != reservedStates.length + 1)) {
-      if (confirm('Do you want to resume your progress?')) {
-        onRecordingButtonClick();
-      } else {
-        console.log('not resume');
+      if (confirm('Do you want to resume your previous records?')) {
+        onResume();
       }
     }
   });
@@ -73,7 +74,7 @@ const ProjectRow: FC<ProjectRowProps> = ({ project, onClick, selected }) => {
   );
 };
 
-const OpenProjectPage: FC<ProjectRowProps> = ({ onRecordingButtonClick, onNext, onBack }) => {
+const OpenProjectPage: FC<OpenProjectPageProps> = ({ onResume, onNext, onBack }) => {
   const { t } = useTranslation();
   const [projects, setProjects] = useState<RecordingProject[]>([]);
   {
@@ -131,7 +132,7 @@ const OpenProjectPage: FC<ProjectRowProps> = ({ onRecordingButtonClick, onNext, 
 
   return (
     <Fragment>
-      <ResumeCheck onRecordingButtonClick={onRecordingButtonClick} />
+      <ResumeCheck onResume={onResume} onBack={onBack} onNext={onNext} />
       <BackButton onBack={onBack} />
       <Container style={{ height: '100%' }} className={'d-flex justify-content-center align-items-center'}>
         <Col xs={'auto'} sm={10} md={10} lg={10} xl={10}>
