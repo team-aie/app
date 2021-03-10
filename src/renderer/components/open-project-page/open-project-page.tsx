@@ -27,7 +27,6 @@ interface OpenProjectPageProps {
   onBack: MouseEventHandler<HTMLElement>;
 }
 
-let reservedStateValues = [];
 const reservedStates = [
   'AieApp$keyOctave',
   'AieApp$projectFolder',
@@ -41,6 +40,7 @@ const reservedStates = [
 ];
 
 const ResumeCheck: FC<OpenProjectPageProps> = ({ onResume }) => {
+  let reservedStateValues = [];
   useEffectOnce(() => {
     reservedStateValues = reservedStates.map((state) => localStorage.getItem(state));
     if (!(reservedStateValues.indexOf(null) > -1 && reservedStateValues.indexOf(null) != reservedStates.length + 1)) {
