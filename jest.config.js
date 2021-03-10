@@ -15,4 +15,6 @@ module.exports = {
   transformIgnorePatterns: ['/node_modules/?!(wavesurfer.js)'],
   setupFiles: ['<rootDir>/jest.setup.js'],
   resetMocks: true,
+  resetModules: true,
+  restoreMocks: true,
 };
