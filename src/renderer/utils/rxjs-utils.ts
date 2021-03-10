@@ -1,6 +1,7 @@
 import { MutableRefObject, RefObject } from 'react';
 import useEffectOnce from 'react-use/lib/useEffectOnce';
-import { SubscriptionLike } from 'rxjs';
+import { Observable, SubscriptionLike } from 'rxjs';
+import { first } from 'rxjs/operators';
 
 export const unsubscribeFromRef = <T extends SubscriptionLike>(
   subscriptionRef: RefObject<T> | MutableRefObject<T>,
@@ -16,5 +17,14 @@ export const useUnsubscribeOnUnmount = <T extends SubscriptionLike>(
 ): void => {
   useEffectOnce(() => {
     return () => unsubscribeFromRef(subscriptionRef);
+  });
+};
+
+/**
+ * Resolves to the first emitted value from an {@link Observable} and then immediately completes.
+ */
+export const firstValueFrom = <T>(obs: Observable<T>): Promise<T> => {
+  return new Promise((resolve) => {
+    obs.pipe(first()).subscribe(resolve);
   });
 };
