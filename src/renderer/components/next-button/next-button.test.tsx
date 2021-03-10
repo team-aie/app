@@ -9,7 +9,7 @@ import { NextButton } from './next-button';
 
 describe('NextButton', () => {
   it('should render correctly', () => {
-    expect.hasAssertions();
+    expect.assertions(1);
 
     const tree = createTree(<NextButton onClick={noOp()} disabled />).toJSON();
 
@@ -41,6 +41,8 @@ describe('NextButton', () => {
   });
 
   it('should be clicked once', async () => {
+    expect.assertions(1);
+
     const mockFunction = jest.fn();
     render(<NextButton onClick={mockFunction} disabled={false} />);
 

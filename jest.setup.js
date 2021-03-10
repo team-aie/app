@@ -1,7 +1,7 @@
 'use strict';
 
 {
-  // This is a polyfill to match Node's implementation with Chromium's, we will not need them after we update to Node 14
+  // Move TextEncoder and TextDecoder into the global scope, just like in a browser (in `window`).
   const { TextEncoder, TextDecoder } = require('util');
 
   global.TextEncoder = TextEncoder;
@@ -25,4 +25,22 @@ global.__static = '__static';
       };
     },
   }));
+}
+
+{
+  // Always mock @electron/remote here to prevent loading electron files just because `src/render/utils` is imported.
+  // If mock behaviors are needed, manually mock in the test.
+  // `jest` is defined.
+  // eslint-disable-next-line no-undef
+  jest.mock('@electron/remote', () => ({}));
+}
+
+{
+  // JSDom has not implemented navigator.mediaDevices yet.
+  const { createMediaDevices } = require('./src/fakes/media-devices');
+
+  // TODO: Do not recreate on every `navigator.mediaDevices` access. Move to `beforeEach` and/or `afterEach`.
+  // `navigator` is defined.
+  // eslint-disable-next-line no-undef
+  Object.defineProperty(navigator, 'mediaDevices', { get: createMediaDevices });
 }
