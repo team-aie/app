@@ -55,6 +55,7 @@ module.exports = {
         },
       },
     ],
+    'jest/prefer-expect-assertions': ['error', { onlyFunctionsWithAsyncKeyword: true }],
     'react/prop-types': 'off',
   },
   settings: {
