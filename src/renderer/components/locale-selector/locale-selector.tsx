@@ -5,7 +5,7 @@ import { SUPPORTED_LOCALES } from '../../../common/env-and-consts';
 import { LocaleContext, ThemeContext } from '../../contexts';
 import { SupportedLocale, SupportedTheme } from '../../types';
 
-const LocaleSelector: FC<{ fontSize?: CSSProperties['fontSize'] }> = ({ fontSize }) => {
+export const LocaleSelector: FC<{ fontSize?: CSSProperties['fontSize'] }> = ({ fontSize }) => {
   const { locale, setLocale } = useContext(LocaleContext);
   const { theme } = useContext(ThemeContext);
 

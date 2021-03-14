@@ -11,12 +11,10 @@ interface ImageButtonProps {
   testId?: string;
 }
 
-const ImageButton: FC<ImageButtonProps> = ({ onClick, src, width, testId }) => {
+export const ImageButton: FC<ImageButtonProps> = ({ onClick, src, width, testId }) => {
   return (
     <button data-testid={testId} onClick={onClick} className={'image-button'}>
       <Image src={src} style={{ width }} />
     </button>
   );
 };
-
-export default ImageButton;

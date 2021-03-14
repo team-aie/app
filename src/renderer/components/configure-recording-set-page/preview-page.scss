@@ -1,0 +1,19 @@
+.slide-down-appear {
+  opacity: 0;
+  transform: translateY(-100%);
+}
+.slide-down-appear-active {
+  opacity: 1;
+  transform: translateY(0%);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.slide-right-enter {
+  opacity: 0;
+  transform: translateX(-100%);
+}
+.slide-right-enter-active {
+  opacity: 1;
+  transform: translateX(0%);
+  transition: opacity 300ms, transform 300ms;
+}

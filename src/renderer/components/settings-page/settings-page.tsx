@@ -11,7 +11,7 @@ import mediaService from '../../services/media';
 import { naiveSerialize } from '../../utils';
 import BackButton from '../back-button';
 import NextButton from '../next-button';
-import { Select } from '../select';
+import Select from '../select';
 
 import { useAudioInputOutputDevices } from './hooks';
 

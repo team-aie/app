@@ -10,6 +10,8 @@ import downButton from './down-button.svg';
 import switchPageButton from './switch-preview.svg';
 import { RecordingPageState } from './types';
 
+import './preview-page.scss';
+
 interface PreviewPageProps {
   /**
    * Sets the local {@link RecordingPageState} (controls which subpage is displayed).

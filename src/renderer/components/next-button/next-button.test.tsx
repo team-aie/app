@@ -3,9 +3,9 @@ import { create as createTree } from 'react-test-renderer';
 
 import { noOp } from '../../../common/env-and-consts';
 
-import NextButton from '.';
+import { NextButton } from './next-button';
 
-describe('next button', () => {
+describe('NextButton', () => {
   it('should render correctly', () => {
     expect.hasAssertions();
 

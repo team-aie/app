@@ -8,8 +8,6 @@ import { RecordingListData } from '../../services/recording-list-data-service/ty
 import { getLSKey } from '../../utils';
 
 import { ConfigureRecordingSet } from './configure-recording-set';
-import './show-details.scss';
-import './index.scss';
 import { PreviewPage } from './preview-page';
 import { SetMetaClickProps } from './set-meta-configuration';
 import { BuiltInRecordingList, MetadataState, RecordingPageState } from './types';

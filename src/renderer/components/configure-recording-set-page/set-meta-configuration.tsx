@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import { SCALE_KEYS_IN_ORDER, SUPPORTED_OCTAVES_IN_ORDER } from '../../../common/env-and-consts';
 import { Consumer, RecordingSet, ScaleKey, SupportedOctave } from '../../types';
-import { Select } from '../select';
+import Select from '../select';
 
 interface SetMetaConfigurationProps {
   chosenKey: ScaleKey;
