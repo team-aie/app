@@ -199,6 +199,11 @@ if (!isFirstInstance) {
   });
 
   electronRemoteInitialize();
+  // For Windows notifications. See https://www.electronjs.org/docs/tutorial/notifications#windows.
+  // But need to use appId here. See https://www.electron.build/configuration/nsis.html#guid-vs-application-name.
+  // Requiring the builder config file ensures the `appId` stays in sync.
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  app.setAppUserModelId(require('../../electron-builder').appId);
 
   if (module.hot) {
     module.hot.accept();
