@@ -5,11 +5,11 @@ import { useTranslation } from 'react-i18next';
 
 import { Positional } from '../helper-components';
 import ImageButton from '../image-button';
-import { ThemeSwitch } from '../theme-switch';
+import ThemeSwitch from '../theme-switch';
 
 import startButton from './start-button-img.svg';
 
-const WelcomePage: FC<{ onNext: MouseEventHandler<HTMLElement> }> = ({ onNext }) => {
+export const WelcomePage: FC<{ onNext: MouseEventHandler<HTMLElement> }> = ({ onNext }) => {
   const { t } = useTranslation();
   return (
     <Container style={{ height: '100%' }} className={'d-flex flex-column justify-content-center align-items-center'}>
@@ -34,5 +34,3 @@ const WelcomePage: FC<{ onNext: MouseEventHandler<HTMLElement> }> = ({ onNext })
     </Container>
   );
 };
-
-export default WelcomePage;

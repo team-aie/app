@@ -1,1 +1,3 @@
-export { TextButton } from './text-button';
+import { TextButton } from './text-button';
+
+export default TextButton;

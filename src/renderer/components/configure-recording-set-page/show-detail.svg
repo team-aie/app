@@ -1,13 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="170" height="66.258" viewBox="0 0 170 66.258">
+<svg width="46.264" height="25.648" xmlns="http://www.w3.org/2000/svg">
     <defs>
-        <style>.b{fill:none;stroke:#707070;}.a{opacity:0.9;}
-        </style>
+        <style>.a{opacity:0.9;}.b{fill:none;stroke:#707070;}</style>
     </defs>
-    <g transform="translate(-910.5 -992.742)">
-        <g class="a" transform="translate(1018 993.242) rotate(90)">
-            <path class="b"
-                  d="M39.219,280.424,17.971,259.177a1.734,1.734,0,0,1,2.452-2.452l19.543,19.531,19.543-19.531a1.734,1.734,0,0,1,2.452,2.452L40.714,280.424a1.054,1.054,0,0,1-1.5,0Z"
-                  transform="translate(280.736 -17.466) rotate(90)"/>
-        </g>
+    <g id="svg_1" transform="rotate(90 23.251520156860355,12.485534667968752) " class="a">
+        <path id="svg_2" transform="rotate(90 291.7374572753907,-27.480468749999975) " d="m330.95647,252.94353l-21.248,-21.247a1.734,1.734 0 0 1 2.452,-2.452l19.543,19.531l19.543,-19.531a1.734,1.734 0 0 1 2.452,2.452l-21.247,21.247a1.054,1.054 0 0 1 -1.5,0l0.005,0z" class="b"/>
     </g>
 </svg>

@@ -15,7 +15,7 @@ const textTranslations = {
 /**
  * Shows a fallback view when the app is loading its translations.
  */
-const AppLoadFallback: FC = () => {
+export const AppLoadFallback: FC = () => {
   const localeToLoad = detectLanguage();
 
   return (
@@ -25,5 +25,3 @@ const AppLoadFallback: FC = () => {
     </LocaleContext.Provider>
   );
 };
-
-export default AppLoadFallback;

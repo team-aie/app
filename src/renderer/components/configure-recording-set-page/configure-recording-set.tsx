@@ -33,7 +33,7 @@ import SetRecordingListConfiguration from './set-recording-list-configuration';
 import showDetailsButton from './show-detail.svg';
 import { BuiltInRecordingList, RecordingPageState } from './types';
 
-import './show-details.scss';
+import './configure-recording-set.scss';
 
 interface ProjectFile extends RecordingProject {
   name: string;
@@ -283,18 +283,6 @@ export const ConfigureRecordingSet: FC<ConfigureRecordingSetProps> = ({
       </CSSTransition>
       <CSSTransition {...transitionProps}>
         <div>
-          {metaDataIndex >= 0 && (
-            <Positional position="bottom-center">
-              <ImageButton
-                src={showDetailsButton}
-                testId="show-details-button"
-                width="7rem"
-                onClick={(): void => {
-                  setRecordingSetState(prevState == 'home' || prevState == 'external' ? 'metadata' : prevState);
-                }}
-              />
-            </Positional>
-          )}
           <Positional position={'top-right'}>
             <AudioSettingButton
               onClick={(event) => {
@@ -311,6 +299,18 @@ export const ConfigureRecordingSet: FC<ConfigureRecordingSetProps> = ({
             }}
             disabled={selectedRecordingSetIndex < 0}
           />
+          {metaDataIndex >= 0 && (
+            <Positional position="bottom-center">
+              <ImageButton
+                src={showDetailsButton}
+                testId="show-details-button"
+                width="2rem"
+                onClick={(): void => {
+                  setRecordingSetState(prevState == 'home' || prevState == 'external' ? 'metadata' : prevState);
+                }}
+              />
+            </Positional>
+          )}
         </div>
       </CSSTransition>
     </Fragment>

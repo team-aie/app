@@ -1,1 +1,3 @@
-export { ThemeSwitch } from './theme-switch';
+import { ThemeSwitch } from './theme-switch';
+
+export default ThemeSwitch;
