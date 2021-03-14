@@ -1,7 +1,7 @@
 import { systemPreferences } from '@electron/remote';
 import log from 'electron-log';
 
-import { ACQUIRE_PERMISSION_RETRIES } from '../env-and-consts';
+import { ACQUIRE_PERMISSION_RETRIES } from '../../common/env-and-consts';
 
 import { readFile } from './fs-utils';
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { create as createTree } from 'react-test-renderer';
 
-import { noOp } from '../../env-and-consts';
+import { noOp } from '../../../common/env-and-consts';
 
 import NextButton from '.';
 

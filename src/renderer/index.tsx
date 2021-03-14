@@ -2,8 +2,9 @@ import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom';
 
 import './services/i18n';
+import { isDevelopment } from '../common/env-and-consts';
+
 import AppLoadFallback from './components/app-load-fallback';
-import { isDevelopment } from './env-and-consts';
 import { globalKeyDownHandler, globalKeyUpHandler } from './services/key-event-handler-registry';
 
 import './index.scss';

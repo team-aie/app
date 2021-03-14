@@ -1,4 +1,4 @@
-import { KEY_SEPARATOR } from '../env-and-consts';
+import { KEY_SEPARATOR } from '../../common/env-and-consts';
 
 export * from './fs-utils';
 export * from './line-by-line-parser';
