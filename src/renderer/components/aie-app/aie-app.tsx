@@ -3,21 +3,20 @@ import React, { FC, Fragment, ReactElement } from 'react';
 import Col from 'react-bootstrap/Col';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 
-import { PAGE_STATES_IN_ORDER } from '../common/env-and-consts';
-
-import { ConfigureRecordingSetPage } from './components/configure-recording-set-page';
-import { Positional } from './components/helper-components';
-import LicenseDisclosure from './components/license-disclosure';
-import LocaleSelector from './components/locale-selector';
-import OpenProjectPage from './components/open-project-page';
-import { RecordingPage } from './components/recording-page';
-import { SettingsPage } from './components/settings-page';
-import StyleSwitcher from './components/style-switcher';
-import WelcomePage from './components/welcome-page';
-import { LocaleContext, RecordingProjectContext, ThemeContext } from './contexts';
-import recordingListDataService from './services/recording-list-data-service';
-import { RecordingItem, RecordingProject, RecordingSet, ScaleKey, SupportedOctave, SupportedTheme } from './types';
-import { getLSKey, join, useLocale } from './utils';
+import { PAGE_STATES_IN_ORDER } from '../../../common/env-and-consts';
+import { LocaleContext, RecordingProjectContext, ThemeContext } from '../../contexts';
+import recordingListDataService from '../../services/recording-list-data-service';
+import { RecordingItem, RecordingProject, RecordingSet, ScaleKey, SupportedOctave, SupportedTheme } from '../../types';
+import { getLSKey, join, useLocale } from '../../utils';
+import ConfigureRecordingSetPage from '../configure-recording-set-page';
+import { Positional } from '../helper-components';
+import LicenseDisclosure from '../license-disclosure';
+import LocaleSelector from '../locale-selector';
+import OpenProjectPage from '../open-project-page';
+import RecordingPage from '../recording-page';
+import SettingsPage from '../settings-page';
+import StyleSwitcher from '../style-switcher';
+import WelcomePage from '../welcome-page';
 
 const { length: numStates } = PAGE_STATES_IN_ORDER;
 
@@ -32,7 +31,7 @@ const BottomRightDisplay: FC = () => (
   </Positional>
 );
 
-const AieApp: FC = () => {
+export const AieApp: FC = () => {
   const [locale, setLocale] = useLocale();
   const [theme = SupportedTheme.LIGHT, setTheme] = useLocalStorage(getLSKey('AieApp', 'theme'), SupportedTheme.LIGHT);
   const [pageStateIndex = 0, setPageStateIndex] = useLocalStorage(getLSKey('AieApp', 'pageStateIndex'), 0);
@@ -150,5 +149,3 @@ const AieApp: FC = () => {
     </LocaleContext.Provider>
   );
 };
-
-export default AieApp;

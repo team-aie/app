@@ -1,4 +1,4 @@
-import React, { CSSProperties, FC } from 'react';
+import React, { FC } from 'react';
 import Form from 'react-bootstrap/Form';
 
 interface StrictSelectProps {
@@ -10,12 +10,7 @@ interface StrictSelectProps {
   testId?: string;
 }
 
-// FIXME: The following didn't work, so adding properties on an ad-hoc basis
-// type SelectProps = StrictSelectProps & React.HTMLProps<Form>;
-interface SelectProps extends StrictSelectProps {
-  className?: string;
-  style?: CSSProperties;
-}
+type SelectProps = StrictSelectProps & Omit<React.ComponentProps<typeof Form>, 'onChange'>;
 
 export const Select: FC<SelectProps> = ({ value, onChange, testId = '', children, ...outerProps }) => {
   return (

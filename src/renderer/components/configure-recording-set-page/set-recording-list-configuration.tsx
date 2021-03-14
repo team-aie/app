@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Consumer } from '../../types';
 import { filename, openFilePicker } from '../../utils';
-import { Select } from '../select';
+import Select from '../select';
 
 import { BuiltInRecordingList } from './types';
 

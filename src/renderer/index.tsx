@@ -16,7 +16,7 @@ if (!isDevelopment) {
   document.body.style.overflow = 'hidden';
 }
 
-const AieAppAsync = React.lazy(() => import('./aie-app'));
+const AieAppAsync = React.lazy(() => import('./components/aie-app'));
 
 ReactDOM.render(
   <Suspense fallback={<AppLoadFallback />}>

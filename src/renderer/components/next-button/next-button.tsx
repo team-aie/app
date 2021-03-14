@@ -9,7 +9,7 @@ interface NextButtonProps {
   disabled: boolean;
 }
 
-const NextButton: FC<NextButtonProps> = ({ text = 'Next', onClick, disabled }) => {
+export const NextButton: FC<NextButtonProps> = ({ text = 'Next', onClick, disabled }) => {
   return (
     <Positional position={'bottom-right'}>
       <Button variant={'outline-secondary'} style={{ minWidth: '120px' }} onClick={onClick} disabled={disabled}>
@@ -18,5 +18,3 @@ const NextButton: FC<NextButtonProps> = ({ text = 'Next', onClick, disabled }) =
     </Positional>
   );
 };
-
-export default NextButton;

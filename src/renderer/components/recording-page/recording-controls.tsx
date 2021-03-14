@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import { ScaleKey, SupportedOctave } from '../../types';
 import ImageButton from '../image-button';
-import { TextButton } from '../text-button';
+import TextButton from '../text-button';
 
 import playRecordedItem from './play-recorded-item.svg';
 import playScale from './play-scale.svg';

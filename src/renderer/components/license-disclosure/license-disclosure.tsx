@@ -70,7 +70,7 @@ const LicenseDetails: FC<LicenseTextModalProps> = ({ name, version, author, repo
   );
 };
 
-const LicenseDisclosure: FC<{ triggerStyle?: CSSProperties }> = ({ triggerStyle }) => {
+export const LicenseDisclosure: FC<{ triggerStyle?: CSSProperties }> = ({ triggerStyle }) => {
   const { t } = useTranslation();
   const { theme } = useContext(ThemeContext);
   const [showModal, setShowModal] = useState(false);

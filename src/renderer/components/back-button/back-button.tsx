@@ -5,12 +5,10 @@ import ImageButton from '../image-button';
 
 import backButton from './back-button.svg';
 
-const BackButton: FC<{ onBack?: MouseEventHandler<HTMLElement> }> = ({ onBack }) => {
+export const BackButton: FC<{ onBack?: MouseEventHandler<HTMLElement> }> = ({ onBack }) => {
   return (
     <Positional position={'top-left'}>
-      <ImageButton onClick={onBack} src={backButton} width="1rem"></ImageButton>
+      <ImageButton onClick={onBack} src={backButton} width="1rem" />
     </Positional>
   );
 };
-
-export default BackButton;

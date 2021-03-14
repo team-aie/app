@@ -2,7 +2,7 @@ import React, { FC, useContext } from 'react';
 
 import { LocaleContext, ThemeContext } from '../../contexts';
 
-const StyleSwitcher: FC = () => {
+export const StyleSwitcher: FC = () => {
   const { locale } = useContext(LocaleContext);
   const { theme } = useContext(ThemeContext);
   const styleHref = `${locale}/themes/${theme}.styles.css`;
@@ -12,5 +12,3 @@ const StyleSwitcher: FC = () => {
     </div>
   );
 };
-
-export default StyleSwitcher;

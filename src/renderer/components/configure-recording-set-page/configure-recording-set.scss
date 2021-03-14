@@ -1,0 +1,18 @@
+.config-rec-set-appear {
+  opacity: 0;
+  transform: translateY(100%);
+}
+.config-rec-set-appear-active {
+  opacity: 1;
+  transform: translateY(0%);
+  transition: opacity 300ms, transform 300ms;
+}
+.config-rec-set-exit {
+  opacity: 1;
+  transform: translateY(0%);
+}
+.config-rec-set-exit-active {
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: opacity 300ms, transform 300ms;
+}

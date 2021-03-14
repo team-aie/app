@@ -6,42 +6,15 @@ import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 import { useTranslation } from 'react-i18next';
 
-import { RecordingProjectContext, ThemeContext } from '../../contexts';
-import { Consumer, RecordingProject, SupportedTheme } from '../../types';
+import { RecordingProjectContext } from '../../contexts';
+import { Consumer, RecordingProject } from '../../types';
 import { ensureFolderExists, filename, openFilePicker } from '../../utils';
 import BackButton from '../back-button';
 
 import knownProjects from './known-projects';
+import { ProjectRow } from './project-row';
 
-interface ProjectRowProps {
-  project: RecordingProject | undefined;
-  onClick: Consumer<RecordingProject>;
-  selected: boolean;
-}
-
-const ProjectRow: FC<ProjectRowProps> = ({ project, onClick, selected }) => {
-  const { theme } = useContext(ThemeContext);
-  const [hovered, setHovered] = useState(false);
-
-  return (
-    <tr
-      onClick={(): void => project && onClick(project)}
-      style={
-        selected || hovered
-          ? { filter: (theme === SupportedTheme.LIGHT && 'invert(1)') || undefined, textDecoration: 'underline' }
-          : undefined
-      }
-      onMouseEnter={(): void => setHovered(true)}
-      onMouseOut={(): void => setHovered(false)}>
-      <td className={'border-bottom'}>{project && project.name}</td>
-      <td className={'border-bottom'} align={'right'}>
-        {project && project.lastAccessTime && project.lastAccessTime.toLocaleString()}
-      </td>
-    </tr>
-  );
-};
-
-const OpenProjectPage: FC<{ onNext: Consumer<void>; onBack: MouseEventHandler<HTMLElement> }> = ({
+export const OpenProjectPage: FC<{ onNext: Consumer<void>; onBack: MouseEventHandler<HTMLElement> }> = ({
   onNext,
   onBack,
 }) => {
@@ -150,5 +123,3 @@ const OpenProjectPage: FC<{ onNext: Consumer<void>; onBack: MouseEventHandler<HT
     </Fragment>
   );
 };
-
-export default OpenProjectPage;
