@@ -64,10 +64,6 @@ jobs:
       - run: npm run lint
       - run: npm run compile
       - run: npm run test
-      - name: Fast Package App
-        run: npm run dist:win -- -p never
-        env:
-          FAST_PACKAGING: true
       - name: Package Production App
         run: npm run dist:win -- -p never
       - name: Upload Packaged App
@@ -116,10 +112,6 @@ jobs:
       - run: npm run lint
       - run: npm run compile
       - run: npm run test
-      - name: Fast Package App
-        run: npm run dist:macos -- -p never
-        env:
-          FAST_PACKAGING: true
       - name: Package Production App
         run: npm run dist:macos -- -p never
       - name: Upload Packaged App
