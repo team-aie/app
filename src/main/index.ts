@@ -199,6 +199,8 @@ if (!isFirstInstance) {
   });
 
   electronRemoteInitialize();
+  // For Windows notifications. See https://www.electronjs.org/docs/tutorial/notifications#windows.
+  app.setAppUserModelId(process.execPath);
 
   if (module.hot) {
     module.hot.accept();
