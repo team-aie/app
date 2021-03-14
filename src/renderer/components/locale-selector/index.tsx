@@ -1,8 +1,8 @@
 import React, { CSSProperties, FC, useContext } from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
 
+import { SUPPORTED_LOCALES } from '../../../common/env-and-consts';
 import { LocaleContext, ThemeContext } from '../../contexts';
-import { SUPPORTED_LOCALES } from '../../env-and-consts';
 import { SupportedLocale, SupportedTheme } from '../../types';
 
 const LocaleSelector: FC<{ fontSize?: CSSProperties['fontSize'] }> = ({ fontSize }) => {

@@ -2,7 +2,7 @@ import log from 'electron-log';
 import { MutableRefObject, useEffect, useRef, useState } from 'react';
 import useUpdate from 'react-use/lib/useUpdate';
 
-import { noOp } from '../../env-and-consts';
+import { noOp } from '../../../common/env-and-consts';
 import {
   addGlobalKeyDownHandler,
   addGlobalKeyUpHandler,

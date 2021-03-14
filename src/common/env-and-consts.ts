@@ -1,4 +1,4 @@
-import { PageState, ScaleKey, SupportedLocale, SupportedOctave, SupportedTheme } from './types';
+import { PageState, ScaleKey, SupportedLocale, SupportedOctave, SupportedTheme } from '../renderer/types';
 
 export const isDevelopment = process.env.NODE_ENV !== 'production';
 

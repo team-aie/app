@@ -6,7 +6,7 @@ import useInterval from 'react-use/lib/useInterval';
 import WaveSurfer from 'wavesurfer.js';
 import SpectrogramPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.spectrogram';
 
-import { noOp } from '../../env-and-consts';
+import { noOp } from '../../../common/env-and-consts';
 import { checkFileExistence, join, readFile } from '../../utils';
 
 import { State } from './types';

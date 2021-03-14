@@ -3,6 +3,8 @@ import React, { FC, Fragment, ReactElement } from 'react';
 import Col from 'react-bootstrap/Col';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 
+import { PAGE_STATES_IN_ORDER } from '../common/env-and-consts';
+
 import { ConfigureRecordingSetPage } from './components/configure-recording-set-page';
 import { Positional } from './components/helper-components';
 import LicenseDisclosure from './components/license-disclosure';
@@ -13,7 +15,6 @@ import { SettingsPage } from './components/settings-page';
 import StyleSwitcher from './components/style-switcher';
 import WelcomePage from './components/welcome-page';
 import { LocaleContext, RecordingProjectContext, ThemeContext } from './contexts';
-import { PAGE_STATES_IN_ORDER } from './env-and-consts';
 import recordingListDataService from './services/recording-list-data-service';
 import { RecordingItem, RecordingProject, RecordingSet, ScaleKey, SupportedOctave, SupportedTheme } from './types';
 import { getLSKey, join, useLocale } from './utils';

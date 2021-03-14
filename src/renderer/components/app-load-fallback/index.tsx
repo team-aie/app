@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 
+import { noOp } from '../../../common/env-and-consts';
 import { LocaleContext } from '../../contexts';
-import { noOp } from '../../env-and-consts';
 import detectLanguage from '../../services/i18n/simple-language-detector';
 import { SupportedLocale } from '../../types';
 import StyleSwitcher from '../style-switcher';
