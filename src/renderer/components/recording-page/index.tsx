@@ -6,7 +6,7 @@ import useEffectOnce from 'react-use/lib/useEffectOnce';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 import usePrevious from 'react-use/lib/usePrevious';
 
-import { noOp } from '../../env-and-consts';
+import { noOp } from '../../../common/env-and-consts';
 import mediaService from '../../services/media';
 import { RecordingItem, ScaleKey, SupportedOctave } from '../../types';
 import { getLSKey, join } from '../../utils';

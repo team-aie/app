@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { noOp } from '../env-and-consts';
+import { noOp } from '../../common/env-and-consts';
 import { Consumer, SupportedTheme } from '../types';
 
 interface ThemeContextType {

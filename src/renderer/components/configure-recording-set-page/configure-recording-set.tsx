@@ -7,8 +7,8 @@ import { useTranslation } from 'react-i18next';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 
+import { PROJECT_CONFIG_FILENAME } from '../../../common/env-and-consts';
 import { RecordingProjectContext } from '../../contexts';
-import { PROJECT_CONFIG_FILENAME } from '../../env-and-consts';
 import { Consumer, RecordingProject, RecordingSet, ScaleKey, SupportedOctave } from '../../types';
 import {
   checkFileExistence,

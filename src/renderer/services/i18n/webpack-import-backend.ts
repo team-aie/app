@@ -1,7 +1,7 @@
 import log from 'electron-log';
 import { BackendModule, ReadCallback, Services } from 'i18next';
 
-import { isDevelopment } from '../../env-and-consts';
+import { isDevelopment } from '../../../common/env-and-consts';
 
 interface WebpackImportBackendOptions {
   saveMissingAllHierarchy: boolean;
