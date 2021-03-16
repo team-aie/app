@@ -214,7 +214,7 @@ export const ConfigureRecordingSet: FC<ConfigureRecordingSetProps> = ({
     in: true,
     appear: true,
     timeout: 3000,
-    classNames: currState == 'external' ? '' : 'config-rec-set',
+    classNames: currState === 'external' ? '' : 'config-rec-set',
   };
 
   return (
@@ -306,7 +306,7 @@ export const ConfigureRecordingSet: FC<ConfigureRecordingSetProps> = ({
                 testId="show-details-button"
                 width="2rem"
                 onClick={(): void => {
-                  setRecordingSetState(prevState == 'home' || prevState == 'external' ? 'metadata' : prevState);
+                  setRecordingSetState(prevState === 'home' || prevState === 'external' ? 'metadata' : prevState);
                 }}
               />
             </Positional>
