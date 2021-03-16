@@ -19,6 +19,18 @@ export const SUPPORTED_LOCALES: ReadonlySet<string> = new Set([
   SupportedLocale.JA_JP,
 ]);
 
+export const reservedStates = [
+  'AieApp$keyOctave',
+  'AieApp$projectFolder',
+  'AieApp$recordingProject',
+  'AieApp$recordingSet',
+  'AieApp$recordingList',
+  'AieApp$pageStateIndex',
+  'ConfigureRecordingSetPage$recordingSets',
+  'ConfigureRecordingSetPage$projectFile',
+  'RecordingPage$index',
+];
+
 export const SUPPORTED_THEMES: ReadonlySet<string> = new Set([SupportedTheme.DARK, SupportedTheme.LIGHT]);
 
 export const SCALE_KEYS_IN_ORDER: ScaleKey[] = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];

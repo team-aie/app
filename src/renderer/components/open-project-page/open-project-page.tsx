@@ -27,24 +27,13 @@ interface OpenProjectPageProps {
   onBack: MouseEventHandler<HTMLElement>;
 }
 
-const reservedStates = [
-  'AieApp$keyOctave',
-  'AieApp$projectFolder',
-  'AieApp$recordingProject',
-  'AieApp$recordingSet',
-  'AieApp$recordingList',
-  'AieApp$pageStateIndex',
-  'ConfigureRecordingSetPage$recordingSets',
-  'ConfigureRecordingSetPage$projectFile',
-  'RecordingPage$index',
-];
-
 const ResumeCheck: FC<OpenProjectPageProps> = ({ onResume }) => {
-  let reservedStateValues = [];
+  const { t } = useTranslation();
   useEffectOnce(() => {
+    let reservedStateValues = [];
     reservedStateValues = reservedStates.map((state) => localStorage.getItem(state));
-    if (!(reservedStateValues.indexOf(null) > -1 && reservedStateValues.indexOf(null) != reservedStates.length + 1)) {
-      if (confirm('Do you want to resume your previous records?')) {
+    if (!reservedStateValues.includes(null)) {
+      if (confirm(`${t('Do you want to resume your previous records?')}`)) {
         onResume();
       }
     }

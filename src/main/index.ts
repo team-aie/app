@@ -6,24 +6,13 @@ import { BrowserWindow, Menu, MenuItemConstructorOptions, app, shell } from 'ele
 import log from 'electron-log';
 
 import { AssertionError } from '../common/errors';
+import { reservedStates } from '../renderer/env-and-consts';
 
 import autoUpdater from './auto-updater';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 const isFirstInstance = app.requestSingleInstanceLock();
-
-const reservedStates = [
-  'AieApp$keyOctave',
-  'AieApp$projectFolder',
-  'AieApp$recordingProject',
-  'AieApp$recordingSet',
-  'AieApp$recordingList',
-  'AieApp$pageStateIndex',
-  'ConfigureRecordingSetPage$recordingSets',
-  'ConfigureRecordingSetPage$projectFile',
-  'RecordingPage$index',
-];
 
 if (!isFirstInstance) {
   app.quit();
@@ -158,16 +147,16 @@ if (!isFirstInstance) {
   };
 
   app.on('session-created', (session) => {
-    let reservedStateValues = [];
-    if (!isDevelopment) {
+    if (isDevelopment) {
       log.info('Cleaning local storage on session creation');
 
-      if (mainWindow != null) {
-        mainWindow.webContents.executeJavaScript('({...localStorage});', true).then((localStorage) => {
-          reservedStateValues = reservedStates.map((state) => localStorage.getItem(state));
+      if (mainWindow) {
+        mainWindow.webContents.executeJavaScript('({...localStorage});').then((localStorage) => {
+          let reservedStateValues = [];
+          reservedStateValues = reservedStates.map((state) => localStorage[state]);
           session.clearStorageData({ storages: ['localstorage'] }).catch(log.error);
           for (let i = 0; i < reservedStates.length; i++) {
-            localStorage.setItem(reservedStates[i], reservedStateValues[i]);
+            localStorage[reservedStates[i]] = reservedStateValues[i];
           }
         });
       }

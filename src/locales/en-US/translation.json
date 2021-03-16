@@ -36,5 +36,6 @@
   "Oto.ini": "Oto.ini",
   "Voice.dvcfg": "Voice.dvcfg",
   "previous": "previous",
-  "next": "next"
+  "next": "next",
+  "Do you want to resume your previous records?": "Do you want to resume your previous records?"
 }
