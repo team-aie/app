@@ -8,10 +8,9 @@ module.exports = {
     'plugin:import/warnings',
     'plugin:import/typescript',
     'plugin:react/recommended',
-    // Currently not working, need to define manually
-    // 'plugin:react-hooks/recommended',
+    'plugin:react-hooks/recommended',
     'plugin:@typescript-eslint/recommended',
-    'prettier/@typescript-eslint',
+    'prettier',
     'plugin:testing-library/recommended',
     'plugin:jest-dom/recommended',
     'plugin:jest/recommended',
@@ -49,8 +48,6 @@ module.exports = {
       },
     ],
     'react/prop-types': 'off',
-    'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': 'warn',
   },
   settings: {
     react: {
