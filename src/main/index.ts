@@ -149,17 +149,18 @@ if (!isFirstInstance) {
   app.on('session-created', (session) => {
     if (isDevelopment) {
       log.info('Cleaning local storage on session creation');
-
-      if (mainWindow) {
-        mainWindow.webContents.executeJavaScript('({...localStorage});').then((localStorage) => {
-          let reservedStateValues = [];
-          reservedStateValues = reservedStates.map((state) => localStorage[state]);
-          session.clearStorageData({ storages: ['localstorage'] }).catch(log.error);
-          for (let i = 0; i < reservedStates.length; i++) {
-            localStorage[reservedStates[i]] = reservedStateValues[i];
-          }
-        });
-      }
+      async (): Promise<void> => {
+        if (mainWindow) {
+          mainWindow.webContents.executeJavaScript('({...localStorage});').then((localStorage) => {
+            let reservedStateValues = [];
+            reservedStateValues = reservedStates.map((state) => localStorage[state]);
+            session.clearStorageData({ storages: ['localstorage'] }).catch(log.error);
+            for (let i = 0; i < reservedStates.length; i++) {
+              localStorage[reservedStates[i]] = reservedStateValues[i];
+            }
+          });
+        }
+      };
     }
   });
 
