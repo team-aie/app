@@ -5,8 +5,8 @@ import { initialize as electronRemoteInitialize } from '@electron/remote/dist/sr
 import { BrowserWindow, Menu, MenuItemConstructorOptions, app, shell } from 'electron';
 import log from 'electron-log';
 
+import { reservedStates } from '../common/env-and-consts';
 import { AssertionError } from '../common/errors';
-import { reservedStates } from '../renderer/env-and-consts';
 
 import autoUpdater from './auto-updater';
 
@@ -154,7 +154,7 @@ if (!isFirstInstance) {
           mainWindow.webContents.executeJavaScript('({...localStorage});').then((localStorage) => {
             let reservedStateValues = [];
             reservedStateValues = reservedStates.map((state) => localStorage[state]);
-            session.clearStorageData({ storages: ['localstorage'] }).catch(log.error);
+            session.StorageData({ storages: ['localstorage'] }).catch(log.error);
             for (let i = 0; i < reservedStates.length; i++) {
               localStorage[reservedStates[i]] = reservedStateValues[i];
             }
