@@ -22,7 +22,7 @@ interface OpenProjectPageProps {
   onBack: MouseEventHandler<HTMLElement>;
 }
 
-const ResumeCheck: FC<OpenProjectPageProps> = ({ onResume }) => {
+const useResumeCheck = (onResume: Consumer<void>) => {
   const { t } = useTranslation();
   useEffectOnce(() => {
     let reservedStateValues = [];
@@ -33,7 +33,6 @@ const ResumeCheck: FC<OpenProjectPageProps> = ({ onResume }) => {
       }
     }
   });
-  return null;
 };
 
 export const OpenProjectPage: FC<OpenProjectPageProps> = ({ onResume, onNext, onBack }) => {
@@ -92,9 +91,10 @@ export const OpenProjectPage: FC<OpenProjectPageProps> = ({ onResume, onNext, on
   const projectsToDisplay: (RecordingProject | undefined)[] =
     projects.length >= 4 ? projects : [...Array(4)].map((x, i) => projects[i]);
 
+  useResumeCheck(onResume);
+
   return (
     <Fragment>
-      <ResumeCheck onResume={onResume} onBack={onBack} onNext={onNext} />
       <BackButton onBack={onBack} />
       <Container style={{ height: '100%' }} className={'d-flex justify-content-center align-items-center'}>
         <Col xs={'auto'} sm={10} md={10} lg={10} xl={10}>
