@@ -16,26 +16,11 @@ import BackButton from '../back-button';
 import knownProjects from './known-projects';
 import { ProjectRow } from './project-row';
 
-interface OpenProjectPageProps {
-  onResume: Consumer<void>;
+export const OpenProjectPage: FC<{
+  onResumeStatus: Consumer<void>;
   onNext: Consumer<void>;
   onBack: MouseEventHandler<HTMLElement>;
-}
-
-const useResumeCheck = (onResume: Consumer<void>) => {
-  const { t } = useTranslation();
-  useEffectOnce(() => {
-    let reservedStateValues = [];
-    reservedStateValues = reservedStates.map((state) => localStorage.getItem(state));
-    if (!reservedStateValues.includes(null)) {
-      if (confirm(`${t('Do you want to resume your previous records?')}`)) {
-        onResume();
-      }
-    }
-  });
-};
-
-export const OpenProjectPage: FC<OpenProjectPageProps> = ({ onResume, onNext, onBack }) => {
+}> = ({ onResumeStatus, onNext, onBack }) => {
   const { t } = useTranslation();
   const [projects, setProjects] = useState<RecordingProject[]>([]);
   {
@@ -55,6 +40,21 @@ export const OpenProjectPage: FC<OpenProjectPageProps> = ({ onResume, onNext, on
       }
     }, [error]);
   }
+
+  const useResumeCheck = (onResumeStatus: Consumer<void>) => {
+    const { t } = useTranslation();
+    useEffectOnce(() => {
+      let reservedStateValues = [];
+      reservedStateValues = reservedStates.map((state) => localStorage.getItem(state));
+      if (!reservedStateValues.includes(null)) {
+        if (confirm(`${t('Do you want to resume your previous records?')}`)) {
+          onResumeStatus();
+        }
+      }
+    });
+  };
+
+  useResumeCheck(onResumeStatus);
 
   const { recordingProject, setRecordingProject } = useContext(RecordingProjectContext);
 
@@ -90,8 +90,6 @@ export const OpenProjectPage: FC<OpenProjectPageProps> = ({ onResume, onNext, on
 
   const projectsToDisplay: (RecordingProject | undefined)[] =
     projects.length >= 4 ? projects : [...Array(4)].map((x, i) => projects[i]);
-
-  useResumeCheck(onResume);
 
   return (
     <Fragment>
