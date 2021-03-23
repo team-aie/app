@@ -3,12 +3,6 @@ import { MutableRefObject, useEffect, useRef, useState } from 'react';
 import useUpdate from 'react-use/lib/useUpdate';
 
 import { noOp } from '../../../common/env-and-consts';
-import {
-  addGlobalKeyDownHandler,
-  addGlobalKeyUpHandler,
-  removeGlobalKeyDownHandler,
-  removeGlobalKeyUpHandler,
-} from '../../services/key-event-handler-registry';
 import mediaService from '../../services/media';
 import { Consumer, RecordingItem, ScaleKey, SupportedOctave, UnaryOperator } from '../../types';
 import { checkFileExistence, deleteFile, join, readWavAsBlob, writeArrayBufferToFile } from '../../utils';
@@ -328,11 +322,12 @@ export const useHotKeyHandlers = (state: State, setState: Consumer<State>): void
     };
 
     const [keyDownHandler, keyUpHandler] = [handleKeyEvent(true), handleKeyEvent(false)];
-    addGlobalKeyDownHandler(keyDownHandler);
-    addGlobalKeyUpHandler(keyUpHandler);
+    window.addEventListener('keydown', keyDownHandler);
+    window.addEventListener('keyup', keyUpHandler);
+
     return (): void => {
-      removeGlobalKeyDownHandler(keyDownHandler);
-      removeGlobalKeyUpHandler(keyUpHandler);
+      window.removeEventListener('keydown', keyDownHandler);
+      window.removeEventListener('keyup', keyUpHandler);
     };
   }, [playKey, playScaleKey, recordKey, setState, state]);
 };
