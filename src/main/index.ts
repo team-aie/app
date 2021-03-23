@@ -146,30 +146,24 @@ if (!isFirstInstance) {
     mainWindow = newWindow;
   };
 
-  app.on('session-created', (session) => {
-    if (isDevelopment) {
-      log.info('Cleaning local storage on session creation');
-      async (): Promise<void> => {
-        if (mainWindow) {
-          mainWindow.webContents.executeJavaScript('({...localStorage});').then((localStorage) => {
-            let reservedStateValues = [];
-            reservedStateValues = reservedStates.map((state) => localStorage[state]);
-            session.StorageData({ storages: ['localstorage'] }).catch(log.error);
-            for (let i = 0; i < reservedStates.length; i++) {
-              localStorage[reservedStates[i]] = reservedStateValues[i];
-            }
-          });
-        }
-      };
-    }
-  });
-
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
-  app.on('ready', () => {
+  app.on('ready', (session) => {
     log.info('App ready');
     createWindow();
+
+    if (isDevelopment) {
+      async (): Promise<void> => {
+        if (mainWindow) {
+          let reservedStateValues = [];
+          const localstorage = await mainWindow.webContents.executeJavaScript('({...localStorage});');
+          reservedStateValues = reservedStates.map((state) => localstorage[state]);
+          await session.clearStorageData({ storages: ['localstorage'] });
+          await mainWindow.webContents.executeJavaScript('localStorage.setItem("newValue","value");');
+        }
+      };
+    }
 
     if (!isDevelopment) {
       autoUpdater.beginUpdate();
