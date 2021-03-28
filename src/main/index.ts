@@ -149,20 +149,31 @@ if (!isFirstInstance) {
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
-  app.on('ready', (session) => {
-    log.info('App ready');
+  app.on('ready', () => {
+    log.info('App ready');
     createWindow();
 
     if (isDevelopment) {
-      async (): Promise<void> => {
+      (async (): Promise<void> => {
         if (mainWindow) {
           let reservedStateValues = [];
           const localstorage = await mainWindow.webContents.executeJavaScript('({...localStorage});');
           reservedStateValues = reservedStates.map((state) => localstorage[state]);
-          await session.clearStorageData({ storages: ['localstorage'] });
-          await mainWindow.webContents.executeJavaScript('localStorage.setItem("newValue","value");');
+          await mainWindow.webContents.session.clearStorageData({ storages: ['localstorage'] });
+          mainWindow.webContents.executeJavaScript(
+            `localStorage.setItem(${JSON.stringify(reservedStates[0])},${JSON.stringify(
+              reservedStateValues[0],
+            )});localStorage.setItem(${JSON.stringify(reservedStates[1])},${JSON.stringify(reservedStateValues[1])});
+localStorage.setItem(${JSON.stringify(reservedStates[2])},${JSON.stringify(reservedStateValues[2])});
+localStorage.setItem(${JSON.stringify(reservedStates[3])},${JSON.stringify(reservedStateValues[3])});
+localStorage.setItem(${JSON.stringify(reservedStates[4])},${JSON.stringify(reservedStateValues[4])});
+localStorage.setItem(${JSON.stringify(reservedStates[5])},${JSON.stringify(reservedStateValues[5])});
+localStorage.setItem(${JSON.stringify(reservedStates[6])},${JSON.stringify(reservedStateValues[6])});
+localStorage.setItem(${JSON.stringify(reservedStates[7])},${JSON.stringify(reservedStateValues[7])});
+localStorage.setItem(${JSON.stringify(reservedStates[8])},${JSON.stringify(reservedStateValues[8])});`,
+          );
         }
-      };
+      })();
     }
 
     if (!isDevelopment) {
