@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "name": "dv_jpn_list_by_alex",
+  "version": "1.0.0",
+  "description": "",
+  "main": "DV_JPN_list_by_Alex.txt",
+  "repository": {
+    "url": ""
+  },
+  "author": "Alex",
+  "license": "UNLICENSED"
+}

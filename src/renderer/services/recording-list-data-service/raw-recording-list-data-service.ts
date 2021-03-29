@@ -14,6 +14,14 @@ const getBuiltInListData = async (listName: BuiltInRecordingList): Promise<Recor
       ]);
       return createRecordingListData(listContent.default, otoIni.default, dvcfg.default);
     }
+    case 'DV JPN List by Alex': {
+      const [listContent, otoIni, dvcfg] = await Promise.all([
+        import('dv_jpn_list_by_alex/DV_JPN_list_by_Alex.txt'),
+        Promise.resolve({ default: undefined }),
+        Promise.resolve({ default: undefined }),
+      ]);
+      return createRecordingListData(listContent.default, otoIni.default, dvcfg.default);
+    }
     case '扩展CVVC 8lite (Extended CVVC 8lite)': {
       const [listContent, otoIni, dvcfg] = await Promise.all([
         import('extended_cvvc_8lite/Reclist.txt'),

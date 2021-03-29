@@ -44,6 +44,7 @@
     "chokidar": "^3.5.1",
     "delta_eng_ver5": "file:external/delta_eng_ver5",
     "dexie": "^3.0.1",
+    "dv_jpn_list_by_alex": "file:external/dv_jpn_list_by_alex",
     "electron-log": "^4.2.2",
     "electron-updater": "^4.3.8",
     "extended_cvvc_8lite": "file:external/extended_cvvc_8lite",

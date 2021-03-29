@@ -41,6 +41,7 @@ module.exports = async (env) => {
         'react-universal-interface@0.6.2': 'Unlicense',
         // FIXME: These recording list "packages" must be assigned a license in order for build to run.
         'delta_eng_ver5@1.0.0': 'GPL-3.0-only',
+        'dv_jpn_list_by_alex@1.0.0': 'GPL-3.0-only',
         'extended_cvvc_8lite@1.0.0': 'GPL-3.0-only',
         'z.cvvc_normal@1.1.0': 'GPL-3.0-only',
       },
