@@ -16,7 +16,7 @@ const getBuiltInListData = async (listName: BuiltInRecordingList): Promise<Recor
     }
     case 'DV JPN List by Alex': {
       const [listContent, otoIni, dvcfg] = await Promise.all([
-        import('dv_jpn_list_by_alex/DV JPN List by Alex.txt'),
+        import('dv_jpn_list_by_alex/DV_JPN_list_by_Alex.txt'),
         Promise.resolve({ default: undefined }),
         Promise.resolve({ default: undefined }),
       ]);
