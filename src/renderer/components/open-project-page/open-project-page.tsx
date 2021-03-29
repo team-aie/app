@@ -7,7 +7,7 @@ import Table from 'react-bootstrap/Table';
 import { useTranslation } from 'react-i18next';
 import { useEffectOnce } from 'react-use';
 
-import { reservedStates } from '../../../common/env-and-consts';
+import { RETAINED_LOCALSTORAGE_KEYS } from '../../../common/env-and-consts';
 import { RecordingProjectContext } from '../../contexts';
 import { Consumer, RecordingProject } from '../../types';
 import { ensureFolderExists, filename, openFilePicker } from '../../utils';
@@ -16,11 +16,16 @@ import BackButton from '../back-button';
 import knownProjects from './known-projects';
 import { ProjectRow } from './project-row';
 
-export const OpenProjectPage: FC<{
+interface OpenProjectPageProps {
   onResumeStatus: Consumer<void>;
   onNext: Consumer<void>;
   onBack: MouseEventHandler<HTMLElement>;
-}> = ({ onResumeStatus, onNext, onBack }) => {
+  /**
+   * Used to allow this element to be routed to other pages according to page index
+   */
+}
+
+export const OpenProjectPage: FC<OpenProjectPageProps> = ({ onResumeStatus, onNext, onBack }) => {
   const { t } = useTranslation();
   const [projects, setProjects] = useState<RecordingProject[]>([]);
   {
@@ -44,9 +49,8 @@ export const OpenProjectPage: FC<{
   const useResumeCheck = (onResumeStatus: Consumer<void>) => {
     const { t } = useTranslation();
     useEffectOnce(() => {
-      let reservedStateValues = [];
-      reservedStateValues = reservedStates.map((state) => localStorage.getItem(state));
-      if (!reservedStateValues.includes(null) && !reservedStateValues.includes('undefined')) {
+      const reservedStateValues = RETAINED_LOCALSTORAGE_KEYS.map((state) => localStorage.getItem(state));
+      if (!reservedStateValues.includes(null)) {
         if (confirm(`${t('Do you want to resume your previous records?')}`)) {
           onResumeStatus();
         }

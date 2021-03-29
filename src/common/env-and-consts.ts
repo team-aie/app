@@ -19,7 +19,7 @@ export const SUPPORTED_LOCALES: ReadonlySet<string> = new Set([
   SupportedLocale.JA_JP,
 ]);
 
-export const reservedStates = [
+export const RETAINED_LOCALSTORAGE_KEYS = [
   'AieApp$keyOctave',
   'AieApp$projectFolder',
   'AieApp$recordingProject',

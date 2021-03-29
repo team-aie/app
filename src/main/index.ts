@@ -5,7 +5,7 @@ import { initialize as electronRemoteInitialize } from '@electron/remote/dist/sr
 import { BrowserWindow, Menu, MenuItemConstructorOptions, app, shell } from 'electron';
 import log from 'electron-log';
 
-import { reservedStates } from '../common/env-and-consts';
+import { RETAINED_LOCALSTORAGE_KEYS } from '../common/env-and-consts';
 import { AssertionError } from '../common/errors';
 
 import autoUpdater from './auto-updater';
@@ -150,31 +150,30 @@ if (!isFirstInstance) {
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   app.on('ready', () => {
-    log.info('App ready');
+    log.info('App ready');
     createWindow();
-
-    if (isDevelopment) {
-      (async (): Promise<void> => {
-        if (mainWindow) {
-          let reservedStateValues = [];
-          const localstorage = await mainWindow.webContents.executeJavaScript('({...localStorage});');
-          reservedStateValues = reservedStates.map((state) => localstorage[state]);
-          await mainWindow.webContents.session.clearStorageData({ storages: ['localstorage'] });
-          mainWindow.webContents.executeJavaScript(
-            `localStorage.setItem(${JSON.stringify(reservedStates[0])},${JSON.stringify(
-              reservedStateValues[0],
-            )});localStorage.setItem(${JSON.stringify(reservedStates[1])},${JSON.stringify(reservedStateValues[1])});
-localStorage.setItem(${JSON.stringify(reservedStates[2])},${JSON.stringify(reservedStateValues[2])});
-localStorage.setItem(${JSON.stringify(reservedStates[3])},${JSON.stringify(reservedStateValues[3])});
-localStorage.setItem(${JSON.stringify(reservedStates[4])},${JSON.stringify(reservedStateValues[4])});
-localStorage.setItem(${JSON.stringify(reservedStates[5])},${JSON.stringify(reservedStateValues[5])});
-localStorage.setItem(${JSON.stringify(reservedStates[6])},${JSON.stringify(reservedStateValues[6])});
-localStorage.setItem(${JSON.stringify(reservedStates[7])},${JSON.stringify(reservedStateValues[7])});
-localStorage.setItem(${JSON.stringify(reservedStates[8])},${JSON.stringify(reservedStateValues[8])});`,
-          );
-        }
-      })();
-    }
+    log.info('Local storage is cleaned on session creation except variables stored in RETAINED_LOCALSTORAGE_KEYS.');
+    (async (): Promise<void> => {
+      if (mainWindow) {
+        const retrievedStorage = await mainWindow.webContents.executeJavaScript('({...localStorage});');
+        const reservedStateValues = RETAINED_LOCALSTORAGE_KEYS.map((state) => retrievedStorage[state]);
+        await mainWindow.webContents.session.clearStorageData({ storages: ['localstorage'] });
+        mainWindow.webContents.executeJavaScript(
+          `localStorage.setItem(${JSON.stringify(RETAINED_LOCALSTORAGE_KEYS[0])},${JSON.stringify(
+            reservedStateValues[0],
+          )});localStorage.setItem(${JSON.stringify(RETAINED_LOCALSTORAGE_KEYS[1])},${JSON.stringify(
+            reservedStateValues[1],
+          )});
+localStorage.setItem(${JSON.stringify(RETAINED_LOCALSTORAGE_KEYS[2])},${JSON.stringify(reservedStateValues[2])});
+localStorage.setItem(${JSON.stringify(RETAINED_LOCALSTORAGE_KEYS[3])},${JSON.stringify(reservedStateValues[3])});
+localStorage.setItem(${JSON.stringify(RETAINED_LOCALSTORAGE_KEYS[4])},${JSON.stringify(reservedStateValues[4])});
+localStorage.setItem(${JSON.stringify(RETAINED_LOCALSTORAGE_KEYS[5])},${JSON.stringify(reservedStateValues[5])});
+localStorage.setItem(${JSON.stringify(RETAINED_LOCALSTORAGE_KEYS[6])},${JSON.stringify(reservedStateValues[6])});
+localStorage.setItem(${JSON.stringify(RETAINED_LOCALSTORAGE_KEYS[7])},${JSON.stringify(reservedStateValues[7])});
+localStorage.setItem(${JSON.stringify(RETAINED_LOCALSTORAGE_KEYS[8])},${JSON.stringify(reservedStateValues[8])});`,
+        );
+      }
+    })();
 
     if (!isDevelopment) {
       autoUpdater.beginUpdate();
