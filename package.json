@@ -46,6 +46,7 @@
     "dexie": "^3.0.1",
     "electron-log": "^4.2.2",
     "electron-updater": "^4.3.8",
+    "extended_cvvc_8lite": "file:external/extended_cvvc_8lite",
     "i18next": "^19.8.9",
     "i18next-browser-languagedetector": "^6.0.1",
     "i18next-fs-backend": "^1.0.7",
