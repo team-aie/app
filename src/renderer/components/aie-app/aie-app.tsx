@@ -19,6 +19,9 @@ import StyleSwitcher from '../style-switcher';
 import WelcomePage from '../welcome-page';
 
 const { length: numStates } = PAGE_STATES_IN_ORDER;
+const CONFIGURE_RECORDING_PAGE_INDEX = 2;
+const RECORDING_PAGE_INDEX = 3;
+const SETTINGS_PAGE_INDEX = 4;
 
 const BottomRightDisplay: FC = () => (
   <Positional position={'bottom-right'}>
@@ -96,9 +99,9 @@ export const AieApp: FC = () => {
   const routePageToComponent = (): ReactElement => {
     const simpleOnNext = (): void => changePage(true);
     const simpleOnBack = (): void => changePage(false);
-    const goToSettingsPage = (): void => setPageStateIndex(4);
-    const goToConfigureRecordingSetPage = (): void => setPageStateIndex(2);
-    const goToRecordingPage = (): void => setPageStateIndex(3);
+    const goToSettingsPage = (): void => setPageStateIndex(SETTINGS_PAGE_INDEX);
+    const goToConfigureRecordingSetPage = (): void => setPageStateIndex(CONFIGURE_RECORDING_PAGE_INDEX);
+    const goToRecordingPage = (): void => setPageStateIndex(RECORDING_PAGE_INDEX);
 
     switch (pageState) {
       case 'welcome':

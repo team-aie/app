@@ -158,20 +158,14 @@ if (!isFirstInstance) {
         const retrievedStorage = await mainWindow.webContents.executeJavaScript('({...localStorage});');
         const reservedStateValues = RETAINED_LOCALSTORAGE_KEYS.map((state) => retrievedStorage[state]);
         await mainWindow.webContents.session.clearStorageData({ storages: ['localstorage'] });
-        mainWindow.webContents.executeJavaScript(
-          `localStorage.setItem(${JSON.stringify(RETAINED_LOCALSTORAGE_KEYS[0])},${JSON.stringify(
-            reservedStateValues[0],
-          )});localStorage.setItem(${JSON.stringify(RETAINED_LOCALSTORAGE_KEYS[1])},${JSON.stringify(
-            reservedStateValues[1],
-          )});
-localStorage.setItem(${JSON.stringify(RETAINED_LOCALSTORAGE_KEYS[2])},${JSON.stringify(reservedStateValues[2])});
-localStorage.setItem(${JSON.stringify(RETAINED_LOCALSTORAGE_KEYS[3])},${JSON.stringify(reservedStateValues[3])});
-localStorage.setItem(${JSON.stringify(RETAINED_LOCALSTORAGE_KEYS[4])},${JSON.stringify(reservedStateValues[4])});
-localStorage.setItem(${JSON.stringify(RETAINED_LOCALSTORAGE_KEYS[5])},${JSON.stringify(reservedStateValues[5])});
-localStorage.setItem(${JSON.stringify(RETAINED_LOCALSTORAGE_KEYS[6])},${JSON.stringify(reservedStateValues[6])});
-localStorage.setItem(${JSON.stringify(RETAINED_LOCALSTORAGE_KEYS[7])},${JSON.stringify(reservedStateValues[7])});
-localStorage.setItem(${JSON.stringify(RETAINED_LOCALSTORAGE_KEYS[8])},${JSON.stringify(reservedStateValues[8])});`,
-        );
+        let index = 0;
+        for (index = 0; index < RETAINED_LOCALSTORAGE_KEYS.length; index++) {
+          mainWindow.webContents.executeJavaScript(
+            `localStorage.setItem(${JSON.stringify(RETAINED_LOCALSTORAGE_KEYS[index])},${JSON.stringify(
+              reservedStateValues[index],
+            )});`,
+          );
+        }
       }
     })();
 

@@ -17,12 +17,9 @@ import knownProjects from './known-projects';
 import { ProjectRow } from './project-row';
 
 interface OpenProjectPageProps {
-  onResumeStatus: Consumer<void>;
+  onResumeStatus: () => void;
   onNext: Consumer<void>;
   onBack: MouseEventHandler<HTMLElement>;
-  /**
-   * Used to allow this element to be routed to other pages according to page index
-   */
 }
 
 export const OpenProjectPage: FC<OpenProjectPageProps> = ({ onResumeStatus, onNext, onBack }) => {
@@ -46,19 +43,23 @@ export const OpenProjectPage: FC<OpenProjectPageProps> = ({ onResumeStatus, onNe
     }, [error]);
   }
 
-  const useResumeCheck = (onResumeStatus: Consumer<void>) => {
-    const { t } = useTranslation();
+  const useResumeCheck = () => {
     useEffectOnce(() => {
       const reservedStateValues = RETAINED_LOCALSTORAGE_KEYS.map((state) => localStorage.getItem(state));
       if (!reservedStateValues.includes(null)) {
         if (confirm(`${t('Do you want to resume your previous records?')}`)) {
           onResumeStatus();
+        } else {
+          let index = 0;
+          for (index = 0; index < RETAINED_LOCALSTORAGE_KEYS.length; index++) {
+            localStorage.removeItem(RETAINED_LOCALSTORAGE_KEYS[index]);
+          }
         }
       }
     });
   };
 
-  useResumeCheck(onResumeStatus);
+  useResumeCheck();
 
   const { recordingProject, setRecordingProject } = useContext(RecordingProjectContext);
 
