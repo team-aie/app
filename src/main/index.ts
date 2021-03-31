@@ -5,7 +5,6 @@ import { initialize as electronRemoteInitialize } from '@electron/remote/dist/sr
 import { BrowserWindow, Menu, MenuItemConstructorOptions, app, shell } from 'electron';
 import log from 'electron-log';
 
-import { RETAINED_LOCALSTORAGE_KEYS } from '../common/env-and-consts';
 import { AssertionError } from '../common/errors';
 
 import autoUpdater from './auto-updater';
@@ -146,27 +145,19 @@ if (!isFirstInstance) {
     mainWindow = newWindow;
   };
 
+  app.on('session-created', (session) => {
+    if (!isDevelopment) {
+      log.info('Cleaning local storage on session creation');
+      session.clearStorageData({ storages: ['localstorage'] }).catch(log.error);
+    }
+  });
+
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   app.on('ready', () => {
     log.info('App ready');
     createWindow();
-    log.info('Local storage is cleaned on session creation except variables stored in RETAINED_LOCALSTORAGE_KEYS.');
-    (async (): Promise<void> => {
-      if (mainWindow) {
-        const retrievedStorage = await mainWindow.webContents.executeJavaScript('({...localStorage});');
-        const reservedStateValues = RETAINED_LOCALSTORAGE_KEYS.map((state) => retrievedStorage[state]);
-        await mainWindow.webContents.session.clearStorageData({ storages: ['localstorage'] });
-        for (let index = 0; index < RETAINED_LOCALSTORAGE_KEYS.length; index++) {
-          mainWindow.webContents.executeJavaScript(
-            `localStorage.setItem(${JSON.stringify(RETAINED_LOCALSTORAGE_KEYS[index])},${JSON.stringify(
-              reservedStateValues[index],
-            )});`,
-          );
-        }
-      }
-    })();
 
     if (!isDevelopment) {
       autoUpdater.beginUpdate();
