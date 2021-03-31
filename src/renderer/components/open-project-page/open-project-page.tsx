@@ -17,14 +17,18 @@ import knownProjects from './known-projects';
 import { ProjectRow } from './project-row';
 
 interface OpenProjectPageProps {
-  onResumeStatus: () => void;
-  onNext: Consumer<void>;
-  onBack: MouseEventHandler<HTMLElement>;
   /**
    * The OnResumeStatus is used to route to Recording page
-   * The onNext is used to route to next page with page index plus 1
-   * The onBack is used to route to previous page with index minus 1
    */
+  onResumeStatus: () => void;
+  /**
+   * The onNext is used to route to next page with page index plus 1
+   */
+  onNext: Consumer<void>;
+  /**
+   * The onBack is used to route to previous page with page index minus 1
+   */
+  onBack: MouseEventHandler<HTMLElement>;
 }
 
 export const OpenProjectPage: FC<OpenProjectPageProps> = ({ onResumeStatus, onNext, onBack }) => {
