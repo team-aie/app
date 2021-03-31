@@ -36,6 +36,5 @@
   "Oto.ini": "Oto.ini",
   "Voice.dvcfg": "Voice.dvcfg",
   "previous": "上一个",
-  "next": "下一个",
-  "Do you want to resume your previous records?": "是否跳转到上次的录音进度？"
+  "next": "下一个"
 }

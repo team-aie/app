@@ -5,9 +5,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 import { useTranslation } from 'react-i18next';
-import { useEffectOnce } from 'react-use';
 
-import { RETAINED_LOCALSTORAGE_KEYS } from '../../../common/env-and-consts';
 import { RecordingProjectContext } from '../../contexts';
 import { Consumer, RecordingProject } from '../../types';
 import { ensureFolderExists, filename, openFilePicker } from '../../utils';
@@ -16,22 +14,10 @@ import BackButton from '../back-button';
 import knownProjects from './known-projects';
 import { ProjectRow } from './project-row';
 
-interface OpenProjectPageProps {
-  /**
-   * Callback when the user chooses to resume from where they left off.
-   */
-  onResumeStatus: () => void;
-  /**
-   * Callback when user navigates to next page
-   */
-  onNext: Consumer<void>;
-  /**
-   * Callback when user navigates to previous page
-   */
-  onBack: MouseEventHandler<HTMLElement>;
-}
-
-export const OpenProjectPage: FC<OpenProjectPageProps> = ({ onResumeStatus, onNext, onBack }) => {
+export const OpenProjectPage: FC<{ onNext: Consumer<void>; onBack: MouseEventHandler<HTMLElement> }> = ({
+  onNext,
+  onBack,
+}) => {
   const { t } = useTranslation();
   const [projects, setProjects] = useState<RecordingProject[]>([]);
   {
@@ -51,21 +37,6 @@ export const OpenProjectPage: FC<OpenProjectPageProps> = ({ onResumeStatus, onNe
       }
     }, [error]);
   }
-
-  const useResumeCheck = () => {
-    useEffectOnce(() => {
-      const reservedStateValues = RETAINED_LOCALSTORAGE_KEYS.map((state) => localStorage.getItem(state));
-      if (!reservedStateValues.includes(null)) {
-        if (confirm(`${t('Do you want to resume your previous records?')}`)) {
-          onResumeStatus();
-        } else {
-          RETAINED_LOCALSTORAGE_KEYS.forEach((e) => localStorage.removeItem(e));
-        }
-      }
-    });
-  };
-
-  useResumeCheck();
 
   const { recordingProject, setRecordingProject } = useContext(RecordingProjectContext);
 
