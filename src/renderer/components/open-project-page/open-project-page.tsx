@@ -18,15 +18,15 @@ import { ProjectRow } from './project-row';
 
 interface OpenProjectPageProps {
   /**
-   * The OnResumeStatus is used to route to Recording page
+   * Callback when the user chooses to resume from where they left off.
    */
   onResumeStatus: () => void;
   /**
-   * The onNext is used to route to next page with page index plus 1
+   * Callback when user navigates to next page
    */
   onNext: Consumer<void>;
   /**
-   * The onBack is used to route to previous page with page index minus 1
+   * Callback when user navigates to previous page
    */
   onBack: MouseEventHandler<HTMLElement>;
 }
