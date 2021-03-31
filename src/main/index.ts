@@ -158,8 +158,7 @@ if (!isFirstInstance) {
         const retrievedStorage = await mainWindow.webContents.executeJavaScript('({...localStorage});');
         const reservedStateValues = RETAINED_LOCALSTORAGE_KEYS.map((state) => retrievedStorage[state]);
         await mainWindow.webContents.session.clearStorageData({ storages: ['localstorage'] });
-        let index = 0;
-        for (index = 0; index < RETAINED_LOCALSTORAGE_KEYS.length; index++) {
+        for (let index = 0; index < RETAINED_LOCALSTORAGE_KEYS.length; index++) {
           mainWindow.webContents.executeJavaScript(
             `localStorage.setItem(${JSON.stringify(RETAINED_LOCALSTORAGE_KEYS[index])},${JSON.stringify(
               reservedStateValues[index],

@@ -20,6 +20,11 @@ interface OpenProjectPageProps {
   onResumeStatus: () => void;
   onNext: Consumer<void>;
   onBack: MouseEventHandler<HTMLElement>;
+  /**
+   * The OnResumeStatus is used to route to Recording page
+   * The onNext is used to route to next page with page index plus 1
+   * The onBack is used to route to previous page with index minus 1
+   */
 }
 
 export const OpenProjectPage: FC<OpenProjectPageProps> = ({ onResumeStatus, onNext, onBack }) => {
@@ -50,10 +55,7 @@ export const OpenProjectPage: FC<OpenProjectPageProps> = ({ onResumeStatus, onNe
         if (confirm(`${t('Do you want to resume your previous records?')}`)) {
           onResumeStatus();
         } else {
-          let index = 0;
-          for (index = 0; index < RETAINED_LOCALSTORAGE_KEYS.length; index++) {
-            localStorage.removeItem(RETAINED_LOCALSTORAGE_KEYS[index]);
-          }
+          RETAINED_LOCALSTORAGE_KEYS.forEach((e) => localStorage.removeItem(e));
         }
       }
     });
