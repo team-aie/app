@@ -169,18 +169,6 @@ if (!isFirstInstance) {
       }
     })();
 
-    app.on('ready', () => {
-      log.info('App ready');
-      createWindow();
-      log.info('Cleaning local storage on session creation');
-      if (mainWindow) {
-        mainWindow.webContents.session.clearStorageData({ storages: ['localstorage'] }).catch(log.error);
-      }
-      if (!isDevelopment) {
-        autoUpdater.beginUpdate();
-      }
-    });
-
     if (!isDevelopment) {
       autoUpdater.beginUpdate();
     }

@@ -25,7 +25,6 @@ export const RETAINED_LOCALSTORAGE_KEYS = [
   'AieApp$recordingProject',
   'AieApp$recordingSet',
   'AieApp$recordingList',
-  'AieApp$pageStateIndex',
   'ConfigureRecordingSetPage$recordingSets',
   'ConfigureRecordingSetPage$projectFile',
   'RecordingPage$index',
