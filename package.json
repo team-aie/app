@@ -93,7 +93,7 @@
     "eslint-plugin-jest-dom": "^3.7.0",
     "eslint-plugin-jest-formatting": "^2.0.1",
     "eslint-plugin-prettier": "^3.1.4",
-    "eslint-plugin-react": "^7.20.3",
+    "eslint-plugin-react": "^7.23.1",
     "eslint-plugin-react-hooks": "^4.0.6",
     "eslint-plugin-testing-library": "^3.10.1",
     "husky": "^5.2.0",
