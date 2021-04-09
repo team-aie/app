@@ -7,7 +7,7 @@ import { PAGE_STATES_IN_ORDER } from '../../../common/env-and-consts';
 import { LocaleContext, RecordingProjectContext, ThemeContext } from '../../contexts';
 import recordingListDataService from '../../services/recording-list-data-service';
 import { RecordingItem, RecordingProject, RecordingSet, ScaleKey, SupportedOctave, SupportedTheme } from '../../types';
-import { getLSKey, join, useLocale } from '../../utils';
+import { getLSKey, join, openFilePicker, useLocale } from '../../utils';
 import ConfigureRecordingSetPage from '../configure-recording-set-page';
 import { Positional } from '../helper-components';
 import LicenseDisclosure from '../license-disclosure';
@@ -116,6 +116,7 @@ export const AieApp: FC = () => {
             onNext={simpleOnNext}
             onBack={simpleOnBack}
             onSetSelected={adaptToPrototypeRecordingStudio}
+            openFilePicker={openFilePicker}
           />
         );
       case 'settings':

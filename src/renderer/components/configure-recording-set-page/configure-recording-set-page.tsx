@@ -20,6 +20,7 @@ export const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({
   onNext,
   onBack,
   onSetSelected,
+  openFilePicker,
 }) => {
   const { t } = useTranslation();
 
@@ -112,7 +113,7 @@ export const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({
           rawSetChosenBuiltInList={rawSetChosenBuiltInList}
           chosenCustomListPath={chosenCustomListPath}
           rawSetChosenCustomListPath={rawSetChosenCustomListPath}
-          metaDataIndex={metadataStateIndex}
+          openFilePicker={openFilePicker}
         />
       );
     case 'metadata':

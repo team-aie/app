@@ -21,6 +21,7 @@ export interface SetMetaClickProps {
   onNext: MouseEventHandler<HTMLElement>;
   onBack: MouseEventHandler<HTMLElement>;
   onSetSelected: Consumer<RecordingSet>;
+  openFilePicker: (a: 'file' | 'folder' | 'new-folder', b: string, c: string) => Promise<string | null>;
 }
 
 export const SetMetaConfiguration: FC<SetMetaConfigurationProps> = ({
