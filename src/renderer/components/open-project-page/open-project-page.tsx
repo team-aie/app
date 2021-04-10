@@ -55,7 +55,7 @@ export const OpenProjectPage: FC<OpenProjectPageProps> = ({ onResumeStatus, onNe
   const useResumeCheck = () => {
     useEffectOnce(() => {
       const reservedStateValues = RETAINED_LOCALSTORAGE_KEYS.map((state) => localStorage.getItem(state));
-      if (!reservedStateValues.includes(null) && !reservedStateValues.includes('undefined')) {
+      if (!reservedStateValues.includes(null)) {
         if (confirm(`${t('Do you want to resume your previous records?')}`)) {
           onResumeStatus();
         } else {

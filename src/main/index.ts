@@ -5,7 +5,6 @@ import { initialize as electronRemoteInitialize } from '@electron/remote/dist/sr
 import { BrowserWindow, Menu, MenuItemConstructorOptions, app, shell } from 'electron';
 import log from 'electron-log';
 
-import { RETAINED_LOCALSTORAGE_KEYS } from '../common/env-and-consts';
 import { AssertionError } from '../common/errors';
 
 import autoUpdater from './auto-updater';
@@ -152,22 +151,6 @@ if (!isFirstInstance) {
   app.on('ready', () => {
     log.info('App ready');
     createWindow();
-    log.info('Local storage is cleaned on session creation except variables stored in RETAINED_LOCALSTORAGE_KEYS.');
-    (async (): Promise<void> => {
-      if (mainWindow) {
-        const retrievedStorage = await mainWindow.webContents.executeJavaScript('({...localStorage});');
-        const reservedStateValues = RETAINED_LOCALSTORAGE_KEYS.map((state) => retrievedStorage[state]);
-        await mainWindow.webContents.session.clearStorageData({ storages: ['localstorage'] });
-        log.info('clearStorageData is done!');
-        for (let index = 0; index < RETAINED_LOCALSTORAGE_KEYS.length; index++) {
-          mainWindow.webContents.executeJavaScript(
-            `localStorage.setItem(${JSON.stringify(RETAINED_LOCALSTORAGE_KEYS[index])},${JSON.stringify(
-              reservedStateValues[index],
-            )});`,
-          );
-        }
-      }
-    })();
 
     if (!isDevelopment) {
       autoUpdater.beginUpdate();
