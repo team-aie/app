@@ -78,8 +78,7 @@ describe('recordingPage', () => {
     const createOscillator = mocked(mediaService.createOscillator);
     osc.start();
     createOscillator.mockReturnValue(osc);
-    // CreateOscillator.m
-    //TODO: make this return a mocked audio node
+
     const playAudioNode = mocked(mediaService.playAudioNode);
     playAudioNode.mockResolvedValue(new Promise(noOp));
 
@@ -87,7 +86,7 @@ describe('recordingPage', () => {
     stopPlaying.mockResolvedValue(new Promise(noOp));
 
     render(<RecordingPage onBack={noOp} recordingItems={[]} basePath={''} scaleKey={'C'} octave={2} />);
-    //R is 82
+    //S is 83
     fireEvent.keyDown(document, { key: 'S', code: '83' });
     await new Promise((r) => setTimeout(r, 3000));
     fireEvent.keyUp(document, { key: 'S', code: '83' });
@@ -123,7 +122,7 @@ describe('recordingPage', () => {
         octave={2}
       />,
     );
-    //R is 82
+    //Space is 32
     fireEvent.keyDown(document, { key: ' ', code: '32' });
     await new Promise((r) => setTimeout(r, 3000));
     fireEvent.keyUp(document, { key: ' ', code: '32' });
