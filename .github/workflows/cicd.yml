@@ -47,7 +47,7 @@ jobs:
         with:
           node-version: 14.16.0
       - name: Download All Artifacts
-        uses: actions/download-artifact@v2.0.8
+        uses: actions/download-artifact@v2.0.9
       - name: Find New Version
         id: find-new-version
         run: |
@@ -99,7 +99,7 @@ jobs:
         with:
           node-version: 14.16.0
       - name: Download All Artifacts
-        uses: actions/download-artifact@v2.0.8
+        uses: actions/download-artifact@v2.0.9
       - name: Find New Version
         id: find-new-version
         run: |
@@ -147,7 +147,7 @@ jobs:
         with:
           node-version: 14.16.0
       - name: Download All Artifacts
-        uses: actions/download-artifact@v2.0.8
+        uses: actions/download-artifact@v2.0.9
       - name: Find New Version
         id: find-new-version
         run: |
@@ -191,7 +191,7 @@ jobs:
           # https://github.com/semantic-release/git/issues/196#issuecomment-601310576
           persist-credentials: false
       - name: Download All Artifacts
-        uses: actions/download-artifact@v2.0.8
+        uses: actions/download-artifact@v2.0.9
       - name: Find New Version
         id: find-new-version
         run: |
