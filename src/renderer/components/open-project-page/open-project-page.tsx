@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { RecordingProjectContext } from '../../contexts';
 import { Consumer, RecordingProject } from '../../types';
 import { ensureFolderExists, filename, openFilePicker } from '../../utils';
-import useResumeCheck from '../../utils/localstorage-clear';
+import { useResumeCheck } from '../../utils/localstorage-clear';
 import BackButton from '../back-button';
 
 import knownProjects from './known-projects';

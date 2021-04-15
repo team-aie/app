@@ -2,9 +2,10 @@ import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom';
 
 import './services/i18n';
-import { RETAINED_LOCALSTORAGE_KEYS, isDevelopment } from '../common/env-and-consts';
+import { isDevelopment } from '../common/env-and-consts';
 
 import AppLoadFallback from './components/app-load-fallback';
+import { RETAINED_LOCALSTORAGE_KEYS } from './utils/localstorage-clear';
 import './index.scss';
 
 if (!isDevelopment) {
