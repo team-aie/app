@@ -12,7 +12,7 @@ if (!isDevelopment) {
   document.body.style.overflow = 'hidden';
 }
 
-const clearStorage = () => {
+const resetLocalStorage = () => {
   const reservedStateValues = RETAINED_LOCALSTORAGE_KEYS.map((state) => localStorage.getItem(state));
   localStorage.clear();
   if (!reservedStateValues.includes(null)) {
@@ -22,7 +22,7 @@ const clearStorage = () => {
   }
 };
 
-clearStorage();
+resetLocalStorage();
 
 const AieAppAsync = React.lazy(() => import('./components/aie-app'));
 

@@ -1,6 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { useEffectOnce } from 'react-use';
 
+/**
+ * Values to be used to determine whether the user is at the Recording Page before closing the application
+ */
 export const RETAINED_LOCALSTORAGE_KEYS = [
   'AieApp$keyOctave',
   'AieApp$projectFolder',
@@ -12,7 +15,10 @@ export const RETAINED_LOCALSTORAGE_KEYS = [
   'RecordingPage$index',
 ];
 
-export const useResumeCheck = (goToRecordingPage: () => void) => {
+/**
+ * Function used to check the localStorage to determine whether user needs to be reminded of resuming status
+ */
+export const useResumeCheck = (goToRecordingPage: () => void): void => {
   const { t } = useTranslation();
   useEffectOnce(() => {
     const reservedStateValues = RETAINED_LOCALSTORAGE_KEYS.map((state) => localStorage.getItem(state));
@@ -24,5 +30,4 @@ export const useResumeCheck = (goToRecordingPage: () => void) => {
       }
     }
   });
-  return null;
 };
