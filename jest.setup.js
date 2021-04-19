@@ -8,6 +8,9 @@
   global.TextDecoder = TextDecoder;
 }
 
+// Fix for 'Reference Error: __static is not defined
+global.__static = '';
+
 {
   // `jest` is defined.
   // eslint-disable-next-line no-undef
