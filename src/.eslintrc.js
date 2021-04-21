@@ -11,13 +11,21 @@ module.exports = {
     'plugin:react-hooks/recommended',
     'plugin:@typescript-eslint/recommended',
     'prettier',
-    'plugin:testing-library/recommended',
-    'plugin:jest-dom/recommended',
-    'plugin:jest/recommended',
-    'plugin:jest/style',
-    'plugin:jest-formatting/strict',
   ],
-  plugins: ['react-hooks'],
+  overrides: [
+    {
+      files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
+      extends: [
+        'plugin:jest-dom/recommended',
+        'plugin:jest/recommended',
+        'plugin:jest/style',
+        'plugin:jest-formatting/strict',
+        'plugin:testing-library/dom',
+        'plugin:testing-library/react',
+      ],
+    },
+  ],
+  plugins: ['jest', 'jest-dom', 'jest-formatting', 'react-hooks', 'testing-library'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     sourceType: 'module',
