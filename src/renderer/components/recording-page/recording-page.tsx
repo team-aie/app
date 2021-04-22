@@ -33,7 +33,7 @@ export const RecordingPage: FC<RecordingPageProps> = ({ onBack, recordingItems, 
   const [index = 0, setIndex] = useLocalStorage(getLSKey('RecordingPage', 'index'), 0);
 
   window.addEventListener('unload', function () {
-    localStorage.clear;
+    localStorage.clear();
   });
 
   useEffectOnce(() => {
