@@ -32,6 +32,10 @@ export const RecordingPage: FC<RecordingPageProps> = ({ onBack, recordingItems, 
   log.info(`prevState`, prevState, `state`, state);
   const [index = 0, setIndex] = useLocalStorage(getLSKey('RecordingPage', 'index'), 0);
 
+  window.addEventListener('unload', function () {
+    localStorage.clear;
+  });
+
   useEffectOnce(() => {
     mediaService.switchOnAudioInput();
   });

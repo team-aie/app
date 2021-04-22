@@ -9,17 +9,12 @@ import { useTranslation } from 'react-i18next';
 import { RecordingProjectContext } from '../../contexts';
 import { Consumer, RecordingProject } from '../../types';
 import { ensureFolderExists, filename, openFilePicker } from '../../utils';
-import { useResumeCheck } from '../../utils/localstorage-clear';
 import BackButton from '../back-button';
 
 import knownProjects from './known-projects';
 import { ProjectRow } from './project-row';
 
 interface OpenProjectPageProps {
-  /**
-   * Callback when the user chooses to resume from where they left off.
-   */
-  onResumeStatus: () => void;
   /**
    * Called when user chooses to navigate to next page.
    */
@@ -30,7 +25,7 @@ interface OpenProjectPageProps {
   onBack: MouseEventHandler<HTMLElement>;
 }
 
-export const OpenProjectPage: FC<OpenProjectPageProps> = ({ onResumeStatus, onNext, onBack }) => {
+export const OpenProjectPage: FC<OpenProjectPageProps> = ({ onNext, onBack }) => {
   const { t } = useTranslation();
   const [projects, setProjects] = useState<RecordingProject[]>([]);
   {
@@ -50,8 +45,6 @@ export const OpenProjectPage: FC<OpenProjectPageProps> = ({ onResumeStatus, onNe
       }
     }, [error]);
   }
-
-  useResumeCheck(onResumeStatus);
 
   const { recordingProject, setRecordingProject } = useContext(RecordingProjectContext);
 

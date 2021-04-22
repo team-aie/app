@@ -151,7 +151,6 @@ if (!isFirstInstance) {
   app.on('ready', () => {
     log.info('App ready');
     createWindow();
-
     if (!isDevelopment) {
       autoUpdater.beginUpdate();
     }

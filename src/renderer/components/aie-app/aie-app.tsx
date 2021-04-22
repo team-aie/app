@@ -105,9 +105,9 @@ export const AieApp: FC = () => {
 
     switch (pageState) {
       case 'welcome':
-        return <WelcomePage onNext={simpleOnNext} />;
+        return <WelcomePage onNext={simpleOnNext} onResumeStatus={goToRecordingPage} />;
       case 'open-project':
-        return <OpenProjectPage onResumeStatus={goToRecordingPage} onNext={simpleOnNext} onBack={simpleOnBack} />;
+        return <OpenProjectPage onNext={simpleOnNext} onBack={simpleOnBack} />;
       case 'configure-recording-set':
         return (
           <ConfigureRecordingSetPage
