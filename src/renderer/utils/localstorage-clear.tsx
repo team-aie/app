@@ -23,6 +23,7 @@ export const useResumeCheck = (goToRecordingPage: () => void): void => {
   const { t } = useTranslation();
   useEffectOnce(() => {
     window.addEventListener('unload', function () {
+      log.info('Window is closed normally');
       localStorage.clear();
     });
     const reservedStateValues = RETAINED_LOCALSTORAGE_KEYS.map((state) => localStorage.getItem(state));
@@ -33,8 +34,6 @@ export const useResumeCheck = (goToRecordingPage: () => void): void => {
       } else {
         RETAINED_LOCALSTORAGE_KEYS.forEach((e) => localStorage.removeItem(e));
       }
-    } else {
-      log.info('Window is closed normally');
     }
   });
 };
