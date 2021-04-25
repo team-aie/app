@@ -14,10 +14,18 @@ import BackButton from '../back-button';
 import knownProjects from './known-projects';
 import { ProjectRow } from './project-row';
 
-export const OpenProjectPage: FC<{ onNext: Consumer<void>; onBack: MouseEventHandler<HTMLElement> }> = ({
-  onNext,
-  onBack,
-}) => {
+interface OpenProjectPageProps {
+  /**
+   * Called when user chooses to navigate to next page.
+   */
+  onNext: Consumer<void>;
+  /**
+   * Called when user chooses to navigate to previous page.
+   */
+  onBack: MouseEventHandler<HTMLElement>;
+}
+
+export const OpenProjectPage: FC<OpenProjectPageProps> = ({ onNext, onBack }) => {
   const { t } = useTranslation();
   const [projects, setProjects] = useState<RecordingProject[]>([]);
   {
