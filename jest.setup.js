@@ -9,7 +9,7 @@
 }
 
 // Fix for 'Reference Error: __static is not defined
-global.__static = '';
+global.__static = '__static';
 
 {
   // `jest` is defined.

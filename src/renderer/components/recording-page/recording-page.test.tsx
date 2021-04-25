@@ -24,9 +24,7 @@ jest.mock('../../services/media', () => ({
   playBlob: jest.fn(),
   createOscillator: jest.fn(),
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  playAudioNode: jest.fn((node: AudioScheduledSourceNode | AudioNode) => {
-    return new Promise(noOp);
-  }),
+  playAudioNode: jest.fn(),
   stopPlaying: jest.fn(),
 }));
 
@@ -65,10 +63,10 @@ describe('RecordingPage', () => {
     createOscillator.mockReturnValue(osc);
 
     const playAudioNode = mocked(mediaService.playAudioNode);
-    playAudioNode.mockResolvedValue(new Promise(noOp));
+    playAudioNode.mockReturnValue(new Promise((resolve) => resolve()));
 
     const stopPlaying = mocked(mediaService.stopPlaying);
-    stopPlaying.mockResolvedValue(new Promise(noOp));
+    stopPlaying.mockReturnValue(new Promise((resolve) => resolve()));
 
     render(<RecordingPage onBack={noOp} recordingItems={[]} basePath={''} scaleKey={'C'} octave={2} />);
     // S is 83
@@ -89,10 +87,10 @@ describe('RecordingPage', () => {
     mediaMock.mockResolvedValue(new Blob([new Uint8Array(new Buffer('Test'))]));
 
     const playBlob = mocked(mediaService.playBlob);
-    playBlob.mockResolvedValue(new Promise(noOp));
+    playBlob.mockReturnValue(new Promise((resolve) => resolve()));
 
     const stopPlaying = mocked(mediaService.stopPlaying);
-    stopPlaying.mockResolvedValue(new Promise(noOp));
+    stopPlaying.mockReturnValue(new Promise((resolve) => resolve()));
 
     render(
       <RecordingPage
