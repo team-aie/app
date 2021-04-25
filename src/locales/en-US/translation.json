@@ -37,5 +37,5 @@
   "Voice.dvcfg": "Voice.dvcfg",
   "previous": "previous",
   "next": "next",
-  "Do you want to continue from where you left off?": "Do you want to continue from where you left off?"
+  "We detected an abnormal shutdown. Do you want to continue from where you left off?": "We detected an abnormal shutdown. Do you want to continue from where you left off?"
 }

@@ -14,8 +14,8 @@ export const WelcomePage: FC<{ onResumeStatus: () => void; onNext: MouseEventHan
   onResumeStatus,
   onNext,
 }) => {
-  useResumeCheck(onResumeStatus);
   const { t } = useTranslation();
+  useResumeCheck(onResumeStatus);
   return (
     <Container style={{ height: '100%' }} className={'d-flex flex-column justify-content-center align-items-center'}>
       <Row>

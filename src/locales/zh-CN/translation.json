@@ -37,5 +37,5 @@
   "Voice.dvcfg": "Voice.dvcfg",
   "previous": "上一个",
   "next": "下一个",
-  "Do you want to continue from where you left off?": "是否继续上次的录音进度？"
+  "We detected an abnormal shutdown. Do you want to continue from where you left off?": "检测到非正常关闭。是否继续上次的录音进度？"
 }
