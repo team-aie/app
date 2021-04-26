@@ -65,7 +65,6 @@ interface ConfigureRecordingSetProps {
   rawSetChosenBuiltInList: Consumer<BuiltInRecordingList | ''>;
   chosenCustomListPath: string;
   rawSetChosenCustomListPath: React.Dispatch<React.SetStateAction<string | undefined>>;
-  openFilePicker: (a: 'file' | 'folder' | 'new-folder', b: string, c: string) => Promise<string | null>;
 }
 
 export const ConfigureRecordingSet: FC<ConfigureRecordingSetProps> = ({
@@ -80,7 +79,6 @@ export const ConfigureRecordingSet: FC<ConfigureRecordingSetProps> = ({
   rawSetChosenBuiltInList,
   chosenCustomListPath,
   rawSetChosenCustomListPath,
-  openFilePicker,
 }) => {
   const { t } = useTranslation();
   const { recordingProject } = useContext(RecordingProjectContext);
@@ -249,7 +247,6 @@ export const ConfigureRecordingSet: FC<ConfigureRecordingSetProps> = ({
                 setChosenBuiltInList={setChosenBuiltInList}
                 chosenCustomListPath={chosenCustomListPath}
                 setChosenCustomListPath={setChosenCustomListPath}
-                openFilePicker={openFilePicker}
               />
               <Col xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'}>
                 <AddRecordingSetButton

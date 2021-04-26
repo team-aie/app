@@ -6,28 +6,23 @@ import { noop } from 'rxjs';
 import { mocked } from 'ts-jest/utils';
 
 import recordingListDataService from '../../services/recording-list-data-service';
+import { openFilePicker } from '../../utils';
 
 import { ConfigureRecordingSetPage } from './configure-recording-set-page';
 
 jest.mock('../../services/recording-list-data-service');
 // Mock the remote module to prevent import failure.
 jest.mock('@electron/remote', () => ({ dialog: jest.fn() }));
-
-const mockedFilePicker = jest.fn();
+jest.mock('../../utils', () => ({
+  ...jest.requireActual('../../utils'),
+  openFilePicker: jest.fn().mockImplementation(),
+}));
 
 describe('ConfigureRecordingSetPage', () => {
   it('renders without showDetails button', async () => {
     expect.assertions(2);
 
-    render(
-      <ConfigureRecordingSetPage
-        onSettingsButtonClick={noop}
-        onNext={noop}
-        onBack={noop}
-        onSetSelected={noop}
-        openFilePicker={mockedFilePicker}
-      />,
-    );
+    render(<ConfigureRecordingSetPage onSettingsButtonClick={noop} onNext={noop} onBack={noop} onSetSelected={noop} />);
 
     expect(screen.queryByTestId('show-details-button')).toBeFalsy();
     expect(recordingListDataService.readData).not.toHaveBeenCalled();
@@ -44,15 +39,7 @@ describe('ConfigureRecordingSetPage', () => {
       voiceDvcfg: 'voiceDvcfg',
     });
 
-    render(
-      <ConfigureRecordingSetPage
-        onSettingsButtonClick={noop}
-        onNext={noop}
-        onBack={noop}
-        onSetSelected={noop}
-        openFilePicker={mockedFilePicker}
-      />,
-    );
+    render(<ConfigureRecordingSetPage onSettingsButtonClick={noop} onNext={noop} onBack={noop} onSetSelected={noop} />);
 
     expect(screen.queryByTestId('show-details-button')).toBeFalsy();
 
@@ -77,15 +64,7 @@ describe('ConfigureRecordingSetPage', () => {
       voiceDvcfg: 'voiceDvcfg',
     });
 
-    render(
-      <ConfigureRecordingSetPage
-        onSettingsButtonClick={noop}
-        onNext={noop}
-        onBack={noop}
-        onSetSelected={noop}
-        openFilePicker={mockedFilePicker}
-      />,
-    );
+    render(<ConfigureRecordingSetPage onSettingsButtonClick={noop} onNext={noop} onBack={noop} onSetSelected={noop} />);
 
     userEvent.selectOptions(screen.getByTestId('selectReclist'), 'デルタ式英語リストver5 (Delta English Ver. 5)');
 
@@ -112,15 +91,7 @@ describe('ConfigureRecordingSetPage', () => {
       voiceDvcfg: 'voiceDvcfg',
     });
 
-    render(
-      <ConfigureRecordingSetPage
-        onSettingsButtonClick={noop}
-        onNext={noop}
-        onBack={noop}
-        onSetSelected={noop}
-        openFilePicker={mockedFilePicker}
-      />,
-    );
+    render(<ConfigureRecordingSetPage onSettingsButtonClick={noop} onNext={noop} onBack={noop} onSetSelected={noop} />);
 
     userEvent.selectOptions(screen.getByTestId('selectReclist'), 'デルタ式英語リストver5 (Delta English Ver. 5)');
     userEvent.click(await screen.findByTestId('show-details-button'));
@@ -143,15 +114,7 @@ describe('ConfigureRecordingSetPage', () => {
       voiceDvcfg: 'voiceDvcfg',
     });
 
-    render(
-      <ConfigureRecordingSetPage
-        onSettingsButtonClick={noop}
-        onNext={noop}
-        onBack={noop}
-        onSetSelected={noop}
-        openFilePicker={mockedFilePicker}
-      />,
-    );
+    render(<ConfigureRecordingSetPage onSettingsButtonClick={noop} onNext={noop} onBack={noop} onSetSelected={noop} />);
 
     userEvent.selectOptions(screen.getByTestId('selectReclist'), 'デルタ式英語リストver5 (Delta English Ver. 5)');
     userEvent.click(await screen.findByTestId('show-details-button'));
@@ -180,15 +143,7 @@ describe('ConfigureRecordingSetPage', () => {
       voiceDvcfg: 'voiceDvcfg',
     });
 
-    render(
-      <ConfigureRecordingSetPage
-        onSettingsButtonClick={noop}
-        onNext={noop}
-        onBack={noop}
-        onSetSelected={noop}
-        openFilePicker={mockedFilePicker}
-      />,
-    );
+    render(<ConfigureRecordingSetPage onSettingsButtonClick={noop} onNext={noop} onBack={noop} onSetSelected={noop} />);
 
     userEvent.selectOptions(screen.getByTestId('selectReclist'), 'デルタ式英語リストver5 (Delta English Ver. 5)');
     userEvent.click(await screen.findByTestId('show-details-button'));
@@ -202,7 +157,7 @@ describe('ConfigureRecordingSetPage', () => {
   });
 
   it('renders showDetails butten when custom reclist is selected', async () => {
-    expect.assertions(2);
+    expect.assertions(3);
 
     const readDataMock = mocked(recordingListDataService.readData);
     readDataMock.mockResolvedValue({
@@ -211,18 +166,12 @@ describe('ConfigureRecordingSetPage', () => {
       otoIni: 'otoIni',
       voiceDvcfg: 'voiceDvcfg',
     });
+    const mockedFilePick = mocked(openFilePicker);
+    // Use of 'any' is required since method is overridden, and the default signature has a different return type than the one we're testing
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockedFilePick.mockResolvedValue('testReclist' as any);
 
-    const mockedFilePicker = jest.fn().mockReturnValue('testReclist');
-
-    render(
-      <ConfigureRecordingSetPage
-        onSettingsButtonClick={noop}
-        onNext={noop}
-        onBack={noop}
-        onSetSelected={noop}
-        openFilePicker={mockedFilePicker}
-      />,
-    );
+    render(<ConfigureRecordingSetPage onSettingsButtonClick={noop} onNext={noop} onBack={noop} onSetSelected={noop} />);
     //Confirm no selected default reclist and no button
 
     userEvent.selectOptions(screen.getByTestId('selectReclist'), '');
@@ -232,9 +181,8 @@ describe('ConfigureRecordingSetPage', () => {
     // Click filepicker
     userEvent.click(await screen.findByTestId('cust-list-button'));
 
-    expect(mockedFilePicker).toHaveBeenCalledTimes(1);
-
-    // Expect(recordingListDataService.readData).toHaveBeenCalledTimes(1);
+    expect(recordingListDataService.readData).toHaveBeenCalledTimes(1);
+    expect(openFilePicker).toHaveBeenCalledTimes(1);
 
     await screen.findByTestId('show-details-button');
   });

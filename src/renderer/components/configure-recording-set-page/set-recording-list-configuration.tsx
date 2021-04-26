@@ -5,7 +5,7 @@ import Row from 'react-bootstrap/Row';
 import { useTranslation } from 'react-i18next';
 
 import { Consumer } from '../../types';
-import { filename } from '../../utils';
+import { filename, openFilePicker } from '../../utils';
 import Select from '../select';
 
 import { BuiltInRecordingList } from './types';
@@ -16,7 +16,6 @@ interface SetRecordingListConfigurationProps {
   setChosenBuiltInList: Consumer<BuiltInRecordingList | ''>;
   chosenCustomListPath: string;
   setChosenCustomListPath: Consumer<string>;
-  openFilePicker: (a: 'file' | 'folder' | 'new-folder', b: string, c: string) => Promise<string | null>;
 }
 
 const SetRecordingListConfiguration: FC<SetRecordingListConfigurationProps> = ({
@@ -25,7 +24,6 @@ const SetRecordingListConfiguration: FC<SetRecordingListConfigurationProps> = ({
   setChosenBuiltInList,
   chosenCustomListPath,
   setChosenCustomListPath,
-  openFilePicker,
 }) => {
   const { t } = useTranslation();
 
