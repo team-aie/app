@@ -68,6 +68,8 @@ export const RecordingPage: FC<RecordingPageProps> = ({ onBack, recordingItems, 
                 ? join(basePath, `${recordingItems[index].fileSystemName}.wav`)
                 : undefined
             }
+            basePath={basePath}
+            recordingItemName={recordingItems[index].fileSystemName}
           />
         </Row>
         <RecordingControls
