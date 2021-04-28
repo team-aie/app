@@ -15,7 +15,7 @@ import BackButton from '../back-button';
 import { useHotKeyHandlers, useRecordingPageLifeCycle, useWatchingProjectFileState } from './hooks';
 import { RecordingControls } from './recording-controls';
 import { RecordingItemIndicator } from './recording-item-indicator';
-import { RecordingVisualization } from './recording-visualization';
+import { RecordingVisualizationProps } from './recording-visualization';
 import { State } from './types';
 
 interface RecordingPageProps {
@@ -24,9 +24,17 @@ interface RecordingPageProps {
   basePath: string;
   scaleKey: ScaleKey;
   octave: SupportedOctave;
+  RecordingVisualization: React.FC<RecordingVisualizationProps>;
 }
 
-export const RecordingPage: FC<RecordingPageProps> = ({ onBack, recordingItems, basePath, scaleKey, octave }) => {
+export const RecordingPage: FC<RecordingPageProps> = ({
+  onBack,
+  recordingItems,
+  basePath,
+  scaleKey,
+  octave,
+  RecordingVisualization,
+}) => {
   const [state, setState] = useState<State>('idle');
   const prevState = usePrevious(state);
   log.info(`prevState`, prevState, `state`, state);
@@ -69,7 +77,7 @@ export const RecordingPage: FC<RecordingPageProps> = ({ onBack, recordingItems, 
                 : undefined
             }
             basePath={basePath}
-            recordingItemName={recordingItems[index].fileSystemName}
+            recordingItemName={recordingItems[index]?.fileSystemName}
           />
         </Row>
         <RecordingControls

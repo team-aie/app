@@ -14,7 +14,7 @@ import { useAudioInputOutputDevices } from '../settings-page/hooks';
 
 import { State } from './types';
 
-interface RecordingVisualizationProps {
+export interface RecordingVisualizationProps {
   /**
    * Last state the recording page was in {idle, recording}
    */
