@@ -7,6 +7,8 @@ import { noOp } from '../../../common/env-and-consts';
 import mediaService from '../../services/media';
 import { readWavAsBlob } from '../../utils/media-utils';
 
+import { RecordingVisualizationStub } from './recording-visualization-stub';
+
 import RecordingPage from './index';
 
 // Mock the remote module to prevent import failure.
@@ -38,7 +40,16 @@ describe('RecordingPage', () => {
     const stopRecording = jest.spyOn(mediaService, 'stopRecording');
     const switchOnAudio = jest.spyOn(mediaService, 'switchOnAudioInput');
 
-    render(<RecordingPage onBack={noOp} recordingItems={[]} basePath={''} scaleKey={'C'} octave={2} />);
+    render(
+      <RecordingPage
+        onBack={noOp}
+        recordingItems={[]}
+        basePath={''}
+        scaleKey={'C'}
+        octave={2}
+        RecordingVisualization={RecordingVisualizationStub}
+      />,
+    );
     // R is 82
     fireEvent.keyDown(document, { key: 'R', code: '82' });
     await new Promise((r) => setTimeout(r, 3000));
@@ -68,7 +79,16 @@ describe('RecordingPage', () => {
     const stopPlaying = mocked(mediaService.stopPlaying);
     stopPlaying.mockReturnValue(new Promise((resolve) => resolve()));
 
-    render(<RecordingPage onBack={noOp} recordingItems={[]} basePath={''} scaleKey={'C'} octave={2} />);
+    render(
+      <RecordingPage
+        onBack={noOp}
+        recordingItems={[]}
+        basePath={''}
+        scaleKey={'C'}
+        octave={2}
+        RecordingVisualization={RecordingVisualizationStub}
+      />,
+    );
     // S is 83
     fireEvent.keyDown(document, { key: 'S', code: '83' });
     await new Promise((r) => setTimeout(r, 3000));
@@ -84,7 +104,7 @@ describe('RecordingPage', () => {
 
     // Define mocks to confirm that calls have been made
     const mediaMock = mocked(readWavAsBlob);
-    mediaMock.mockResolvedValue(new Blob([new Uint8Array(new Buffer('Test'))]));
+    mediaMock.mockResolvedValue(new Blob([new Uint8Array(Buffer.from('Test'))]));
 
     const playBlob = mocked(mediaService.playBlob);
     playBlob.mockReturnValue(new Promise((resolve) => resolve()));
@@ -95,10 +115,11 @@ describe('RecordingPage', () => {
     render(
       <RecordingPage
         onBack={noOp}
-        recordingItems={[{ fileSystemName: 'Test', displayText: 'TestText' }]}
+        recordingItems={[]}
         basePath={''}
         scaleKey={'C'}
         octave={2}
+        RecordingVisualization={RecordingVisualizationStub}
       />,
     );
     // Space is 32

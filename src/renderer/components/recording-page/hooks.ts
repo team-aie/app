@@ -127,7 +127,7 @@ export const useTogglePlaying = (
       stopPlayingRef.current = noOp();
       setState('idle');
     };
-    readWavAsBlob(join(basePath, `${recordingItems[index].fileSystemName}.wav`)).then((blob) => {
+    readWavAsBlob(join(basePath, `${recordingItems[index]?.fileSystemName}.wav`)).then((blob) => {
       if (!cancelled) {
         mediaService.createNewAudioGraph();
         mediaService

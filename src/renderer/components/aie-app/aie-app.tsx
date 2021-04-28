@@ -14,6 +14,7 @@ import LicenseDisclosure from '../license-disclosure';
 import LocaleSelector from '../locale-selector';
 import OpenProjectPage from '../open-project-page';
 import RecordingPage from '../recording-page';
+import { RecordingVisualization } from '../recording-page/recording-visualization';
 import SettingsPage from '../settings-page';
 import StyleSwitcher from '../style-switcher';
 import WelcomePage from '../welcome-page';
@@ -127,6 +128,7 @@ export const AieApp: FC = () => {
             basePath={join(projectFolder, (recordingSet && recordingSet.name) || '')}
             scaleKey={key}
             octave={octave}
+            RecordingVisualization={RecordingVisualization}
           />
         );
       default: {
