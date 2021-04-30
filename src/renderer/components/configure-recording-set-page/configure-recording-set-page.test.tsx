@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom/extend-expect';
 import React from 'react';
@@ -17,6 +17,11 @@ jest.mock('../../utils', () => ({
   ...jest.requireActual('../../utils'),
   openFilePicker: jest.fn().mockImplementation(),
 }));
+
+afterEach(() => {
+  cleanup();
+  window.localStorage.clear();
+});
 
 describe('ConfigureRecordingSetPage', () => {
   it('renders without showDetails button', async () => {
@@ -90,7 +95,6 @@ describe('ConfigureRecordingSetPage', () => {
       otoIni: 'otoIni',
       voiceDvcfg: 'voiceDvcfg',
     });
-
     render(<ConfigureRecordingSetPage onSettingsButtonClick={noop} onNext={noop} onBack={noop} onSetSelected={noop} />);
 
     userEvent.selectOptions(screen.getByTestId('selectReclist'), 'デルタ式英語リストver5 (Delta English Ver. 5)');
@@ -99,8 +103,6 @@ describe('ConfigureRecordingSetPage', () => {
     await screen.findByText('listContent');
 
     expect(recordingListDataService.readData).toHaveBeenCalledTimes(1);
-
-    userEvent.click(await screen.findByTestId('up-button'));
   });
 
   it('renders oto.ini and dvcfg pages after next button is clicked', async () => {
@@ -128,8 +130,6 @@ describe('ConfigureRecordingSetPage', () => {
     await screen.findByText('voiceDvcfg');
 
     expect(recordingListDataService.readData).toHaveBeenCalledTimes(1);
-
-    userEvent.click(await screen.findByTestId('up-button'));
   });
 
   it('returns from list-preview page to main page when up is clicked', async () => {
@@ -157,15 +157,8 @@ describe('ConfigureRecordingSetPage', () => {
   });
 
   it('renders showDetails butten when custom reclist is selected', async () => {
-    expect.assertions(3);
+    expect.assertions(2);
 
-    const readDataMock = mocked(recordingListDataService.readData);
-    readDataMock.mockResolvedValue({
-      listContent: 'listContent',
-      recordingItems: [],
-      otoIni: 'otoIni',
-      voiceDvcfg: 'voiceDvcfg',
-    });
     const mockedFilePick = mocked(openFilePicker);
     // Use of 'any' is required since method is overridden, and the default signature has a different return type than the one we're testing
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -181,7 +174,6 @@ describe('ConfigureRecordingSetPage', () => {
     // Click filepicker
     userEvent.click(await screen.findByTestId('cust-list-button'));
 
-    expect(recordingListDataService.readData).toHaveBeenCalledTimes(1);
     expect(openFilePicker).toHaveBeenCalledTimes(1);
 
     await screen.findByTestId('show-details-button');
