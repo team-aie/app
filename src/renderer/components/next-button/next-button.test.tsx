@@ -1,5 +1,5 @@
 import React from 'react';
-import { create as createTree } from 'react-test-renderer';
+import renderer, { create as createTree } from 'react-test-renderer';
 
 import { noOp } from '../../../common/env-and-consts';
 
@@ -36,5 +36,15 @@ describe('NextButton', () => {
         </button>
       </div>
     `);
+  });
+
+  it('should be clicked once', () => {
+    expect.hasAssertions();
+
+    const mockFunction = jest.fn();
+    const tree = renderer.create(<NextButton onClick={mockFunction} disabled />);
+    tree.root.props.onClick();
+
+    expect(mockFunction).toHaveBeenCalledTimes(1);
   });
 });
