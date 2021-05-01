@@ -18,12 +18,12 @@ jest.mock('../../utils', () => ({
   openFilePicker: jest.fn().mockImplementation(),
 }));
 
-afterEach(() => {
-  cleanup();
-  window.localStorage.clear();
-});
-
 describe('ConfigureRecordingSetPage', () => {
+  afterEach(() => {
+    cleanup();
+    window.localStorage.clear();
+  });
+
   it('renders without showDetails button', async () => {
     expect.assertions(2);
 
