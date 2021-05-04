@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom/extend-expect';
 import React from 'react';
@@ -15,13 +15,12 @@ jest.mock('../../services/recording-list-data-service');
 jest.mock('@electron/remote', () => ({ dialog: jest.fn() }));
 jest.mock('../../utils', () => ({
   ...jest.requireActual('../../utils'),
-  openFilePicker: jest.fn().mockImplementation(),
+  openFilePicker: jest.fn(),
 }));
 
 describe('ConfigureRecordingSetPage', () => {
   afterEach(() => {
-    cleanup();
-    window.localStorage.clear();
+    localStorage.clear();
   });
 
   it('renders without showDetails button', async () => {
@@ -165,8 +164,7 @@ describe('ConfigureRecordingSetPage', () => {
     mockedFilePick.mockResolvedValue('testReclist' as any);
 
     render(<ConfigureRecordingSetPage onSettingsButtonClick={noop} onNext={noop} onBack={noop} onSetSelected={noop} />);
-    //Confirm no selected default reclist and no button
-
+    // Confirm no selected default reclist and no button
     userEvent.selectOptions(screen.getByTestId('selectReclist'), '');
 
     expect(screen.queryByTestId('show-details-button')).toBeFalsy();
