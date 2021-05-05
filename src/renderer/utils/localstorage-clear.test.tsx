@@ -10,9 +10,10 @@ describe('project state resume test', () => {
     }
     const goToRecordingPage = jest.fn();
     renderHook(() => useResumeCheck(goToRecordingPage));
-    localStorage.clear();
 
     expect(goToRecordingPage).toHaveBeenCalledTimes(1);
+
+    localStorage.clear();
   });
 
   it('if user clicks cancel', () => {
@@ -23,9 +24,9 @@ describe('project state resume test', () => {
 
     const goToRecordingPage = jest.fn();
     renderHook(() => useResumeCheck(goToRecordingPage));
-    localStorage.clear();
     for (let i = 0; i < RETAINED_LOCALSTORAGE_KEYS.length; i++) {
       expect(localStorage.getItem(RETAINED_LOCALSTORAGE_KEYS[i])).toBeNull();
     }
+    localStorage.clear();
   });
 });
