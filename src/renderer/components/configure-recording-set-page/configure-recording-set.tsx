@@ -65,7 +65,6 @@ interface ConfigureRecordingSetProps {
   rawSetChosenBuiltInList: Consumer<BuiltInRecordingList | ''>;
   chosenCustomListPath: string;
   rawSetChosenCustomListPath: React.Dispatch<React.SetStateAction<string | undefined>>;
-  metaDataIndex: number;
 }
 
 export const ConfigureRecordingSet: FC<ConfigureRecordingSetProps> = ({
@@ -80,7 +79,6 @@ export const ConfigureRecordingSet: FC<ConfigureRecordingSetProps> = ({
   rawSetChosenBuiltInList,
   chosenCustomListPath,
   rawSetChosenCustomListPath,
-  metaDataIndex,
 }) => {
   const { t } = useTranslation();
   const { recordingProject } = useContext(RecordingProjectContext);
@@ -301,7 +299,7 @@ export const ConfigureRecordingSet: FC<ConfigureRecordingSetProps> = ({
             }}
             disabled={selectedRecordingSetIndex < 0}
           />
-          {metaDataIndex >= 0 && (
+          {(chosenBuiltInList !== '' || chosenCustomListPath !== '') && (
             <Positional position="bottom-center">
               <ImageButton
                 src={showDetailsButton}
