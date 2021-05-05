@@ -112,7 +112,6 @@ export const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({
           rawSetChosenBuiltInList={rawSetChosenBuiltInList}
           chosenCustomListPath={chosenCustomListPath}
           rawSetChosenCustomListPath={rawSetChosenCustomListPath}
-          metaDataIndex={metadataStateIndex}
         />
       );
     case 'metadata':

@@ -50,6 +50,7 @@ const SetRecordingListConfiguration: FC<SetRecordingListConfigurationProps> = ({
       </Col>
       <Col>
         <Button
+          data-testid={'cust-list-button'}
           variant={'outline-secondary'}
           className={'text-truncate'}
           style={{

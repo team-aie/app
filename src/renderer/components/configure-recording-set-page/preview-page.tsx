@@ -74,6 +74,7 @@ export const PreviewPage: FC<PreviewPageProps> = ({
           <Col>
             <Row className="d-flex justify-content-center">
               <ImageButton
+                testId="up-button"
                 onClick={(): void => {
                   setRecordingSetState('home');
                 }}
@@ -96,6 +97,7 @@ export const PreviewPage: FC<PreviewPageProps> = ({
               </Col>
               <Col sm="auto" className="d-flex justify-content-center">
                 <ImageButton
+                  testId="next-button"
                   onClick={(): void => {
                     setDropDownState();
                     setTransition(false);
