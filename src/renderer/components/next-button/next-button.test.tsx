@@ -1,7 +1,5 @@
-import { screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import React from 'react';
-import renderer, { create as createTree } from 'react-test-renderer';
+import { create as createTree } from 'react-test-renderer';
 
 import { noOp } from '../../../common/env-and-consts';
 
