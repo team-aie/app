@@ -25,13 +25,18 @@ const toSystemDarkModeValue = (theme: SupportedTheme): typeof nativeTheme.themeS
   }
 };
 
-export const useTheme = (): [SupportedTheme, Consumer<SupportedTheme>] => {
-  const defaultTheme = getSystemMappedTheme();
-
-  const [theme = defaultTheme, rawSetTheme] = useLocalStorage(getLSKey('AieAppHooks', 'theme'), defaultTheme);
+/**
+ * Read OS's light/dark theme settings and sync app theme with it.
+ */
+export const useSyncSystemTheme = (): [SupportedTheme, Consumer<SupportedTheme>] => {
   const [isThemeOverriddenByUser = false, setIsThemeOverriddenByUser] = useLocalStorage(
     getLSKey('AieAppHooks', 'isThemeOverriddenByUser'),
     false,
+  );
+  const [theme = SupportedTheme.LIGHT, rawSetTheme] = useLocalStorage(
+    getLSKey('AieAppHooks', 'theme'),
+    // SupportedTheme.LIGHT shouldn't really be used if isThemeOverriddenByUser. However, just in case.
+    isThemeOverriddenByUser ? SupportedTheme.LIGHT : getSystemMappedTheme(),
   );
 
   const setTheme = (nextTheme: SupportedTheme) => {
@@ -40,16 +45,16 @@ export const useTheme = (): [SupportedTheme, Consumer<SupportedTheme>] => {
   };
 
   useEffectOnce(() => {
-    const onNativeThemeUpdate = () => {
+    const syncAppThemeToSystemTheme = () => {
       if (nativeTheme.themeSource === 'system') {
         rawSetTheme(getSystemMappedTheme());
       }
     };
 
-    nativeTheme.addListener('updated', onNativeThemeUpdate);
+    nativeTheme.addListener('updated', syncAppThemeToSystemTheme);
 
     return () => {
-      nativeTheme.removeListener('updated', onNativeThemeUpdate);
+      nativeTheme.removeListener('updated', syncAppThemeToSystemTheme);
     };
   });
 

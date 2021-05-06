@@ -10,7 +10,7 @@ export class CleanUpLocalStorageTask implements LifeCycleTask {
   beforeRender = (): void => {
     const localStorageState = { ...localStorage };
     log.info(`Current local storage state: ${naivePrettyPrint(localStorageState)}`);
-    for (const key in Object.getOwnPropertyNames(localStorageState)) {
+    for (const key of Object.getOwnPropertyNames(localStorageState)) {
       const storedValue = localStorage.getItem(key);
       log.debug(`Next key ${key} has next stored value: ${naivePrettyPrint(storedValue)}`);
       if (storedValue === 'null' || storedValue === 'undefined') {
