@@ -1,3 +1,5 @@
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { create as createTree } from 'react-test-renderer';
 
@@ -36,5 +38,14 @@ describe('NextButton', () => {
         </button>
       </div>
     `);
+  });
+
+  it('should be clicked once', async () => {
+    const mockFunction = jest.fn();
+    render(<NextButton onClick={mockFunction} disabled={false} />);
+
+    userEvent.click(await screen.findByText('Next'));
+
+    expect(mockFunction).toHaveBeenCalledTimes(1);
   });
 });
