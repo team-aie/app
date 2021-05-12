@@ -6,16 +6,16 @@ import { first } from 'rxjs/operators';
 
 import { FileMonitor } from './file-monitor';
 
-beforeAll(() => {
-  fs.mkdirSync(__dirname + '/temp');
-});
-
-afterAll(() => {
-  fse.emptyDirSync(__dirname + '/temp');
-  fs.rmdirSync(__dirname + '/temp');
-});
-
 describe('FileMonitor', () => {
+  beforeAll(() => {
+    fs.mkdirSync(__dirname + '/temp');
+  });
+
+  afterAll(() => {
+    fse.emptyDirSync(__dirname + '/temp');
+    fs.rmdirSync(__dirname + '/temp');
+  });
+
   it('should report adding files', async () => {
     expect.assertions(1);
 
