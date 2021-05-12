@@ -22,12 +22,12 @@ describe('FileMonitor', () => {
     const reportedFiles = fileMonitor.getSubject().pipe(first()).toPromise();
 
     fs.writeFileSync(path.join(__dirname, 'temp', 'test.txt'), __dirname);
+    fs.unlinkSync(path.join(__dirname, 'temp', 'test.txt'));
 
     const message = await reportedFiles;
 
     expect(message).toStrictEqual(['add', __dirname + '\\temp\\test.txt']);
 
-    fs.unlinkSync(path.join(__dirname, 'temp', 'test.txt'));
     fileMonitor.closeAll();
   });
 
