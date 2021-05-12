@@ -27,7 +27,7 @@ describe('FileMonitor', () => {
 
     const message = await reportedFiles;
 
-    expect(message).toStrictEqual(['add', __dirname + '\\temp\\test.txt']);
+    expect(message).toStrictEqual(['add', path.join(__dirname, 'temp', 'test.txt')]);
 
     fs.unlinkSync(path.join(__dirname, 'temp', 'test.txt'));
 
