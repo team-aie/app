@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
+import fse from 'fs-extra';
 import { first } from 'rxjs/operators';
 
 import { FileMonitor } from './file-monitor';
@@ -10,6 +11,7 @@ beforeAll(() => {
 });
 
 afterAll(() => {
+  fse.emptyDirSync(__dirname + '/temp');
   fs.rmdirSync(__dirname + '/temp');
 });
 
