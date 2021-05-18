@@ -5,7 +5,14 @@ import { mocked } from 'ts-jest/utils';
 import WaveSurfer from 'wavesurfer.js';
 
 import { RecordingVisualization } from './recording-visualization';
-jest.mock('wavesurfer.js');
+jest.mock('wavesurfer.js', () => ({
+  create: jest.fn().mockReturnValue({
+    destroy: jest.fn(),
+  }),
+}));
+jest.mock('wavesurfer.js/src/plugin/microphone', () => ({
+  create: jest.fn(),
+}));
 
 // Mock the remote module to prevent import failure.
 jest.mock('@electron/remote', () => ({ dialog: jest.fn() }));
