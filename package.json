@@ -71,7 +71,7 @@
     "@testing-library/jest-dom": "^5.11.10",
     "@testing-library/react": "^11.2.6",
     "@testing-library/react-hooks": "^5.1.2",
-    "@testing-library/user-event": "^13.1.8",
+    "@testing-library/user-event": "^13.1.9",
     "@types/audiobuffer-to-wav": "^1.0.0",
     "@types/dom-mediacapture-record": "^1.0.7",
     "@types/jest": "^26.0.22",
