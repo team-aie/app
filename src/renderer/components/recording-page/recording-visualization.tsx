@@ -3,8 +3,9 @@ import React, { FC, useEffect, useRef } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import useEffectOnce from 'react-use/lib/useEffectOnce';
 import WaveSurfer from 'wavesurfer.js';
-import MicrophonePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.microphone';
+// TODO: For some reason this custom typing cannot be removed at this time. Check later.
 import SpectrogramPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.spectrogram';
+import MicrophonePlugin from 'wavesurfer.js/src/plugin/microphone';
 
 import { noOp } from '../../../common/env-and-consts';
 import { acquireAudioInputStream, checkFileExistence, join, readFile } from '../../utils';
