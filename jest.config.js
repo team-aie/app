@@ -12,6 +12,7 @@ module.exports = {
       '<rootDir>/src/jest-file-transformer.js',
     '\\.(css|scss)$': '<rootDir>/src/jest-file-transformer.js',
   },
+  transformIgnorePatterns: ['/node_modules/?!(wavesurfer.js)'],
   setupFiles: ['<rootDir>/jest.setup.js'],
   resetMocks: true,
 };
