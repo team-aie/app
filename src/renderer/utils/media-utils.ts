@@ -1,9 +1,9 @@
-import { systemPreferences } from '@electron/remote';
 import log from 'electron-log';
 
 import { ACQUIRE_PERMISSION_RETRIES } from '../../common/env-and-consts';
 
 import { readFile } from './fs-utils';
+import { systemPreferences } from './isomorphic-electron';
 
 export const acquireAudioInputStream = async (deviceId: string): Promise<MediaStream> => {
   const constraint: MediaStreamConstraints = {
