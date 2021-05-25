@@ -127,7 +127,8 @@ export const RecordingVisualization: FC<RecordingVisualizationProps> = ({
           checkSpectrogramPluginOrCreateNew();
           loadWavFile(filePathFromEvent);
         } else if (fileEventType === 'unlink') {
-          alert('File ' + filePathFromEvent + ' was deleted.');
+          // FIXME: Temporarily disable the alert until state interaction is fixed.
+          // alert('File ' + filePathFromEvent + ' was deleted.');
           waveSurfer.empty();
           waveSurfer.destroyPlugin('spectrogram');
         }
