@@ -9,5 +9,6 @@ export * from './string-utils';
 
 export const getLSKey = (namespace: string, key: string): string => `${namespace}${KEY_SEPARATOR}${key}`;
 export const naiveSerialize = (obj: unknown): string => JSON.stringify(obj);
+export const naivePrettyPrint = (obj: unknown): string => JSON.stringify(obj, null, 2);
 export const naiveEquals = <T>(a: T, b: T): boolean => naiveSerialize(a) === naiveSerialize(b);
 export const naiveDeepCopy = <T>(obj: T): T => JSON.parse(JSON.stringify(obj));

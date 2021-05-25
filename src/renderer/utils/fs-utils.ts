@@ -1,11 +1,11 @@
 import fs, { promises as fsp } from 'fs';
 import path from 'path';
 
-import { dialog } from '@electron/remote';
 import { OpenDialogOptions } from 'electron';
 import log from 'electron-log';
 
 import { bestEffortDecode } from './buffer-decoders';
+import { dialog } from './isomorphic-electron';
 import { ensureLF } from './string-utils';
 
 // Direct Imports

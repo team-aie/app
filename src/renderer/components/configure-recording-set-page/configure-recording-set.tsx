@@ -16,6 +16,7 @@ import {
   ensureFolderExists,
   getLSKey,
   join,
+  naivePrettyPrint,
   naiveSerialize,
   readFile,
   writeFile,
@@ -203,10 +204,9 @@ export const ConfigureRecordingSet: FC<ConfigureRecordingSetProps> = ({
         name: recordingProject.name,
         recordingSets,
       };
-      writeFile(
-        join(recordingProject.rootPath, PROJECT_CONFIG_FILENAME),
-        JSON.stringify(currentProjectState, null, 2),
-      ).catch(log.error);
+      writeFile(join(recordingProject.rootPath, PROJECT_CONFIG_FILENAME), naivePrettyPrint(currentProjectState)).catch(
+        log.error,
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [naiveSerialize(recordingProject), naiveSerialize(recordingSets)]);
