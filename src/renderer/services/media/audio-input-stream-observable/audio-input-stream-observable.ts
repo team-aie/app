@@ -7,7 +7,7 @@ import { AudioDeviceConfigObservable } from '../audio-device-config-observable';
 import { AudioDeviceConfig, AudioDeviceId } from '../audio-device-config-observable/types';
 
 export class AudioInputStreamObservable implements Closeable, IObservable<MediaStream | undefined> {
-  private readonly audioInputStreamSubject: Subject<MediaStream> = new Subject<MediaStream>();
+  private readonly audioInputStreamSubject = new Subject<MediaStream | undefined>();
   private readonly audioDeviceConfigSubscription: Subscription;
   private lastAudioInputDeviceId: AudioDeviceId;
   private cancelLastMicrophoneAccessAcquisition?: () => void;
