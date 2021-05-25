@@ -2,6 +2,7 @@ import log from 'electron-log';
 import { BackendModule, ReadCallback, Services } from 'i18next';
 
 import { isDevelopment } from '../../../common/env-and-consts';
+import { naivePrettyPrint } from '../../utils';
 
 interface WebpackImportBackendOptions {
   saveMissingAllHierarchy: boolean;
@@ -84,7 +85,7 @@ export default class WebpackImportBackend implements BackendModule<WebpackImport
             if (!fs.existsSync(missingFileDir)) {
               fs.mkdirSync(missingFileDir, { recursive: true });
             }
-            fs.writeFileSync(missingFile, JSON.stringify({ [key]: fallbackValue }, null, 2));
+            fs.writeFileSync(missingFile, naivePrettyPrint({ [key]: fallbackValue }));
           };
 
           if (fs.existsSync(missingFile)) {
@@ -97,7 +98,7 @@ export default class WebpackImportBackend implements BackendModule<WebpackImport
               return;
             }
             missing[key] = fallbackValue;
-            fs.writeFileSync(missingFile, JSON.stringify(missing, null, 2));
+            fs.writeFileSync(missingFile, naivePrettyPrint(missing));
           } else {
             tryCreateNewFile();
           }

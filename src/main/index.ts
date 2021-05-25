@@ -6,6 +6,7 @@ import { BrowserWindow, Menu, MenuItemConstructorOptions, app, shell } from 'ele
 import log from 'electron-log';
 
 import { AssertionError } from '../common/errors';
+import { naivePrettyPrint } from '../renderer/utils';
 
 import autoUpdater from './auto-updater';
 
@@ -74,7 +75,7 @@ if (!isFirstInstance) {
         },
       ];
       log.debug('Menu bar template', template);
-      log.debug('Menu bar template JSON', JSON.stringify(template, null, 2));
+      log.debug('Menu bar template JSON', naivePrettyPrint(template));
       Menu.setApplicationMenu(Menu.buildFromTemplate(template));
     }
   };
