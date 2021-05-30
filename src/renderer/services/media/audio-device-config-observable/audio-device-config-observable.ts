@@ -3,8 +3,11 @@ import { PartialObserver, Subject, Subscription } from 'rxjs';
 
 import { Closeable, IObservable } from '../../../types';
 import { naiveEquals } from '../../../utils';
-import { MediaDeviceInfoObservable } from '../media-device-info-observable';
-import { CategorizedNormalizedMediaDeviceInfo, NormalizedMediaDeviceInfo } from '../media-device-info-observable/types';
+import {
+  CategorizedNormalizedMediaDeviceInfo,
+  MediaDeviceInfoService,
+  NormalizedMediaDeviceInfo,
+} from '../media-device-info-service';
 
 import { AudioDeviceConfig, AudioDeviceId } from './types';
 
@@ -19,8 +22,8 @@ export class AudioDeviceConfigObservable implements Closeable, IObservable<Audio
   private audioInputDeviceId: AudioDeviceId;
   private audioOutputDeviceId: AudioDeviceId;
 
-  constructor(private readonly mediaDeviceInfoObservable: MediaDeviceInfoObservable) {
-    this.mediaDeviceInfoSubscription = this.mediaDeviceInfoObservable.subscribe({
+  constructor(private readonly mediaDeviceInfoObservable: MediaDeviceInfoService) {
+    this.mediaDeviceInfoSubscription = this.mediaDeviceInfoObservable.categorizedDeviceInfo$.subscribe({
       next: this.onMediaDeviceInfoUpdate,
     });
   }
