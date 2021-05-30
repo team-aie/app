@@ -3,7 +3,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import { useTranslation } from 'react-i18next';
 
-import { useResumeCheck } from '../../utils/localstorage-clear';
+import { useAbnormalShutdownResumeSessionCheck } from '../../utils/localstorage-clear';
 import { Positional } from '../helper-components';
 import ImageButton from '../image-button';
 import ThemeSwitch from '../theme-switch';
@@ -15,7 +15,7 @@ export const WelcomePage: FC<{ onResumeStatus: () => void; onNext: MouseEventHan
   onNext,
 }) => {
   const { t } = useTranslation();
-  useResumeCheck(onResumeStatus);
+  useAbnormalShutdownResumeSessionCheck(onResumeStatus);
   return (
     <Container style={{ height: '100%' }} className={'d-flex flex-column justify-content-center align-items-center'}>
       <Row>
