@@ -10,7 +10,7 @@ import MicrophonePlugin from 'wavesurfer.js/src/plugin/microphone';
 import { noOp } from '../../../common/env-and-consts';
 import { acquireAudioInputStream, checkFileExistence, join, readFile } from '../../utils';
 import { FileMonitor } from '../../utils/file-monitor';
-import { useInitializerRef } from '../../utils/useInitializerRef';
+import { useInitializerRef } from '../../utils/use-initializer-ref';
 import { useAudioInputOutputDevices } from '../settings-page/hooks';
 
 import { State } from './types';
@@ -181,7 +181,7 @@ export const RecordingVisualization: FC<RecordingVisualizationProps> = ({
       loadWavFile(filePathToRead);
     } else if (state === 'recording') {
       if (!waveSurfer.microphone.active) {
-        acquireAudioInputStream(audioInputDeviceId === undefined ? '' : audioInputDeviceId).then(
+        acquireAudioInputStream(audioInputDeviceId === undefined ? '' : audioInputDeviceId, 44100, 16).then(
           (mediaStream: MediaStream) => waveSurfer.microphone.gotStream(mediaStream),
         );
       } else {

@@ -70,13 +70,24 @@ export const enum SupportedTheme {
 }
 
 /**
+ * Allows fields to be writable on an interface with "readonly" keyword.
+ *
  * https://stackoverflow.com/a/43001581
  */
 export type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 /**
+ * Similar to {@link Writable}, but suppresses "readonly" deeply into the object.
+ *
  * https://stackoverflow.com/a/43001581
  */
 export type DeepWriteable<T> = { -readonly [P in keyof T]: DeepWriteable<T[P]> };
+
+/**
+ * Creates a tuple without typescript complaints.
+ *
+ * See also: https://stackoverflow.com/a/52445008.
+ */
+export const tuple = <T extends unknown[]>(...args: T): T => args;
 
 export interface Closeable {
   close(): void | Promise<void>;
@@ -89,3 +100,8 @@ export interface IObservable<T> {
    */
   subscribe(observer: PartialObserver<T>): Subscription;
 }
+
+/**
+ * A basic type trying to encompass all the types that can be stringified with `JSON.stringify()`.
+ */
+export type Serializable = string | number | boolean | Array<unknown> | Record<string | number | symbol, unknown>;
