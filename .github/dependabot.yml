@@ -6,6 +6,7 @@ updates:
   target-branch: 'dev'
   schedule:
     interval: weekly
+  open-pull-requests-limit: 15
   commit-message:
     prefix: fix
     prefix-development: fix
@@ -16,6 +17,7 @@ updates:
   target-branch: 'dev'
   schedule:
     interval: weekly
+  open-pull-requests-limit: 15
   commit-message:
     prefix: chore
     prefix-development: chore
