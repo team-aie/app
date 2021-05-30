@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Subscription } from 'rxjs';
+import { Subscription, combineLatest } from 'rxjs';
 
-import audioDeviceConfigObservable from '../../services/media/audio-device-config-observable';
+import audioDeviceConfigService from '../../services/media/audio-device-config-service';
 import mediaDeviceInfoService, { NormalizedMediaDeviceInfo } from '../../services/media/media-device-info-service';
 import { Consumer } from '../../types';
 import { useUnsubscribeOnUnmount } from '../../utils';
@@ -40,8 +40,11 @@ export const useAudioInputOutputDevices = (): [
   useUnsubscribeOnUnmount(mediaDeviceInfoSubscriptionRef);
 
   const audioDeviceConfigSubscriptionRef = useInitializerRef<Subscription>(() =>
-    audioDeviceConfigObservable.subscribe({
-      next: ({ audioInputDeviceId, audioOutputDeviceId }) => {
+    combineLatest([
+      audioDeviceConfigService.audioInputDeviceId$,
+      audioDeviceConfigService.audioOutputDeviceId$,
+    ]).subscribe({
+      next: ([audioInputDeviceId, audioOutputDeviceId]) => {
         setDevicesInUse({
           audioInputDeviceId,
           audioOutputDeviceId,
@@ -51,8 +54,8 @@ export const useAudioInputOutputDevices = (): [
   );
   useUnsubscribeOnUnmount(audioDeviceConfigSubscriptionRef);
 
-  const { setAudioInputDeviceId } = audioDeviceConfigObservable;
-  const { setAudioOutputDeviceId } = audioDeviceConfigObservable;
+  const { setAudioInputDeviceId } = audioDeviceConfigService;
+  const { setAudioOutputDeviceId } = audioDeviceConfigService;
 
   return [
     audioInputDevices,
