@@ -1,5 +1,3 @@
-import { PartialObserver, Subscription } from 'rxjs';
-
 import { BuiltInRecordingList } from '../components/configure-recording-set-page/types';
 
 export type PageState = 'welcome' | 'open-project' | 'configure-recording-set' | 'settings' | 'recording';
@@ -91,14 +89,6 @@ export const tuple = <T extends unknown[]>(...args: T): T => args;
 
 export interface Closeable {
   close(): void | Promise<void>;
-}
-
-export interface IObservable<T> {
-  /**
-   * Note: Must make sure to call onNext() with the last emitted value for each new subscriber
-   * @param observer
-   */
-  subscribe(observer: PartialObserver<T>): Subscription;
 }
 
 /**

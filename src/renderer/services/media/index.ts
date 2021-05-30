@@ -1,7 +1,7 @@
 import { ChromeHTMLAudioElement } from '../../types';
 
-import audioDeviceConfigObservable from './audio-device-config-observable';
-import audioInputStreamObservable from './audio-input-stream-observable';
+import audioDeviceConfigService from './audio-device-config-service';
+import audioInputStreamService from './audio-input-stream-service';
 import { ChromiumMediaService } from './chromium-media-service';
 
 export default new ChromiumMediaService(
@@ -9,6 +9,6 @@ export default new ChromiumMediaService(
     latencyHint: 0, // Request lowest latency possible
   }),
   new Audio() as ChromeHTMLAudioElement,
-  audioDeviceConfigObservable,
-  audioInputStreamObservable,
+  audioDeviceConfigService,
+  audioInputStreamService,
 );
