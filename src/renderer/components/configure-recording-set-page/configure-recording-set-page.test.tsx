@@ -28,7 +28,7 @@ describe('ConfigureRecordingSetPage', () => {
 
     render(<ConfigureRecordingSetPage onSettingsButtonClick={noop} onNext={noop} onBack={noop} onSetSelected={noop} />);
 
-    expect(screen.queryByTestId('show-details-button')).toBeFalsy();
+    expect(screen.queryByTestId('show-details-button')).not.toBeInTheDocument();
     expect(recordingListDataService.readData).not.toHaveBeenCalled();
   });
 
@@ -45,7 +45,7 @@ describe('ConfigureRecordingSetPage', () => {
 
     render(<ConfigureRecordingSetPage onSettingsButtonClick={noop} onNext={noop} onBack={noop} onSetSelected={noop} />);
 
-    expect(screen.queryByTestId('show-details-button')).toBeFalsy();
+    expect(screen.queryByTestId('show-details-button')).not.toBeInTheDocument();
 
     userEvent.selectOptions(screen.getByTestId('selectReclist'), 'デルタ式英語リストver5 (Delta English Ver. 5)');
 
@@ -81,7 +81,7 @@ describe('ConfigureRecordingSetPage', () => {
 
     userEvent.selectOptions(screen.getByTestId('selectReclist'), '');
 
-    expect(screen.queryByTestId('show-details-button')).toBeFalsy();
+    expect(screen.queryByTestId('show-details-button')).not.toBeInTheDocument();
   });
 
   it('renders list preview page after showDetails button is clicked', async () => {
@@ -167,7 +167,7 @@ describe('ConfigureRecordingSetPage', () => {
     // Confirm no selected default reclist and no button
     userEvent.selectOptions(screen.getByTestId('selectReclist'), '');
 
-    expect(screen.queryByTestId('show-details-button')).toBeFalsy();
+    expect(screen.queryByTestId('show-details-button')).not.toBeInTheDocument();
 
     // Click filepicker
     userEvent.click(await screen.findByTestId('cust-list-button'));
