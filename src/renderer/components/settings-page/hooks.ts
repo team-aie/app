@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { Subscription } from 'rxjs';
 
 import audioDeviceConfigObservable from '../../services/media/audio-device-config-observable';
-import mediaDeviceInfoObservable from '../../services/media/media-device-info-observable';
-import { NormalizedMediaDeviceInfo } from '../../services/media/media-device-info-observable/types';
+import mediaDeviceInfoService, { NormalizedMediaDeviceInfo } from '../../services/media/media-device-info-service';
 import { Consumer } from '../../types';
 import { useUnsubscribeOnUnmount } from '../../utils';
 import { useInitializerRef } from '../../utils/useInitializerRef';
@@ -29,7 +28,7 @@ export const useAudioInputOutputDevices = (): [
   });
 
   const mediaDeviceInfoSubscriptionRef = useInitializerRef<Subscription>(() =>
-    mediaDeviceInfoObservable.subscribe({
+    mediaDeviceInfoService.categorizedDeviceInfo$.subscribe({
       next: ({ audioInputs: audioInputDevices, audioOutputs: audioOutputDevices }) => {
         setDevices({
           audioInputDevices,

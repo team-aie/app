@@ -1,4 +1,4 @@
-import { NormalizedMediaDeviceInfo } from '../../services/media/media-device-info-observable/types';
+import { NormalizedMediaDeviceInfo } from '../../services/media/media-device-info-service';
 
 export interface KnownDevices {
   audioInputDevices: NormalizedMediaDeviceInfo[];
