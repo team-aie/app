@@ -6,7 +6,7 @@ import useLocalStorage from 'react-use/lib/useLocalStorage';
 import { PAGE_STATES_IN_ORDER } from '../../../common/env-and-consts';
 import { LocaleContext, RecordingProjectContext, ThemeContext } from '../../contexts';
 import recordingListDataService from '../../services/recording-list-data-service';
-import { RecordingItem, RecordingProject, RecordingSet, ScaleKey, SupportedOctave, SupportedTheme } from '../../types';
+import { RecordingItem, RecordingProject, RecordingSet, ScaleKey, SupportedOctave } from '../../types';
 import { getLSKey, join, useLocale } from '../../utils';
 import ConfigureRecordingSetPage from '../configure-recording-set-page';
 import { Positional } from '../helper-components';
@@ -18,6 +18,8 @@ import { RecordingVisualization } from '../recording-page/recording-visualizatio
 import SettingsPage from '../settings-page';
 import StyleSwitcher from '../style-switcher';
 import WelcomePage from '../welcome-page';
+
+import { useSyncSystemTheme } from './hooks';
 
 const { length: numStates } = PAGE_STATES_IN_ORDER;
 const CONFIGURE_RECORDING_PAGE_INDEX = 2;
@@ -37,7 +39,7 @@ const BottomRightDisplay: FC = () => (
 
 export const AieApp: FC = () => {
   const [locale, setLocale] = useLocale();
-  const [theme = SupportedTheme.LIGHT, setTheme] = useLocalStorage(getLSKey('AieApp', 'theme'), SupportedTheme.LIGHT);
+  const [theme, setTheme] = useSyncSystemTheme();
   const [pageStateIndex = 0, setPageStateIndex] = useLocalStorage(getLSKey('AieApp', 'pageStateIndex'), 0);
   const pageState = PAGE_STATES_IN_ORDER[pageStateIndex];
   function changePage(isNext: boolean): void {
@@ -47,23 +49,6 @@ export const AieApp: FC = () => {
       setPageStateIndex((pageStateIndex - 1 + numStates) % numStates);
     }
   }
-
-  // TODO: Will decide whether this is a good idea later
-  // if (!isDevelopment) {
-  //   // This is intentional for debugging purposes
-  //   // eslint-disable-next-line react-hooks/rules-of-hooks
-  //   useEffect(() => {
-  //     const window = remote.getCurrentWindow();
-  //     if (pageState === 'recording') {
-  //       window.setMaximizable(true);
-  //       window.setResizable(true);
-  //     } else {
-  //       window.setMaximizable(false);
-  //       window.setResizable(false);
-  //       window.setSize(800, 600);
-  //     }
-  //   }, [pageState]);
-  // }
 
   const [recordingProject = { name: '', rootPath: '' }, setRecordingProject] = useLocalStorage<RecordingProject>(
     getLSKey('AieApp', 'recordingProject'),
