@@ -1,5 +1,6 @@
 import log from 'electron-log';
 import React, { FC, Fragment, MouseEventHandler, useContext, useEffect, useState } from 'react';
+import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -24,7 +25,6 @@ import {
 import BackButton from '../back-button';
 import { Positional } from '../helper-components';
 import ImageButton from '../image-button';
-import NextButton from '../next-button';
 
 import AddRecordingSetButton from './add-recording-set-button';
 import { AudioSettingButton } from './audio-setting-button';
@@ -291,26 +291,38 @@ export const ConfigureRecordingSet: FC<ConfigureRecordingSetProps> = ({
               }}
             />
           </Positional>
-          <NextButton
-            text={t('Start')}
-            onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>): void => {
-              setRecordingSetState('external');
-              onNext(event);
-            }}
-            disabled={selectedRecordingSetIndex < 0}
-          />
-          {(chosenBuiltInList !== '' || chosenCustomListPath !== '') && (
-            <Positional position="bottom-center">
-              <ImageButton
-                src={showDetailsButton}
-                testId="show-details-button"
-                width="2rem"
-                onClick={(): void => {
-                  setRecordingSetState(prevState === 'home' || prevState === 'external' ? 'metadata' : prevState);
-                }}
-              />
-            </Positional>
-          )}
+          <Container fluid className="position-absolute px-4" style={{ bottom: '1.5em' }}>
+            <Col>
+              <Row>
+                <Col />
+                {(chosenBuiltInList !== '' || chosenCustomListPath !== '') && (
+                  <ImageButton
+                    src={showDetailsButton}
+                    testId="show-details-button"
+                    width="2rem"
+                    onClick={(): void => {
+                      setRecordingSetState(prevState === 'home' || prevState === 'external' ? 'metadata' : prevState);
+                    }}
+                  />
+                )}
+                <Col>
+                  <Row>
+                    <Col />
+                    <Button
+                      variant={'outline-secondary'}
+                      style={{ minWidth: '120px' }}
+                      onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>): void => {
+                        setRecordingSetState('external');
+                        onNext(event);
+                      }}
+                      disabled={selectedRecordingSetIndex < 0}>
+                      {t('Start')}
+                    </Button>
+                  </Row>
+                </Col>
+              </Row>
+            </Col>
+          </Container>
         </div>
       </CSSTransition>
     </Fragment>
