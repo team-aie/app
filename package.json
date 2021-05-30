@@ -118,6 +118,10 @@
     "webpack": "^4.44.2",
     "webpack-license-plugin": "^4.1.2"
   },
+  "engines": {
+    "node": "14.17.0",
+    "npm": "7.15.0"
+  },
   "//": {
     "devDependencies": {
       "@types/js-cookie": "Required because react-use@17.1.1 uses `js-cookie`, leading to TSC errors"
