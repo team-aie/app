@@ -61,7 +61,7 @@
     "rxjs": "^7.1.0",
     "sanitize-filename": "^1.6.3",
     "source-map-support": "^0.5.19",
-    "wavesurfer.js": "^4.6.0",
+    "wavesurfer.js": "^5.0.1",
     "web-audio-test-api": "^0.5.2",
     "z.cvvc_normal": "file:external/z.cvvc_normal"
   },
