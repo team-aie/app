@@ -181,9 +181,9 @@ export const RecordingVisualization: FC<RecordingVisualizationProps> = ({
       loadWavFile(filePathToRead);
     } else if (state === 'recording') {
       if (!waveSurfer.microphone.active) {
-        acquireAudioInputStream(
-          audioInputDeviceId === undefined ? '' : audioInputDeviceId,
-        ).then((mediaStream: MediaStream) => waveSurfer.microphone.gotStream(mediaStream));
+        acquireAudioInputStream(audioInputDeviceId === undefined ? '' : audioInputDeviceId).then(
+          (mediaStream: MediaStream) => waveSurfer.microphone.gotStream(mediaStream),
+        );
       } else {
         waveSurfer.microphone.play();
       }

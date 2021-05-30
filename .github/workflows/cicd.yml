@@ -14,10 +14,12 @@ jobs:
         with:
           fetch-depth: 0
       - run: git tag -l
-      - name: Use Node.js 14.16.0
+      - name: Use Node.js LTS version
         uses: actions/setup-node@v2.1.5
         with:
-          node-version: 14.16.0
+          node-version: 14.17.0
+      - name: Use Specific NPM Version
+        run: npm -v && npm i -g npm@7.15.0
       - name: Detect New Version
         id: find-new-version
         run: |
@@ -42,10 +44,12 @@ jobs:
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v2.3.4
-      - name: Use Node.js 14.16.0
+      - name: Use Node.js LTS version
         uses: actions/setup-node@v2.1.5
         with:
-          node-version: 14.16.0
+          node-version: 14.17.0
+      - name: Use Specific NPM Version
+        run: npm -v && npm i -g npm@7.15.0
       - name: Download All Artifacts
         uses: actions/download-artifact@v2.0.9
       - name: Find New Version
@@ -94,10 +98,12 @@ jobs:
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v2.3.4
-      - name: Use Node.js 14.16.0
+      - name: Use Node.js LTS version
         uses: actions/setup-node@v2.1.5
         with:
-          node-version: 14.16.0
+          node-version: 14.17.0
+      - name: Use Specific NPM Version
+        run: npm -v && npm i -g npm@7.15.0
       - name: Download All Artifacts
         uses: actions/download-artifact@v2.0.9
       - name: Find New Version
@@ -142,10 +148,12 @@ jobs:
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v2.3.4
-      - name: Use Node.js 14.16.0
+      - name: Use Node.js LTS version
         uses: actions/setup-node@v2.1.5
         with:
-          node-version: 14.16.0
+          node-version: 14.17.0
+      - name: Use Specific NPM Version
+        run: npm -v && npm i -g npm@7.15.0
       - name: Download All Artifacts
         uses: actions/download-artifact@v2.0.9
       - name: Find New Version
