@@ -1,3 +1,4 @@
+import { RecordingFrequency, RecordingSampleSize } from '../renderer/services/media/audio-device-config-service';
 import { PageState, ScaleKey, SupportedLocale, SupportedOctave, SupportedTheme } from '../renderer/types';
 
 export const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -18,6 +19,8 @@ export const SUPPORTED_LOCALES: ReadonlySet<string> = new Set([
   SupportedLocale.EN_US,
   SupportedLocale.JA_JP,
 ]);
+export const SUPPORTED_FREQUENCIES: ReadonlySet<RecordingFrequency> = new Set([44100, 48000]);
+export const SUPPORTED_SAMPLE_SIZES: ReadonlySet<RecordingSampleSize> = new Set([16, 24, 32]);
 
 export const SUPPORTED_THEMES: ReadonlySet<string> = new Set([SupportedTheme.DARK, SupportedTheme.LIGHT]);
 

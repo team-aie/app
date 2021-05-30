@@ -1,66 +1,31 @@
-import { useState } from 'react';
-import { Subscription } from 'rxjs';
+import { useObservable } from 'react-use';
 
-import audioDeviceConfigObservable from '../../services/media/audio-device-config-observable';
-import mediaDeviceInfoObservable from '../../services/media/media-device-info-observable';
-import { NormalizedMediaDeviceInfo } from '../../services/media/media-device-info-observable/types';
+import audioDeviceConfigService, { AudioDeviceId } from '../../services/media/audio-device-config-service';
+import { NormalizedMediaDeviceInfo } from '../../services/media/media-device-info-service';
 import { Consumer } from '../../types';
-import { useUnsubscribeOnUnmount } from '../../utils';
-import { useInitializerRef } from '../../utils/useInitializerRef';
 
-import { DevicesInUse, KnownDevices } from './types';
+interface useAudioInputOutputDevicesReturnType {
+  audioInputDevices: NormalizedMediaDeviceInfo[];
+  audioOutputDevices: NormalizedMediaDeviceInfo[];
+  audioInputDeviceId: AudioDeviceId | undefined;
+  audioOutputDeviceId: AudioDeviceId | undefined;
+  setAudioInputDeviceId: Consumer<AudioDeviceId>;
+  setAudioOutputDeviceId: Consumer<AudioDeviceId>;
+}
 
-export const useAudioInputOutputDevices = (): [
-  NormalizedMediaDeviceInfo[],
-  NormalizedMediaDeviceInfo[],
-  string | undefined,
-  string | undefined,
-  Consumer<string>,
-  Consumer<string>,
-] => {
-  const [{ audioInputDevices, audioOutputDevices }, setDevices] = useState<KnownDevices>({
-    audioInputDevices: [],
-    audioOutputDevices: [],
-  });
+export const useAudioInputOutputDevices = (): useAudioInputOutputDevicesReturnType => {
+  const audioInputDevices = useObservable(audioDeviceConfigService.audioInputDevices, []);
+  const audioOutputDevices = useObservable(audioDeviceConfigService.audioOutputDevices, []);
+  const audioInputDeviceId = useObservable(audioDeviceConfigService.audioInputDeviceId, undefined);
+  const audioOutputDeviceId = useObservable(audioDeviceConfigService.audioOutputDeviceId, undefined);
 
-  const [{ audioInputDeviceId, audioOutputDeviceId }, setDevicesInUse] = useState<DevicesInUse>({
-    audioInputDeviceId: undefined,
-    audioOutputDeviceId: undefined,
-  });
-
-  const mediaDeviceInfoSubscriptionRef = useInitializerRef<Subscription>(() =>
-    mediaDeviceInfoObservable.subscribe({
-      next: ({ audioInputs: audioInputDevices, audioOutputs: audioOutputDevices }) => {
-        setDevices({
-          audioInputDevices,
-          audioOutputDevices,
-        });
-      },
-    }),
-  );
-  useUnsubscribeOnUnmount(mediaDeviceInfoSubscriptionRef);
-
-  const audioDeviceConfigSubscriptionRef = useInitializerRef<Subscription>(() =>
-    audioDeviceConfigObservable.subscribe({
-      next: ({ audioInputDeviceId, audioOutputDeviceId }) => {
-        setDevicesInUse({
-          audioInputDeviceId,
-          audioOutputDeviceId,
-        });
-      },
-    }),
-  );
-  useUnsubscribeOnUnmount(audioDeviceConfigSubscriptionRef);
-
-  const { setAudioInputDeviceId } = audioDeviceConfigObservable;
-  const { setAudioOutputDeviceId } = audioDeviceConfigObservable;
-
-  return [
+  const { setAudioInputDeviceId, setAudioOutputDeviceId } = audioDeviceConfigService;
+  return {
     audioInputDevices,
     audioOutputDevices,
     audioInputDeviceId,
     audioOutputDeviceId,
     setAudioInputDeviceId,
     setAudioOutputDeviceId,
-  ];
+  };
 };

@@ -19,14 +19,14 @@ export const SettingsPage: FC<{
   onSettingsButtonClick: MouseEventHandler<HTMLElement>;
 }> = ({ onSettingsButtonClick }) => {
   const { t } = useTranslation();
-  const [
+  const {
     audioInputDevices,
     audioOutputDevices,
     audioInputDeviceId,
     audioOutputDeviceId,
     setAudioInputDeviceId,
     setAudioOutputDeviceId,
-  ] = useAudioInputOutputDevices();
+  } = useAudioInputOutputDevices();
   const [muted, setMuted] = useState(true);
   useEffect((): void => {
     if (muted) {

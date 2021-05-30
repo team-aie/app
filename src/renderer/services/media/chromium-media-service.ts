@@ -3,9 +3,8 @@ import log from 'electron-log';
 
 import { ChromeHTMLAudioElement, Closeable } from '../../types';
 
-import { AudioDeviceConfigObservable } from './audio-device-config-observable';
-import { AudioDeviceConfig } from './audio-device-config-observable/types';
-import { AudioInputStreamObservable } from './audio-input-stream-observable';
+import { AudioDeviceConfigService, AudioDeviceId } from './audio-device-config-service';
+import { AudioInputStreamService } from './audio-input-stream-service';
 import { BaseMediaService } from './base-media-service';
 import { MediaServiceState } from './types';
 
@@ -26,16 +25,16 @@ export class ChromiumMediaService extends BaseMediaService implements Closeable 
   constructor(
     audioCtx: AudioContext,
     private readonly audioElement: ChromeHTMLAudioElement,
-    private readonly audioDeviceConfigObservable: AudioDeviceConfigObservable,
-    private readonly audioInputStreamObservable: AudioInputStreamObservable,
+    private readonly audioDeviceConfigService: AudioDeviceConfigService,
+    private readonly audioInputStreamService: AudioInputStreamService,
   ) {
     super(audioCtx);
     this.audioElement.autoplay = true;
     this.createNewAudioGraph();
-    this.audioDeviceConfigObservable.subscribe({
-      next: this.onNextAudioDeviceConfig,
+    this.audioDeviceConfigService.audioOutputDeviceId.subscribe({
+      next: this.onNextAudioOutputDeviceId,
     });
-    this.audioInputStreamObservable.subscribe({
+    this.audioInputStreamService.audioInputStream.subscribe({
       next: this.onNextAudioInputStream,
     });
   }
@@ -54,9 +53,9 @@ export class ChromiumMediaService extends BaseMediaService implements Closeable 
     this.audioElement.srcObject = this.destinationNode.stream;
   };
 
-  private onNextAudioDeviceConfig = (audioDeviceConfig: AudioDeviceConfig): void => {
-    if (audioDeviceConfig.audioOutputDeviceId) {
-      this.audioElement.setSinkId(audioDeviceConfig.audioOutputDeviceId).catch(log.error);
+  private onNextAudioOutputDeviceId = (audioOutputDeviceId: AudioDeviceId | undefined): void => {
+    if (audioOutputDeviceId) {
+      this.audioElement.setSinkId(audioOutputDeviceId).catch(log.error);
     }
   };
 
@@ -74,7 +73,7 @@ export class ChromiumMediaService extends BaseMediaService implements Closeable 
   startRecording = async (): Promise<Blob> => {
     return new Promise<Blob>((resolve, reject) => {
       if (!this.getIsRecording()) {
-        if (!this.audioInputStreamObservable.getIsOn()) {
+        if (!this.audioInputStreamService.getIsOn()) {
           reject(new Error('Audio input is not turned on!'));
           return;
         }
@@ -182,7 +181,7 @@ export class ChromiumMediaService extends BaseMediaService implements Closeable 
   };
 
   switchOnAudioInput = (): void => {
-    this.audioInputStreamObservable.switchOn();
+    this.audioInputStreamService.switchOn();
   };
 
   audioBlobToWavArrayBuffer = async (audioBlob: Blob): Promise<ArrayBuffer> => {
@@ -239,7 +238,7 @@ export class ChromiumMediaService extends BaseMediaService implements Closeable 
   };
 
   playAudioInput = async (): Promise<void> => {
-    this.audioInputStreamObservable.switchOn();
+    this.audioInputStreamService.switchOn();
     if (this.audioInputStream) {
       this.createNewAudioGraph();
       return this.playMediaStream(this.audioInputStream);
