@@ -5,7 +5,7 @@ import audioDeviceConfigObservable from '../../services/media/audio-device-confi
 import mediaDeviceInfoService, { NormalizedMediaDeviceInfo } from '../../services/media/media-device-info-service';
 import { Consumer } from '../../types';
 import { useUnsubscribeOnUnmount } from '../../utils';
-import { useInitializerRef } from '../../utils/useInitializerRef';
+import { useInitializerRef } from '../../utils/use-initializer-ref';
 
 import { DevicesInUse, KnownDevices } from './types';
 

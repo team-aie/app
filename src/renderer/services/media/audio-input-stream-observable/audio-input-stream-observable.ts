@@ -45,7 +45,7 @@ export class AudioInputStreamObservable implements Closeable, IObservable<MediaS
         this.cancelLastMicrophoneAccessAcquisition = undefined;
       }
     };
-    acquireAudioInputStream(audioInputDeviceId)
+    acquireAudioInputStream(audioInputDeviceId, 44100, 16)
       .then((stream) => {
         if (!isCancelled) {
           log.debug('Audio input stream created', audioInputDeviceId, audioDeviceConfig);

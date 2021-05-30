@@ -5,11 +5,16 @@ import { ACQUIRE_PERMISSION_RETRIES } from '../../common/env-and-consts';
 import { readFile } from './fs-utils';
 import { systemPreferences } from './isomorphic-electron';
 
-export const acquireAudioInputStream = async (deviceId: string): Promise<MediaStream> => {
+export const acquireAudioInputStream = async (
+  deviceId: string,
+  sampleRate: number,
+  sampleSize: number,
+): Promise<MediaStream> => {
   const constraint: MediaStreamConstraints = {
     audio: {
       deviceId,
-      sampleRate: 44100,
+      sampleRate,
+      sampleSize,
       channelCount: 1,
     },
   };
