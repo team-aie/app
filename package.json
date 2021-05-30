@@ -75,7 +75,7 @@
     "@types/audiobuffer-to-wav": "^1.0.0",
     "@types/dom-mediacapture-record": "^1.0.7",
     "@types/jest": "^26.0.22",
-    "@types/react": "17.0.6",
+    "@types/react": "17.0.8",
     "@types/react-dom": "^17.0.3",
     "@types/react-test-renderer": "^17.0.1",
     "@types/react-transition-group": "^4.4.1",
