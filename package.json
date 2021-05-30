@@ -76,6 +76,7 @@
     "@types/dom-mediacapture-record": "^1.0.7",
     "@types/jest": "^26.0.22",
     "@types/js-cookie": "^2.2.6",
+    "@types/react": "17.0.6",
     "@types/react-dom": "^17.0.3",
     "@types/react-test-renderer": "^17.0.1",
     "@types/react-transition-group": "^4.4.1",
@@ -124,7 +125,8 @@
   },
   "//": {
     "devDependencies": {
-      "@types/js-cookie": "Required because react-use@17.1.1 uses `js-cookie`, leading to TSC errors"
+      "@types/js-cookie": "Required because react-use@17.1.1 uses `js-cookie`, leading to TSC errors",
+      "@types/react": "Required until https://github.com/react-bootstrap/react-bootstrap/pull/5851 is released"
     }
   }
 }
