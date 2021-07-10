@@ -11,7 +11,7 @@ production of voice banks.
 ## Download
 
 The latest release page is located [here](https://github.com/team-aie/app/releases/latest). Look for the respective file
-name for your platform:
+name for your platform: 1
 
 - Windows: `aie-setup-x.y.z.exe`
 - macOS: `aie-x.y.z.dmg`
