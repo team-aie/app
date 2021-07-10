@@ -14,6 +14,9 @@ jest.mock('wavesurfer.js', () => ({
 jest.mock('wavesurfer.js/src/plugin/microphone', () => ({
   create: jest.fn(),
 }));
+jest.mock('wavesurfer.js/src/plugin/spectrogram', () => ({
+  create: jest.fn(),
+}));
 
 // Mock the remote module to prevent import failure.
 jest.mock('@electron/remote', () => ({ dialog: jest.fn() }));
