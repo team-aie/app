@@ -75,7 +75,6 @@
     "@types/audiobuffer-to-wav": "^1.0.0",
     "@types/dom-mediacapture-record": "^1.0.7",
     "@types/jest": "^26.0.22",
-    "@types/react": "17.0.11",
     "@types/react-dom": "^17.0.8",
     "@types/react-test-renderer": "^17.0.1",
     "@types/react-transition-group": "^4.4.1",
@@ -122,9 +121,5 @@
     "node": "v14.17.0",
     "npm": "7.15.0"
   },
-  "//": {
-    "devDependencies": {
-      "@types/react": "Required until https://github.com/react-bootstrap/react-bootstrap/pull/5851 is released"
-    }
-  }
+  "//": {}
 }
