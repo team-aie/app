@@ -1,6 +1,7 @@
 import log from 'electron-log';
 import React, { FC, useEffect, useRef } from 'react';
-import { Col, Row } from 'react-bootstrap';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 import useEffectOnce from 'react-use/lib/useEffectOnce';
 import WaveSurfer from 'wavesurfer.js';
 import MicrophonePlugin from 'wavesurfer.js/src/plugin/microphone';
