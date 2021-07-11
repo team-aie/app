@@ -6,8 +6,8 @@
 const path = require('path');
 
 module.exports = {
-  process: (src, filename, config) => {
-    const { cwd } = config;
+  process: (src, filename, context) => {
+    const { cwd } = context.config;
     const relativePath = path.relative(path.join(cwd, 'src'), filename);
     return `module.exports = ${JSON.stringify(relativePath)};`;
   },
