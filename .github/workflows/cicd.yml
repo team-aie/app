@@ -15,7 +15,7 @@ jobs:
           fetch-depth: 0
       - run: git tag -l
       - name: Use Node.js LTS version
-        uses: actions/setup-node@v2.2.0
+        uses: actions/setup-node@v2.3.0
         with:
           node-version: 14.17.0
       - name: Use Specific NPM Version
@@ -45,7 +45,7 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v2.3.4
       - name: Use Node.js LTS version
-        uses: actions/setup-node@v2.2.0
+        uses: actions/setup-node@v2.3.0
         with:
           node-version: 14.17.0
       - name: Use Specific NPM Version
@@ -99,7 +99,7 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v2.3.4
       - name: Use Node.js LTS version
-        uses: actions/setup-node@v2.2.0
+        uses: actions/setup-node@v2.3.0
         with:
           node-version: 14.17.0
       - name: Use Specific NPM Version
@@ -149,7 +149,7 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v2.3.4
       - name: Use Node.js LTS version
-        uses: actions/setup-node@v2.2.0
+        uses: actions/setup-node@v2.3.0
         with:
           node-version: 14.17.0
       - name: Use Specific NPM Version
