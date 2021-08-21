@@ -17,9 +17,9 @@ jobs:
       - name: Use Node.js LTS version
         uses: actions/setup-node@v2.3.0
         with:
-          node-version: 14.17.0
+          node-version: 16.7.0
       - name: Use Specific NPM Version
-        run: npm -v && npm i -g npm@7.15.0
+        run: npm -v && npm i -g npm@7.21.0
       - name: Detect New Version
         id: find-new-version
         run: |
@@ -47,9 +47,9 @@ jobs:
       - name: Use Node.js LTS version
         uses: actions/setup-node@v2.3.0
         with:
-          node-version: 14.17.0
+          node-version: 16.7.0
       - name: Use Specific NPM Version
-        run: npm -v && npm i -g npm@7.15.0
+        run: npm -v && npm i -g npm@7.21.0
       - name: Download All Artifacts
         uses: actions/download-artifact@v2.0.10
       - name: Find New Version
@@ -101,9 +101,9 @@ jobs:
       - name: Use Node.js LTS version
         uses: actions/setup-node@v2.3.0
         with:
-          node-version: 14.17.0
+          node-version: 16.7.0
       - name: Use Specific NPM Version
-        run: npm -v && npm i -g npm@7.15.0
+        run: npm -v && npm i -g npm@7.21.0
       - name: Download All Artifacts
         uses: actions/download-artifact@v2.0.10
       - name: Find New Version
@@ -151,9 +151,9 @@ jobs:
       - name: Use Node.js LTS version
         uses: actions/setup-node@v2.3.0
         with:
-          node-version: 14.17.0
+          node-version: 16.7.0
       - name: Use Specific NPM Version
-        run: npm -v && npm i -g npm@7.15.0
+        run: npm -v && npm i -g npm@7.21.0
       - name: Download All Artifacts
         uses: actions/download-artifact@v2.0.10
       - name: Find New Version
