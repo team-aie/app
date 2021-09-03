@@ -1,16 +1,18 @@
 import React, { FC } from 'react';
 import Form from 'react-bootstrap/Form';
+import { FormControlProps } from 'react-bootstrap/FormControl';
 
 interface StrictSelectProps {
   value: string | number;
-  onChange: React.ChangeEventHandler<HTMLSelectElement>;
   /**
    * Used to allow this element to be selected in react-testing-library testing
    */
   testId?: string;
 }
 
-type SelectProps = StrictSelectProps & Omit<React.ComponentProps<typeof Form>, 'onChange'>;
+type SelectProps = StrictSelectProps &
+  Omit<React.ComponentProps<typeof Form>, 'onChange'> &
+  Pick<FormControlProps, 'onChange'>;
 
 export const Select: FC<SelectProps> = ({ value, onChange, testId = '', children, ...outerProps }) => {
   return (
