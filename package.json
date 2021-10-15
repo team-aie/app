@@ -67,7 +67,7 @@
   },
   "devDependencies": {
     "@electron/remote": "^2.0.1",
-    "@semantic-release/git": "^9.0.1",
+    "@semantic-release/git": "^10.0.0",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.1.0",
     "@testing-library/react-hooks": "^7.0.2",
