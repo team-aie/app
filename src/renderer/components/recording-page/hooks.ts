@@ -8,7 +8,7 @@ import { Consumer, RecordingItem, ScaleKey, SupportedOctave, UnaryOperator } fro
 import { checkFileExistence, deleteFile, join, readWavAsBlob, writeArrayBufferToFile } from '../../utils';
 
 import NoteFrequencyMap from './note-to-frequency';
-import { RecordingFileState, State } from './types';
+import { RecordingFileState, RecordingPageState } from './types';
 
 export const useWatchingProjectFileState = (
   recordingItems: RecordingItem[],
@@ -62,8 +62,8 @@ export const useWatchingProjectFileState = (
 };
 
 export const useToggleRecording = (
-  state: State,
-  setState: Consumer<State>,
+  state: RecordingPageState,
+  setState: Consumer<RecordingPageState>,
   recordingItems: RecordingItem[],
   basePath: string,
   index: number,
@@ -110,8 +110,8 @@ export const useToggleRecording = (
 };
 
 export const useTogglePlaying = (
-  state: State,
-  setState: Consumer<State>,
+  state: RecordingPageState,
+  setState: Consumer<RecordingPageState>,
   recordingItems: RecordingItem[],
   basePath: string,
   index: number,
@@ -141,8 +141,8 @@ export const useTogglePlaying = (
 };
 
 export const useTogglePlayingScale = (
-  state: State,
-  setState: Consumer<State>,
+  state: RecordingPageState,
+  setState: Consumer<RecordingPageState>,
   scaleKey: ScaleKey,
   octave: SupportedOctave,
 ): [MutableRefObject<() => void>, () => void] => {
@@ -175,9 +175,9 @@ export const useTogglePlayingScale = (
 };
 
 export const useRecordingPageLifeCycle = (
-  prevState: State | undefined,
-  state: State,
-  setState: Consumer<State>,
+  prevState: RecordingPageState | undefined,
+  state: RecordingPageState,
+  setState: Consumer<RecordingPageState>,
   recordingItems: RecordingItem[],
   basePath: string,
   index: number,
@@ -245,7 +245,7 @@ export const useRecordingPageLifeCycle = (
   });
 };
 
-export const useHotKeyHandlers = (state: State, setState: Consumer<State>): void => {
+export const useHotKeyHandlers = (state: RecordingPageState, setState: Consumer<RecordingPageState>): void => {
   const [[recordKey, playKey, playScaleKey]] = useState(['R', ' ', 'S']);
 
   useEffect((): (() => void) => {

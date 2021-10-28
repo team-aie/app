@@ -9,15 +9,15 @@ import ImageButton from '../image-button';
 
 import downButton from './down-button.svg';
 import switchPageButton from './switch-preview.svg';
-import { RecordingPageState } from './types';
+import { ConfigureRecordingSetPageState } from './types';
 
 import './preview-page.scss';
 
 interface PreviewPageProps {
   /**
-   * Sets the local {@link RecordingPageState} (controls which subpage is displayed).
+   * Sets the local {@link ConfigureRecordingSetPageState} (controls which subpage is displayed).
    */
-  setRecordingSetState: Consumer<RecordingPageState>;
+  setRecordingSetState: Consumer<ConfigureRecordingSetPageState>;
   /**
    * Name to be displayed at the top of the page.
    */

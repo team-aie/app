@@ -13,17 +13,17 @@ import { FileMonitor } from '../../utils/file-monitor';
 import { useInitializerRef } from '../../utils/use-initializer-ref';
 import { useAudioInputOutputDevices } from '../settings-page/hooks';
 
-import { State } from './types';
+import { RecordingPageState } from './types';
 
 export interface RecordingVisualizationProps {
   /**
    * Last state the recording page was in {idle, recording}
    */
-  prevState?: State;
+  prevState?: RecordingPageState;
   /**
    * Current state the recording page was in {idle, recording}
    */
-  state: State;
+  state: RecordingPageState;
   /**
    * File path of the current recording item's .wav file
    */

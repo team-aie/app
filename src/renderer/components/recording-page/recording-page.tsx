@@ -16,7 +16,7 @@ import { useHotKeyHandlers, useRecordingPageLifeCycle, useWatchingProjectFileSta
 import { RecordingControls } from './recording-controls';
 import { RecordingItemIndicator } from './recording-item-indicator';
 import { RecordingVisualizationProps } from './recording-visualization';
-import { State } from './types';
+import { RecordingPageState } from './types';
 
 interface RecordingPageProps {
   onBack: MouseEventHandler<HTMLElement>;
@@ -35,7 +35,7 @@ export const RecordingPage: FC<RecordingPageProps> = ({
   octave,
   RecordingVisualization,
 }) => {
-  const [state, setState] = useState<State>('idle');
+  const [state, setState] = useState<RecordingPageState>('idle');
   const prevState = usePrevious(state);
   log.info(`prevState`, prevState, `state`, state);
   const [index = 0, setIndex] = useLocalStorage(getLSKey('RecordingPage', 'index'), 0);

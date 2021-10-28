@@ -32,7 +32,7 @@ import CreatedRecordingSetList from './created-recording-set-list';
 import { SetMetaConfiguration } from './set-meta-configuration';
 import SetRecordingListConfiguration from './set-recording-list-configuration';
 import showDetailsButton from './show-detail.svg';
-import { BuiltInRecordingList, RecordingPageState } from './types';
+import { BuiltInRecordingList, ConfigureRecordingSetPageState } from './types';
 
 import './configure-recording-set.scss';
 
@@ -59,9 +59,9 @@ interface ConfigureRecordingSetProps {
   onNext: MouseEventHandler<HTMLElement>;
   onBack: MouseEventHandler<HTMLElement>;
   onSetSelected: Consumer<RecordingSet>;
-  setRecordingSetState: Consumer<RecordingPageState>;
-  prevState: RecordingPageState;
-  currState: RecordingPageState;
+  setRecordingSetState: Consumer<ConfigureRecordingSetPageState>;
+  prevState: ConfigureRecordingSetPageState;
+  currState: ConfigureRecordingSetPageState;
   chosenBuiltInList: BuiltInRecordingList | '';
   rawSetChosenBuiltInList: Consumer<BuiltInRecordingList | ''>;
   chosenCustomListPath: string;

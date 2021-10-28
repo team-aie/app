@@ -12,7 +12,7 @@ import { getLSKey } from '../../utils';
 import { ConfigureRecordingSet } from './configure-recording-set';
 import { PreviewPage } from './preview-page';
 import { SetMetaClickProps } from './set-meta-configuration';
-import { BuiltInRecordingList, MetadataState, RecordingPageState } from './types';
+import { BuiltInRecordingList, ConfigureRecordingSetPageState, MetadataState } from './types';
 
 /**
  * Base page to handle configure-recording-set, dvcfg, oto.ini, and list-preview pages.
@@ -25,9 +25,9 @@ export const ConfigureRecordingSetPage: FC<SetMetaClickProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const [recordingSetState = 'external' as RecordingPageState, setRecordingSetState] = useLocalStorage(
+  const [recordingSetState = 'external' as ConfigureRecordingSetPageState, setRecordingSetState] = useLocalStorage(
     getLSKey('ConfigureRecordingSetPage', 'recordingSetStateForConfig'),
-    'external' as RecordingPageState,
+    'external' as ConfigureRecordingSetPageState,
   );
   const [metadataStateIndex = -1, setMetadataStateIndex] = useLocalStorage(
     getLSKey('ConfigureRecordingSetPage', 'metadataStateIndex'),
