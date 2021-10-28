@@ -1,7 +1,11 @@
 dist/
 coverage/
 src/renderer/licenses.ts.base
-*.snap
+*.md
+*.js
+*.ts
+*.tsx
 *.json
+*.snap
 *.svg
 *.txt
