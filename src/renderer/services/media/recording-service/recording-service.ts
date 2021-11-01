@@ -49,5 +49,6 @@ export class RecordingService implements Closeable {
   close = (): void => {
     this.stopRecording();
     this.closed$.next();
+    this.closed$.complete();
   };
 }
