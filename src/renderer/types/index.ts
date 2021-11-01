@@ -41,6 +41,7 @@ export interface RecordedVoiceItem extends RecordingItem {
 }
 
 export type Consumer<T> = (t: T) => void;
+export type Supplier<T> = () => T;
 export type Func<T, R> = (t: T) => R;
 export type UnaryOperator<T> = Func<T, T>;
 
