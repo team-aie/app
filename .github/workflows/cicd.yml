@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v2.3.5
+        uses: actions/checkout@v2.4.0
         with:
           fetch-depth: 0
       - run: git tag -l
@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v2.3.5
+        uses: actions/checkout@v2.4.0
       - name: Use Node.js LTS version
         uses: actions/setup-node@v2.4.1
         with:
@@ -99,7 +99,7 @@ jobs:
     runs-on: macos-11
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v2.3.5
+        uses: actions/checkout@v2.4.0
       - name: Use Node.js LTS version
         uses: actions/setup-node@v2.4.1
         with:
@@ -149,7 +149,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v2.3.5
+        uses: actions/checkout@v2.4.0
       - name: Use Node.js LTS version
         uses: actions/setup-node@v2.4.1
         with:
@@ -196,7 +196,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v2.3.5
+        uses: actions/checkout@v2.4.0
         with:
           # https://github.com/semantic-release/git/issues/196#issuecomment-601310576
           persist-credentials: false
