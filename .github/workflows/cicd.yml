@@ -66,7 +66,7 @@ jobs:
           sudo dpkg --add-architecture i386
           wget -qO - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add -
           sudo apt-add-repository "deb https://dl.winehq.org/wine-builds/ubuntu $(lsb_release -cs) main"
-          sudo apt install -y --install-recommends wine-stable winehq-stable
+          sudo apt install -y --install-recommends wine-stable-i386 wine-stable winehq-stable
       - run: npm ci
       - run: npm run lint
       - run: npm run compile
