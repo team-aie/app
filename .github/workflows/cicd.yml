@@ -62,7 +62,7 @@ jobs:
         run: npm version --allow-same-version --no-git-tag-version ${{ steps.find-new-version.outputs.new_release_version }}
       - name: Install Wine
         run: |
-          echo `Current OS codename: $(lsb_release -cs)`
+          echo "Current OS codename: $(lsb_release -cs)"
           sudo dpkg --add-architecture i386
           wget -qO - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add -
           sudo apt-add-repository "deb https://dl.winehq.org/wine-builds/ubuntu $(lsb_release -cs) main"
