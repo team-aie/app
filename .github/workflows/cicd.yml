@@ -66,7 +66,7 @@ jobs:
           sudo dpkg --add-architecture i386
           wget -qO - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add -
           sudo apt-add-repository "deb https://dl.winehq.org/wine-builds/ubuntu $(lsb_release -cs) main"
-          sudo apt install -y --install-recommends libpcre2-8-0:i386 libmount1:i386 libselinux1:i386 libfaudio0:i386 libglib2.0-0:i386 libgstreamer-plugins-base1.0-0:i386 libgstreamer1.0-0:i386 libodbc1:i386 wine-stable-i386 wine-stable winehq-stable
+          sudo apt install --install-recommends winehq-devel # Using dev version to temporarily make build pass
       - run: npm ci
       - run: npm run lint
       - run: npm run compile
