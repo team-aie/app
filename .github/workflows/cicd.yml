@@ -68,6 +68,7 @@ jobs:
           sudo apt-add-repository "deb https://dl.winehq.org/wine-builds/ubuntu $(lsb_release -cs) main"
           sudo apt-get install -y aptitude
           sudo aptitude install -y winehq-stable
+          wine --version
       - run: npm ci
       - run: npm run lint
       - run: npm run compile
