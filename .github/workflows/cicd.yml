@@ -69,7 +69,6 @@ jobs:
           sudo apt-get install -y aptitude
           man aptitude
           sudo aptitude why-not winehq-stable
-          sudo aptitude why winehq-stable
           sudo aptitude install winehq-stable
       - run: npm ci
       - run: npm run lint
