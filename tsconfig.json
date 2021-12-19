@@ -4,7 +4,11 @@
     "target": "ES2019",
     "jsx": "react",
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@electron/remote": ["./src/common/electron-remote.d.ts"]
+    }
   },
   "exclude": [
     "dist"
