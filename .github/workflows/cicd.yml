@@ -41,7 +41,7 @@ jobs:
     name: Build Windows App
     needs: find-release-version
     # TODO: Look for solutions to run this on ubuntu-20.04 or newer.
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v2.4.0
