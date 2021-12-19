@@ -40,7 +40,8 @@ jobs:
   build-win:
     name: Build Windows App
     needs: find-release-version
-    runs-on: ubuntu-20.04
+    # TODO: Look for solutions to run this on ubuntu-20.04 or newer.
+    runs-on: ubuntu-18.04
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v2.4.0
@@ -62,15 +63,10 @@ jobs:
         run: npm version --allow-same-version --no-git-tag-version ${{ steps.find-new-version.outputs.new_release_version }}
       - name: Install Wine
         run: |
-          echo "Current OS codename: $(lsb_release -cs) "
           sudo dpkg --add-architecture i386
           wget -qO - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add -
           sudo apt-add-repository "deb https://dl.winehq.org/wine-builds/ubuntu $(lsb_release -cs) main"
-          sudo apt-get install -y aptitude
-          sudo apt list --installed
-          sudo aptitude -y -o Aptitude::Delete-Unused=1 install
-          sudo aptitude install -y winehq-stable
-          wine --version
+          sudo apt install --install-recommends winehq-stable
       - run: npm ci
       - run: npm run lint
       - run: npm run compile
