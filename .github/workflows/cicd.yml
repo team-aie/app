@@ -40,7 +40,8 @@ jobs:
   build-win:
     name: Build Windows App
     needs: find-release-version
-    runs-on: ubuntu-20.04
+    # TODO: Look for solutions to run this on ubuntu-20.04 or newer.
+    runs-on: ubuntu-18.04
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v2.4.0
@@ -64,6 +65,7 @@ jobs:
         run: |
           sudo dpkg --add-architecture i386
           wget -qO - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add -
+          sudo add-apt-repository ppa:cybermax-dexter/sdl2-backport
           sudo apt-add-repository "deb https://dl.winehq.org/wine-builds/ubuntu $(lsb_release -cs) main"
           sudo apt install --install-recommends winehq-stable
       - run: npm ci
