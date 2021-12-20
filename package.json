@@ -119,8 +119,8 @@
     "webpack-license-plugin": "^4.2.1"
   },
   "engines": {
-    "node": "v16.7.0",
-    "npm": "7.21.0"
+    "node": "v16.13.1",
+    "npm": "8.1.2"
   },
   "//": {}
 }
