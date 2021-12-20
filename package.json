@@ -45,7 +45,7 @@
     "delta_eng_ver5": "file:external/delta_eng_ver5",
     "dexie": "^3.2.0",
     "dv_jpn_list_by_alex": "file:external/dv_jpn_list_by_alex",
-    "electron-log": "^4.4.1",
+    "electron-log": "^4.4.3",
     "electron-updater": "^4.6.1",
     "extended_cvvc_8lite": "file:external/extended_cvvc_8lite",
     "fs-extra": "^10.0.0",
