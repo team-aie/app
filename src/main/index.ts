@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { format as formatUrl } from 'url';
 
-import { initialize as electronRemoteInitialize } from '@electron/remote/dist/src/main';
+import { enable as enableRemote, initialize as initializeRemote } from '@electron/remote/dist/src/main';
 import { BrowserWindow, Menu, MenuItemConstructorOptions, app, shell } from 'electron';
 import log from 'electron-log';
 
@@ -99,14 +99,13 @@ if (!isFirstInstance) {
       webPreferences: {
         contextIsolation: false,
         defaultEncoding: 'UTF-8',
-        enableRemoteModule: true,
         nodeIntegration: true,
         nodeIntegrationInWorker: true,
-        worldSafeExecuteJavaScript: true,
       },
     });
 
     initializeOrHideMenuBar(newWindow, osPlatform);
+    enableRemote(newWindow.webContents);
 
     if (isDevelopment) {
       newWindow.webContents.openDevTools({
@@ -191,7 +190,7 @@ if (!isFirstInstance) {
     }
   });
 
-  electronRemoteInitialize();
+  initializeRemote();
   // For Windows notifications. See https://www.electronjs.org/docs/tutorial/notifications#windows.
   // But need to use appId here. See https://www.electron.build/configuration/nsis.html#guid-vs-application-name.
   // Requiring the builder config file ensures the `appId` stays in sync.
