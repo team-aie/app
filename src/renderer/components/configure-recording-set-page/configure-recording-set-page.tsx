@@ -1,7 +1,9 @@
 import log from 'electron-log';
 import React, { FC, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAsync, useLocalStorage, usePrevious } from 'react-use';
+import useAsync from 'react-use/lib/useAsync';
+import useLocalStorage from 'react-use/lib/useLocalStorage';
+import usePrevious from 'react-use/lib/usePrevious';
 
 import recordingListDataService from '../../services/recording-list-data-service';
 import { RecordingListData } from '../../services/recording-list-data-service/types';

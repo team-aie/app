@@ -1,6 +1,6 @@
 import log from 'electron-log';
 import { useTranslation } from 'react-i18next';
-import { useEffectOnce } from 'react-use';
+import useEffectOnce from 'react-use/lib/useEffectOnce';
 
 /**
  * {@link localStorage} keys that are needed to restore to a previous session.
