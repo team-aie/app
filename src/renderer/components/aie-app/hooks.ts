@@ -1,7 +1,7 @@
 import { nativeTheme } from '@electron/remote';
-import { useUpdateEffect } from 'react-use';
 import useEffectOnce from 'react-use/lib/useEffectOnce';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
+import useUpdateEffect from 'react-use/lib/useUpdateEffect';
 
 import { Consumer, SupportedTheme } from '../../types';
 import { getLSKey } from '../../utils';
