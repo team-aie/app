@@ -21,6 +21,10 @@ class FakeMediaDevices extends EventTarget implements MediaDevices {
   getUserMedia = (): Promise<MediaStream> => {
     throw new Error('Not implemented. Mock it using jest.spyOn()');
   };
+
+  getDisplayMedia(): Promise<MediaStream> {
+    throw new Error('Not implemented. Mock it using jest.spyOn()');
+  }
 }
 
 export const createMediaDevices = (): MediaDevices => new FakeMediaDevices();

@@ -7,7 +7,8 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@electron/remote": ["./src/common/electron-remote.d.ts"]
+      "@electron/remote": ["./src/common/electron-remote.d.ts"],
+      "react-i18next": ["./src/common/react-i18next.d.ts"]
     }
   },
   "exclude": [
