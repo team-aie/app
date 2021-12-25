@@ -1,14 +1,17 @@
 import log from 'electron-log';
 import { MutableRefObject, useEffect, useRef, useState } from 'react';
+import usePrevious from 'react-use/lib/usePrevious';
 import useUpdate from 'react-use/lib/useUpdate';
 
 import { noOp } from '../../../common/env-and-consts';
 import mediaService from '../../services/media';
 import { Consumer, RecordingItem, ScaleKey, SupportedOctave, UnaryOperator } from '../../types';
 import { checkFileExistence, deleteFile, join, readWavAsBlob, writeArrayBufferToFile } from '../../utils';
+import { useInitializerRef } from '../../utils/use-initializer-ref';
 
 import NoteFrequencyMap from './note-to-frequency';
-import { RecordingFileState, RecordingPageState } from './types';
+import { RecordingPageStateService } from './recording-page-state-service';
+import { RecordingFileState } from './types';
 
 export const useWatchingProjectFileState = (
   recordingItems: RecordingItem[],
@@ -62,8 +65,6 @@ export const useWatchingProjectFileState = (
 };
 
 export const useToggleRecording = (
-  state: RecordingPageState,
-  setState: Consumer<RecordingPageState>,
   recordingItems: RecordingItem[],
   basePath: string,
   index: number,
@@ -80,7 +81,6 @@ export const useToggleRecording = (
       cancelled = true;
       mediaService.stopRecording();
       stopRecordingRef.current = noOp();
-      setState('idle');
     };
 
     (async (): Promise<void> => {
@@ -110,8 +110,6 @@ export const useToggleRecording = (
 };
 
 export const useTogglePlaying = (
-  state: RecordingPageState,
-  setState: Consumer<RecordingPageState>,
   recordingItems: RecordingItem[],
   basePath: string,
   index: number,
@@ -125,7 +123,6 @@ export const useTogglePlaying = (
       cancelled = true;
       mediaService.stopPlaying().catch(log.error);
       stopPlayingRef.current = noOp();
-      setState('idle');
     };
     readWavAsBlob(join(basePath, `${recordingItems[index]?.fileSystemName}.wav`)).then((blob) => {
       if (!cancelled) {
@@ -141,8 +138,6 @@ export const useTogglePlaying = (
 };
 
 export const useTogglePlayingScale = (
-  state: RecordingPageState,
-  setState: Consumer<RecordingPageState>,
   scaleKey: ScaleKey,
   octave: SupportedOctave,
 ): [MutableRefObject<() => void>, () => void] => {
@@ -163,7 +158,6 @@ export const useTogglePlayingScale = (
       oscillator.stop();
       mediaService.stopPlaying().catch(log.error);
       stopPlayingScaleRef.current = noOp();
-      setState('idle');
     };
 
     mediaService.playAudioNode(oscillator).then(stopPlayingScaleRef.current).catch(log.error);
@@ -175,64 +169,43 @@ export const useTogglePlayingScale = (
 };
 
 export const useRecordingPageLifeCycle = (
-  prevState: RecordingPageState | undefined,
-  state: RecordingPageState,
-  setState: Consumer<RecordingPageState>,
   recordingItems: RecordingItem[],
   basePath: string,
   index: number,
+  rawSetIndex: Consumer<number>,
   recordingState: RecordingFileState,
   updateProjectFileStatus: Consumer<UnaryOperator<RecordingFileState>>,
   scaleKey: ScaleKey,
   octave: SupportedOctave,
-): void => {
+): [RecordingPageStateService, Consumer<number>] => {
+  const stateService = useInitializerRef(() => new RecordingPageStateService()).current;
+  const { state } = stateService;
+  const prevState = usePrevious(state);
+  log.info(`prevState`, prevState, `state`, state);
+
   const [stopRecordingRef, startRecording] = useToggleRecording(
-    state,
-    setState,
     recordingItems,
     basePath,
     index,
     recordingState,
     updateProjectFileStatus,
   );
-  const [stopPlayingRef, startPlaying] = useTogglePlaying(state, setState, recordingItems, basePath, index);
-  const [stopPlayingScaleRef, startPlayingScale] = useTogglePlayingScale(state, setState, scaleKey, octave);
+  const [stopPlayingRef, startPlaying] = useTogglePlaying(recordingItems, basePath, index);
+  const [stopPlayingScaleRef, startPlayingScale] = useTogglePlayingScale(scaleKey, octave);
+  useHotKeyHandlers(stateService);
 
-  useEffect(() => {
-    log.debug('State management callback', 'prevState', prevState, 'state', state);
-    if (prevState === 'idle' && state === 'recording') {
-      startRecording();
-    } else if (prevState === 'idle' && state === 'playing') {
-      startPlaying();
-    } else if (prevState === 'idle' && state === 'playing-scale') {
-      startPlayingScale();
-    } else if (prevState === 'recording' && state === 'idle') {
-      stopRecordingRef.current();
-    } else if (prevState === 'recording' && state === 'playing') {
-      stopRecordingRef.current();
-      setImmediate(startPlaying);
-    } else if (prevState === 'recording' && state === 'playing-scale') {
-      stopRecordingRef.current();
-      setImmediate(startPlayingScale);
-    } else if (prevState === 'playing' && state === 'idle') {
-      stopPlayingRef.current();
-    } else if (prevState === 'playing' && state === 'recording') {
-      stopPlayingRef.current();
-      setImmediate(startRecording);
-    } else if (prevState === 'playing' && state === 'playing-scale') {
-      stopPlayingRef.current();
-      setImmediate(startPlayingScale);
-    } else if (prevState === 'playing-scale' && state === 'idle') {
-      stopPlayingScaleRef.current();
-    } else if (prevState === 'playing-scale' && state === 'recording') {
-      stopPlayingScaleRef.current();
-      setImmediate(startRecording);
-    } else if (prevState === 'playing-scale' && state === 'playing') {
-      stopPlayingScaleRef.current();
-      setImmediate(startPlaying);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [prevState, state]);
+  const setIndex = (nextIndex: number) => {
+    stateService.dispatch('navigate', () => rawSetIndex(nextIndex));
+  };
+
+  stateService.with(
+    startRecording,
+    stopRecordingRef.current,
+    startPlaying,
+    stopPlayingRef.current,
+    startPlayingScale,
+    stopPlayingScaleRef.current,
+  );
 
   const onUnloadHandler = (): void => {
     stopRecordingRef.current();
@@ -243,9 +216,11 @@ export const useRecordingPageLifeCycle = (
     window.addEventListener('unload', onUnloadHandler);
     return (): void => window.removeEventListener('unload', onUnloadHandler);
   });
+
+  return [stateService, setIndex];
 };
 
-export const useHotKeyHandlers = (state: RecordingPageState, setState: Consumer<RecordingPageState>): void => {
+export const useHotKeyHandlers = (stateService: RecordingPageStateService): void => {
   const [[recordKey, playKey, playScaleKey]] = useState(['R', ' ', 'S']);
 
   useEffect((): (() => void) => {
@@ -260,57 +235,18 @@ export const useHotKeyHandlers = (state: RecordingPageState, setState: Consumer<
         const { key } = castedEvent;
         const keyUpperCase = key.toLocaleUpperCase();
         let processed = false;
-        switch (state) {
-          case 'playing':
-            if (!isDown) {
-              if (keyUpperCase === playKey) {
-                setState('idle');
-                processed = true;
-              }
-            } else if (keyUpperCase === playKey) {
-              processed = true;
-            }
+        switch (keyUpperCase) {
+          case playKey:
+            stateService.dispatch('toggle-playing');
+            processed = true;
             break;
-          case 'recording':
-            if (!isDown) {
-              if (keyUpperCase === recordKey) {
-                setState('idle');
-                processed = true;
-              }
-            } else if (keyUpperCase === recordKey) {
-              processed = true;
-            }
+          case recordKey:
+            stateService.dispatch('toggle-recording');
+            processed = true;
             break;
-          case 'playing-scale':
-            if (!isDown) {
-              if (keyUpperCase === playScaleKey) {
-                setState('idle');
-                processed = true;
-              }
-            } else if (keyUpperCase === playScaleKey) {
-              processed = true;
-            }
-            break;
-          case 'idle':
-          default:
-            if (isDown) {
-              if (keyUpperCase === playKey) {
-                if (!castedEvent.repeat) {
-                  setState('playing');
-                }
-                processed = true;
-              } else if (keyUpperCase === recordKey) {
-                if (!castedEvent.repeat) {
-                  setState('recording');
-                }
-                processed = true;
-              } else if (keyUpperCase === playScaleKey) {
-                if (!castedEvent.repeat) {
-                  setState('playing-scale');
-                }
-                processed = true;
-              }
-            }
+          case playScaleKey:
+            stateService.dispatch('toggle-playing-scale');
+            processed = true;
             break;
         }
 
@@ -329,5 +265,5 @@ export const useHotKeyHandlers = (state: RecordingPageState, setState: Consumer<
       window.removeEventListener('keydown', keyDownHandler);
       window.removeEventListener('keyup', keyUpHandler);
     };
-  }, [playKey, playScaleKey, recordKey, setState, state]);
+  }, [playKey, playScaleKey, recordKey, stateService]);
 };

@@ -1,10 +1,10 @@
 import log from 'electron-log';
-import React, { FC, Fragment, MouseEventHandler, useState } from 'react';
+import React, { FC, Fragment, MouseEventHandler } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
+import { useObservable } from 'react-use';
 import useEffectOnce from 'react-use/lib/useEffectOnce';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
-import usePrevious from 'react-use/lib/usePrevious';
 
 import { noOp } from '../../../common/env-and-consts';
 import mediaService from '../../services/media';
@@ -12,11 +12,10 @@ import { RecordingItem, ScaleKey, SupportedOctave } from '../../types';
 import { getLSKey, join } from '../../utils';
 import BackButton from '../back-button';
 
-import { useHotKeyHandlers, useRecordingPageLifeCycle, useWatchingProjectFileState } from './hooks';
+import { useRecordingPageLifeCycle, useWatchingProjectFileState } from './hooks';
 import { RecordingControls } from './recording-controls';
 import { RecordingItemIndicator } from './recording-item-indicator';
 import { RecordingVisualizationProps } from './recording-visualization';
-import { RecordingPageState } from './types';
 
 interface RecordingPageProps {
   onBack: MouseEventHandler<HTMLElement>;
@@ -35,10 +34,7 @@ export const RecordingPage: FC<RecordingPageProps> = ({
   octave,
   RecordingVisualization,
 }) => {
-  const [state, setState] = useState<RecordingPageState>('idle');
-  const prevState = usePrevious(state);
-  log.info(`prevState`, prevState, `state`, state);
-  const [index = 0, setIndex] = useLocalStorage(getLSKey('RecordingPage', 'index'), 0);
+  const [index = 0, rawSetIndex] = useLocalStorage(getLSKey('RecordingPage', 'index'), 0);
 
   useEffectOnce(() => {
     mediaService.switchOnAudioInput();
@@ -46,19 +42,17 @@ export const RecordingPage: FC<RecordingPageProps> = ({
 
   const { updateProjectFileStatus, recordingState } = useWatchingProjectFileState(recordingItems, basePath);
 
-  useRecordingPageLifeCycle(
-    prevState,
-    state,
-    setState,
+  const [stateService, setIndex] = useRecordingPageLifeCycle(
     recordingItems,
     basePath,
     index,
+    rawSetIndex,
     recordingState,
     updateProjectFileStatus,
     scaleKey,
     octave,
   );
-  useHotKeyHandlers(state, setState);
+  const state = useObservable(stateService.state$, 'idle');
 
   log.info(recordingState);
   return (
@@ -81,9 +75,9 @@ export const RecordingPage: FC<RecordingPageProps> = ({
           />
         </Row>
         <RecordingControls
-          toggleRecord={(): void => (state === 'recording' ? setState('idle') : setState('recording'))}
-          togglePlay={(): void => (state === 'playing' ? setState('idle') : setState('playing'))}
-          togglePlayScale={(): void => (state === 'playing-scale' ? setState('idle') : setState('playing-scale'))}
+          toggleRecord={(): void => stateService.dispatch('toggle-recording')}
+          togglePlay={(): void => stateService.dispatch('toggle-playing')}
+          togglePlayScale={(): void => stateService.dispatch('toggle-playing-scale')}
           goToPrevious={(): void => (index > 0 ? setIndex(index - 1) : noOp()())}
           goToNext={(): void => (index < recordingItems.length - 1 ? setIndex(index + 1) : noOp()())}
           scaleKey={scaleKey}
