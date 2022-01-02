@@ -58,7 +58,7 @@
     "react-i18next": "^11.15.1",
     "react-transition-group": "^4.4.1",
     "react-use": "^17.3.2",
-    "rxjs": "^7.4.0",
+    "rxjs": "^7.5.1",
     "sanitize-filename": "^1.6.3",
     "source-map-support": "^0.5.21",
     "wavesurfer.js": "^5.1.0",
