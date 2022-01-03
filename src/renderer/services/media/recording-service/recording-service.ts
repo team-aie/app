@@ -1,39 +1,33 @@
 import log from 'electron-log';
-import { Subject, concatMap, filter, takeUntil } from 'rxjs';
+import { Subject, exhaustMap, takeUntil, tap } from 'rxjs';
 
 import { Closeable, RecordingItem } from '../../../types';
-import { naiveSerialize } from '../../../utils';
 import { MediaService } from '../types';
 
-export interface RecordingJob {
-  recordingItem: RecordingItem;
-  recordedBlob?: Blob;
-}
+import { CompletedRecordingJob, PendingRecordingJob } from './types';
 
 export class RecordingService implements Closeable {
   private readonly closed$ = new Subject<void>();
-  private readonly recordingJob$ = new Subject<RecordingJob>();
-  readonly recordedJob$ = this.recordingJob$.pipe(
+  private readonly pendingJob$ = new Subject<PendingRecordingJob>();
+  readonly completedJob$ = this.pendingJob$.pipe(
     takeUntil(this.closed$),
-    concatMap(async (job) => {
-      try {
-        return await this.processRecordingJob(job);
-      } catch (e) {
-        log.error('Recording failed for:', naiveSerialize(job), 'error:', e);
-        return job;
-      }
+    tap((job) => log.info(`[RecordingService] Recording job received:`, job)),
+    // This will prevent recording jobs to queue up or be processed concurrently, while it is currently recording a job.
+    exhaustMap((job) => {
+      log.info(`[RecordingService] Currently recording and processing:`, job);
+      return this.processRecordingJob(job);
     }),
+    tap((job) => log.info(`[RecordingService] Recording job recorded and processed:`, job)),
     takeUntil(this.closed$),
-    filter((job) => !!job.recordedBlob),
   );
 
   constructor(private readonly mediaService: MediaService) {}
 
-  startRecording = async (recordingItem: RecordingItem): Promise<RecordingJob> => {
-    const job: RecordingJob = {
+  startRecording = async (recordingItem: RecordingItem): Promise<PendingRecordingJob> => {
+    const job: PendingRecordingJob = {
       recordingItem,
     };
-    this.recordingJob$.next(job);
+    this.pendingJob$.next(job);
     return job;
   };
 
@@ -41,9 +35,16 @@ export class RecordingService implements Closeable {
     this.mediaService.stopRecording();
   };
 
-  private processRecordingJob = async (recordingJob: RecordingJob): Promise<RecordingJob> => {
-    const recordedBlob = await this.mediaService.startRecording();
-    return { ...recordingJob, recordedBlob };
+  private processRecordingJob = async (recordingJob: PendingRecordingJob): Promise<CompletedRecordingJob> => {
+    try {
+      const recordedBlob = await this.mediaService.startRecording();
+      return { ...recordingJob, recordedBlob };
+    } catch (e) {
+      return {
+        ...recordingJob,
+        error: new Error(`[RecordingService] Failed to process recording job ${recordingJob}, error: ${e}`),
+      };
+    }
   };
 
   close = (): void => {
