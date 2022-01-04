@@ -2,9 +2,9 @@ import log from 'electron-log';
 import React, { FC, Fragment, MouseEventHandler } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import { useObservable } from 'react-use';
 import useEffectOnce from 'react-use/lib/useEffectOnce';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
+import useObservable from 'react-use/lib/useObservable';
 
 import { noOp } from '../../../common/env-and-consts';
 import mediaService from '../../services/media';

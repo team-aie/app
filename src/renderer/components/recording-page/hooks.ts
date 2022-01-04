@@ -1,15 +1,15 @@
 import log from 'electron-log';
 import { MutableRefObject, useEffect, useRef, useState } from 'react';
 import usePrevious from 'react-use/lib/usePrevious';
-import useUpdate from 'react-use/lib/useUpdate';
 
 import { noOp } from '../../../common/env-and-consts';
 import mediaService from '../../services/media';
 import { Consumer, RecordingItem, ScaleKey, SupportedOctave, UnaryOperator } from '../../types';
-import { checkFileExistence, deleteFile, join, readWavAsBlob, writeArrayBufferToFile } from '../../utils';
+import { deleteFile, join, naiveSerialize, readWavAsBlob, writeArrayBufferToFile } from '../../utils';
 import { useInitializerRef } from '../../utils/use-initializer-ref';
 
 import NoteFrequencyMap from './note-to-frequency';
+import { ProjectFileStateService } from './project-file-state-service';
 import { RecordingPageStateService } from './recording-page-state-service';
 import { RecordingFileState } from './types';
 
@@ -17,50 +17,61 @@ export const useWatchingProjectFileState = (
   recordingItems: RecordingItem[],
   basePath: string,
 ): {
+  // TODO: Deprecated. Remove later.
   updateProjectFileStatus: (updateFunc: UnaryOperator<RecordingFileState>) => void;
   recordingState: RecordingFileState;
 } => {
-  const recordingStateRef = useRef<RecordingFileState>({});
-  const rerender = useUpdate();
+  const [recordingState, setRecordingState] = useState<RecordingFileState>({});
+  const projectFileStateServiceRef = useRef<ProjectFileStateService>();
+  useEffect(() => {
+    log.info(
+      '[useWatchingProjectFileState] Creating new ProjectFileStateService because basePath has been updated to',
+      basePath,
+    );
 
-  const checkProjectFileStatus = (): Promise<void> => {
-    log.info('Update project file status');
-    const previousState = recordingStateRef.current;
-    const state: RecordingFileState = {};
-    let changed = false;
-    return Promise.all(
-      recordingItems.map(({ fileSystemName }) => {
-        state[fileSystemName] = previousState[fileSystemName];
-        const filePath = join(basePath, `${fileSystemName}.wav`);
-        return checkFileExistence(filePath)
-          .then((result) => {
-            state[fileSystemName] = result === 'file';
-            if (state[fileSystemName] !== previousState[fileSystemName]) {
-              changed = true;
-            }
-          })
-          .catch(log.error);
-      }),
-    ).then(() => {
-      if (changed) {
-        recordingStateRef.current = state;
-        rerender();
-      }
-    });
-  };
+    const serviceInstance = new ProjectFileStateService(basePath);
+    projectFileStateServiceRef.current = serviceInstance;
 
-  const updateProjectFileStatus = (updateFunc: UnaryOperator<RecordingFileState>) => {
-    recordingStateRef.current = updateFunc(recordingStateRef.current);
-    rerender();
-  };
+    const subscription = serviceInstance.recordingFileState$.subscribe((state) => setRecordingState(state));
+
+    return () => {
+      subscription.unsubscribe();
+      serviceInstance.close();
+    };
+  }, [basePath]);
 
   useEffect(() => {
-    checkProjectFileStatus().catch(log.error);
+    log.info(
+      '[useWatchingProjectFileState] Need to update recording items on ProjectFileStateService to',
+      recordingItems,
+    );
+    const projectFileStateService = projectFileStateServiceRef.current;
+    if (projectFileStateService) {
+      projectFileStateService.setRecordingItems(recordingItems);
+    } else {
+      log.info(
+        '[useWatchingProjectFileState] Not updating recording items on ProjectFileStateService because it is not initialized',
+      );
+    }
+    // Just checking recordingItems is not enough, because the comparison is by reference.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [naiveSerialize(recordingItems)]);
+
+  useEffect(() => {
+    log.info('[useWatchingProjectFileState] Need to check project file state');
+    const projectFileStateService = projectFileStateServiceRef.current;
+    if (projectFileStateService) {
+      projectFileStateService.checkProjectFileStatus();
+    } else {
+      log.info(
+        '[useWatchingProjectFileState] Not checking recording items on ProjectFileStateService because it is not initialized',
+      );
+    }
   });
 
   return {
-    updateProjectFileStatus,
-    recordingState: recordingStateRef.current || {},
+    updateProjectFileStatus: noOp(),
+    recordingState,
   };
 };
 
