@@ -41,7 +41,7 @@
     "audiobuffer-to-wav": "^1.0.0",
     "bootstrap": "^4.5.0",
     "chardet": "^1.4.0",
-    "chokidar": "^3.5.2",
+    "chokidar": "^3.5.3",
     "delta_eng_ver5": "file:external/delta_eng_ver5",
     "dexie": "^3.0.1",
     "dv_jpn_list_by_alex": "file:external/dv_jpn_list_by_alex",
