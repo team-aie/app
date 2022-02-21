@@ -124,21 +124,51 @@ jobs:
       - run: npm run test
       - name: Package Production App
         run: npm run dist:macos -- -p never
-      - name: Upload Packaged App
+      - name: Upload Packaged App (x64)
         uses: actions/upload-artifact@v2.3.1
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}.dmg.zip
           path: dist/aie-${{ steps.find-new-version.outputs.new_release_version }}.dmg
-      - name: Upload Packaged Zip
+      - name: Upload Packaged Zip (x64)
         uses: actions/upload-artifact@v2.3.1
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}-mac.zip.zip
           path: dist/aie-${{ steps.find-new-version.outputs.new_release_version }}-mac.zip
-      - name: Upload Blockmap
+      - name: Upload Blockmap (x64)
         uses: actions/upload-artifact@v2.3.1
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}.dmg.blockmap.zip
           path: dist/aie-${{ steps.find-new-version.outputs.new_release_version }}.dmg.blockmap
+      - name: Upload Packaged App (ARM64, untested)
+        uses: actions/upload-artifact@v2.3.1
+        with:
+          name: aie-${{ steps.find-new-version.outputs.new_release_version }}-arm64-untested.dmg.zip
+          path: dist/aie-${{ steps.find-new-version.outputs.new_release_version }}-arm64.dmg
+      - name: Upload Packaged Zip
+        uses: actions/upload-artifact@v2.3.1
+        with:
+          name: aie-${{ steps.find-new-version.outputs.new_release_version }}-arm64-untested-mac.zip.zip
+          path: dist/aie-${{ steps.find-new-version.outputs.new_release_version }}-arm64-mac.zip
+      - name: Upload Blockmap
+        uses: actions/upload-artifact@v2.3.1
+        with:
+          name: aie-${{ steps.find-new-version.outputs.new_release_version }}-arm64-untested.dmg.blockmap.zip
+          path: dist/aie-${{ steps.find-new-version.outputs.new_release_version }}-arm64.dmg.blockmap
+      - name: Upload Packaged App (Universal, untested)
+        uses: actions/upload-artifact@v2.3.1
+        with:
+          name: aie-${{ steps.find-new-version.outputs.new_release_version }}-universal-untested.dmg.zip
+          path: dist/aie-${{ steps.find-new-version.outputs.new_release_version }}-universal.dmg
+      - name: Upload Packaged Zip (Universal, untested)
+        uses: actions/upload-artifact@v2.3.1
+        with:
+          name: aie-${{ steps.find-new-version.outputs.new_release_version }}-universal-untested-mac.zip.zip
+          path: dist/aie-${{ steps.find-new-version.outputs.new_release_version }}-universal-mac.zip
+      - name: Upload Blockmap (Universal, untested)
+        uses: actions/upload-artifact@v2.3.1
+        with:
+          name: aie-${{ steps.find-new-version.outputs.new_release_version }}-universal-untested.dmg.blockmap.zip
+          path: dist/aie-${{ steps.find-new-version.outputs.new_release_version }}-universal.dmg.blockmap
       - name: Upload AutoUpdate Metadata
         uses: actions/upload-artifact@v2.3.1
         with:
