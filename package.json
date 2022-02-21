@@ -78,7 +78,7 @@
     "@types/react-dom": "^17.0.11",
     "@types/react-test-renderer": "^17.0.1",
     "@types/react-transition-group": "^4.4.4",
-    "@types/wavesurfer.js": "^5.2.2",
+    "@types/wavesurfer.js": "^6.0.0",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
     "conventional-changelog-angular": "^5.0.13",
