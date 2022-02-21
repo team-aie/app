@@ -11,7 +11,7 @@ console.info(`Compression level: ${compression}`);
 
 module.exports = {
   appId: 'com.team-aie.app',
-  copyright: 'Copyright © 2020 ${author}',
+  copyright: 'Copyright © 2022 ${author}',
   asar: true,
   compression,
   files: [
@@ -26,8 +26,24 @@ module.exports = {
         arch: 'x64',
       },
       {
+        target: 'dmg',
+        arch: 'arm64',
+      },
+      {
+        target: 'dmg',
+        arch: 'universal',
+      },
+      {
         target: 'zip',
         arch: 'x64',
+      },
+      {
+        target: 'zip',
+        arch: 'arm64',
+      },
+      {
+        target: 'zip',
+        arch: 'universal',
       },
     ],
   },
