@@ -95,8 +95,8 @@ jobs:
           name: latest.yml.zip
           path: dist/latest.yml
 
-  build-macos:
-    name: Build macOS App
+  build-macos-x64-arm64:
+    name: Build macOS App (x64, ARM64 untested)
     needs: find-release-version
     runs-on: macos-11
     steps:
@@ -122,8 +122,8 @@ jobs:
       - run: npm run lint
       - run: npm run compile
       - run: npm run test
-      - name: Package Production App
-        run: npm run dist:macos -- -p never
+      - name: Package Production App (x64, ARM64 untested)
+        run: npm run dist:macos -- --x64 --arm64 -p never
       - name: Upload Packaged App (x64)
         uses: actions/upload-artifact@v2.3.1
         with:
@@ -144,16 +144,51 @@ jobs:
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}-arm64-untested.dmg.zip
           path: dist/aie-${{ steps.find-new-version.outputs.new_release_version }}-arm64.dmg
-      - name: Upload Packaged Zip
+      - name: Upload Packaged Zip (ARM64, untested)
         uses: actions/upload-artifact@v2.3.1
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}-arm64-untested-mac.zip.zip
           path: dist/aie-${{ steps.find-new-version.outputs.new_release_version }}-arm64-mac.zip
-      - name: Upload Blockmap
+      - name: Upload Blockmap (ARM64, untested)
         uses: actions/upload-artifact@v2.3.1
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}-arm64-untested.dmg.blockmap.zip
           path: dist/aie-${{ steps.find-new-version.outputs.new_release_version }}-arm64.dmg.blockmap
+      - name: Upload AutoUpdate Metadata
+        uses: actions/upload-artifact@v2.3.1
+        with:
+          name: latest-mac.yml.zip
+          path: dist/latest-mac.yml
+
+  build-macos-universal:
+    name: Build macOS App (Universal, untested)
+    needs: find-release-version
+    runs-on: macos-11
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v2.4.0
+      - name: Use Node.js LTS version
+        uses: actions/setup-node@v2.5.1
+        with:
+          node-version: 16.13.1
+      - name: Use Specific NPM Version
+        run: npm -v && npm i -g npm@8.1.2
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v2.1.0
+      - name: Find New Version
+        id: find-new-version
+        run: |
+          NEW_RELEASE_VERSION=$(cat NEXT_VERSION.zip/NEXT_VERSION)
+          rm -r NEXT_VERSION.zip
+          echo "::set-output name=new_release_version::${NEW_RELEASE_VERSION}"
+      - name: Use New Version
+        run: npm version --allow-same-version --no-git-tag-version ${{ steps.find-new-version.outputs.new_release_version }}
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run compile
+      - run: npm run test
+      - name: Package Production App (Universal, untested)
+        run: npm run dist:macos -- --universal -p never
       - name: Upload Packaged App (Universal, untested)
         uses: actions/upload-artifact@v2.3.1
         with:
@@ -169,11 +204,6 @@ jobs:
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}-universal-untested.dmg.blockmap.zip
           path: dist/aie-${{ steps.find-new-version.outputs.new_release_version }}-universal.dmg.blockmap
-      - name: Upload AutoUpdate Metadata
-        uses: actions/upload-artifact@v2.3.1
-        with:
-          name: latest-mac.yml.zip
-          path: dist/latest-mac.yml
 
   build-linux:
     name: Build Linux App
@@ -224,7 +254,7 @@ jobs:
   create-release:
     name: Semantic Release
     if: github.ref == 'refs/heads/master'
-    needs: [build-win, build-macos, build-linux]
+    needs: [build-win, build-macos-x64-arm64, build-macos-universal, build-linux]
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout Source Code

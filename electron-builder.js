@@ -9,6 +9,55 @@ console.info('isLinuxOnlyBuild:', isLinuxOnlyBuild);
 const compression = isLinuxOnlyBuild || !isCi ? 'store' : 'maximum';
 console.info(`Compression level: ${compression}`);
 
+// We need this because with config file, electron-builder cannot specify arch from CLI.
+const includeX64 = process.argv.includes('--x64');
+const includeArm64 = process.argv.includes('--arm64');
+const includeUniversal = process.argv.includes('--universal');
+console.info('includeX64:', includeX64, 'includeArm64:', includeArm64, 'includeUniversal:', includeUniversal);
+
+const getMacOsTarget = () => {
+  const X64_FRAGMENT = [
+    {
+      target: 'dmg',
+      arch: 'x64',
+    },
+    {
+      target: 'zip',
+      arch: 'x64',
+    },
+  ];
+  const ARM64_FRAGMENT = [
+    {
+      target: 'dmg',
+      arch: 'arm64',
+    },
+    {
+      target: 'zip',
+      arch: 'arm64',
+    },
+  ];
+  const UNIVERSAL_FRAGMENT = [
+    {
+      target: 'dmg',
+      arch: 'universal',
+    },
+    {
+      target: 'zip',
+      arch: 'universal',
+    },
+  ];
+
+  if (!includeX64 && !includeArm64 && !includeUniversal) {
+    return [...X64_FRAGMENT, ...ARM64_FRAGMENT, ...UNIVERSAL_FRAGMENT];
+  }
+
+  return [
+    ...(includeX64 ? X64_FRAGMENT : []),
+    ...(includeArm64 ? ARM64_FRAGMENT : []),
+    ...(includeUniversal ? UNIVERSAL_FRAGMENT : []),
+  ];
+};
+
 module.exports = {
   appId: 'com.team-aie.app',
   copyright: 'Copyright © 2022 ${author}',
@@ -20,32 +69,7 @@ module.exports = {
   ],
   mac: {
     identity: null,
-    target: [
-      {
-        target: 'dmg',
-        arch: 'x64',
-      },
-      {
-        target: 'dmg',
-        arch: 'arm64',
-      },
-      {
-        target: 'dmg',
-        arch: 'universal',
-      },
-      {
-        target: 'zip',
-        arch: 'x64',
-      },
-      {
-        target: 'zip',
-        arch: 'arm64',
-      },
-      {
-        target: 'zip',
-        arch: 'universal',
-      },
-    ],
+    target: getMacOsTarget(),
   },
   dmg: {
     format: 'ULFO',
