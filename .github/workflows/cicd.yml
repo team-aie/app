@@ -122,7 +122,7 @@ jobs:
       - run: npm run lint
       - run: npm run compile
       - run: npm run test
-      - name: Package Production App
+      - name: Package Production App (x64, ARM64 untested)
         run: npm run dist:macos -- --x64 --arm64 -p never
       - name: Upload Packaged App (x64)
         uses: actions/upload-artifact@v2.3.1
@@ -187,7 +187,7 @@ jobs:
       - run: npm run lint
       - run: npm run compile
       - run: npm run test
-      - name: Package Production App
+      - name: Package Production App (Universal, untested)
         run: npm run dist:macos -- --universal -p never
       - name: Upload Packaged App (Universal, untested)
         uses: actions/upload-artifact@v2.3.1
