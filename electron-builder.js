@@ -46,7 +46,7 @@ const getMacOsTarget = () => {
       arch: 'universal',
     },
   ];
-  console.info('includeX64:', includeX64, 'includeArm64:', includeArm64, 'includeUniversal:', includeUniversal);
+
   if (!includeX64 && !includeArm64 && !includeUniversal) {
     return [...X64_FRAGMENT, ...ARM64_FRAGMENT, ...UNIVERSAL_FRAGMENT];
   }
