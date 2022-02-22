@@ -139,17 +139,17 @@ jobs:
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}.dmg.blockmap.zip
           path: dist/aie-${{ steps.find-new-version.outputs.new_release_version }}.dmg.blockmap
-      - name: Upload Packaged App (ARM64, untested)
+      - name: Upload Packaged App (ARM64 untested)
         uses: actions/upload-artifact@v2.3.1
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}-arm64-untested.dmg.zip
           path: dist/aie-${{ steps.find-new-version.outputs.new_release_version }}-arm64.dmg
-      - name: Upload Packaged Zip (ARM64, untested)
+      - name: Upload Packaged Zip (ARM64 untested)
         uses: actions/upload-artifact@v2.3.1
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}-arm64-untested-mac.zip.zip
           path: dist/aie-${{ steps.find-new-version.outputs.new_release_version }}-arm64-mac.zip
-      - name: Upload Blockmap (ARM64, untested)
+      - name: Upload Blockmap (ARM64 untested)
         uses: actions/upload-artifact@v2.3.1
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}-arm64-untested.dmg.blockmap.zip
@@ -161,7 +161,7 @@ jobs:
           path: dist/latest-mac.yml
 
   build-macos-universal:
-    name: Build macOS App (Universal, untested)
+    name: Build macOS App (Universal untested)
     needs: find-release-version
     runs-on: macos-11
     steps:
@@ -187,19 +187,19 @@ jobs:
       - run: npm run lint
       - run: npm run compile
       - run: npm run test
-      - name: Package Production App (Universal, untested)
+      - name: Package Production App (Universal untested)
         run: npm run dist:macos -- --universal -p never
-      - name: Upload Packaged App (Universal, untested)
+      - name: Upload Packaged App (Universal untested)
         uses: actions/upload-artifact@v2.3.1
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}-universal-untested.dmg.zip
           path: dist/aie-${{ steps.find-new-version.outputs.new_release_version }}-universal.dmg
-      - name: Upload Packaged Zip (Universal, untested)
+      - name: Upload Packaged Zip (Universal untested)
         uses: actions/upload-artifact@v2.3.1
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}-universal-untested-mac.zip.zip
           path: dist/aie-${{ steps.find-new-version.outputs.new_release_version }}-universal-mac.zip
-      - name: Upload Blockmap (Universal, untested)
+      - name: Upload Blockmap (Universal untested)
         uses: actions/upload-artifact@v2.3.1
         with:
           name: aie-${{ steps.find-new-version.outputs.new_release_version }}-universal-untested.dmg.blockmap.zip
