@@ -53,7 +53,7 @@
     "i18next-browser-languagedetector": "^6.1.4",
     "i18next-fs-backend": "^1.1.4",
     "react": "^17.0.2",
-    "react-bootstrap": "^1.6.4",
+    "react-bootstrap": "^2.3.0",
     "react-dom": "^17.0.2",
     "react-i18next": "^11.16.2",
     "react-transition-group": "^4.4.1",
