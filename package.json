@@ -43,7 +43,7 @@
     "chardet": "^1.4.0",
     "chokidar": "^3.5.3",
     "delta_eng_ver5": "file:external/delta_eng_ver5",
-    "dexie": "^3.2.1",
+    "dexie": "^3.2.2",
     "dv_jpn_list_by_alex": "file:external/dv_jpn_list_by_alex",
     "electron-log": "^4.4.6",
     "electron-updater": "^4.6.5",
