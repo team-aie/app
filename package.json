@@ -46,7 +46,7 @@
     "dexie": "^3.2.2",
     "dv_jpn_list_by_alex": "file:external/dv_jpn_list_by_alex",
     "electron-log": "^4.4.8",
-    "electron-updater": "^5.0.5",
+    "electron-updater": "^5.2.1",
     "extended_cvvc_8lite": "file:external/extended_cvvc_8lite",
     "fs-extra": "^10.1.0",
     "i18next": "^21.8.14",
