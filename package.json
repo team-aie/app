@@ -39,7 +39,7 @@
   "homepage": "https://github.com/team-aie/app#readme",
   "dependencies": {
     "audiobuffer-to-wav": "^1.0.0",
-    "bootstrap": "^4.5.0",
+    "bootstrap": "^5.2.2",
     "chardet": "^1.4.0",
     "chokidar": "^3.5.3",
     "delta_eng_ver5": "file:external/delta_eng_ver5",
