@@ -275,7 +275,7 @@ jobs:
       - name: Move Files to Dist Folder
         run: mv *.zip/* dist
       - name: Run Semantic Release
-        uses: cycjimmy/semantic-release-action@v2
+        uses: cycjimmy/semantic-release-action@v3
         with:
           extra_plugins: '@semantic-release/git'
         env:
