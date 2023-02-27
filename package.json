@@ -83,7 +83,7 @@
     "@typescript-eslint/parser": "^4.33.0",
     "conventional-changelog-angular": "^5.0.13",
     "conventional-recommended-bump": "^6.0.9",
-    "electron": "^21.2.0",
+    "electron": "^23.1.1",
     "electron-builder": "^23.3.3",
     "electron-webpack": "^2.8.2",
     "electron-webpack-eslint": "^6.0.0",
