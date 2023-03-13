@@ -49,7 +49,7 @@
     "electron-updater": "^5.2.1",
     "extended_cvvc_8lite": "file:external/extended_cvvc_8lite",
     "fs-extra": "^10.1.0",
-    "i18next": "^21.8.16",
+    "i18next": "^22.4.11",
     "i18next-browser-languagedetector": "^6.1.5",
     "i18next-fs-backend": "^1.1.5",
     "react": "^17.0.2",
