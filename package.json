@@ -79,7 +79,7 @@
     "@types/react-test-renderer": "^18.0.0",
     "@types/react-transition-group": "^4.4.5",
     "@types/wavesurfer.js": "^6.0.3",
-    "@typescript-eslint/eslint-plugin": "^4.33.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
     "@typescript-eslint/parser": "^4.33.0",
     "conventional-changelog-angular": "^5.0.13",
     "conventional-recommended-bump": "^6.0.9",
