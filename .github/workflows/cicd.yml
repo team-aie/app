@@ -52,7 +52,7 @@ jobs:
       - name: Use Specific NPM Version
         run: npm -v && npm i -g npm@8.1.2
       - name: Download All Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
       - name: Find New Version
         id: find-new-version
         run: |
@@ -109,7 +109,7 @@ jobs:
       - name: Use Specific NPM Version
         run: npm -v && npm i -g npm@8.1.2
       - name: Download All Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
       - name: Find New Version
         id: find-new-version
         run: |
@@ -174,7 +174,7 @@ jobs:
       - name: Use Specific NPM Version
         run: npm -v && npm i -g npm@8.1.2
       - name: Download All Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
       - name: Find New Version
         id: find-new-version
         run: |
@@ -219,7 +219,7 @@ jobs:
       - name: Use Specific NPM Version
         run: npm -v && npm i -g npm@8.1.2
       - name: Download All Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
       - name: Find New Version
         id: find-new-version
         run: |
@@ -263,7 +263,7 @@ jobs:
           # https://github.com/semantic-release/git/issues/196#issuecomment-601310576
           persist-credentials: false
       - name: Download All Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
       - name: Find New Version
         id: find-new-version
         run: |
