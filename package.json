@@ -116,7 +116,7 @@
     "ts-jest": "^27.1.4",
     "typescript": "^4.6.3",
     "webpack": "^4.44.2",
-    "webpack-license-plugin": "^4.2.2"
+    "webpack-license-plugin": "^4.4.2"
   },
   "engines": {
     "node": "v16.13.1",
