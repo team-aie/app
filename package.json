@@ -84,7 +84,7 @@
     "conventional-changelog-angular": "^5.0.13",
     "conventional-recommended-bump": "^6.0.9",
     "electron": "^19.0.4",
-    "electron-builder": "^23.0.3",
+    "electron-builder": "^24.13.3",
     "electron-webpack": "^2.8.2",
     "electron-webpack-eslint": "^6.0.0",
     "electron-webpack-ts": "^4.0.1",
