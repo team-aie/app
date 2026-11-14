@@ -11,7 +11,7 @@ import type {
   RecentProjectSummary,
   RecordingSetConfig
 } from '@shared/types';
-import { createFallbackBridge } from '@renderer/store/fallbackBridge';
+import { createFallbackBridge } from '@renderer/store/fallback-bridge';
 
 /** jsdom lacks ResizeObserver (used by Radix Switch/Checkbox). */
 export function installDomShims(): void {

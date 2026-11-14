@@ -1,7 +1,7 @@
 import { FolderOpen, Loader2 } from 'lucide-react';
 import { useEffect, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAppStore } from '@renderer/store/useAppStore';
+import { useAppStore } from '@renderer/store/use-app-store';
 import { Button, Field, ModalShell, TextInput } from '../shell/ui';
 
 export function CreateProjectDialog({

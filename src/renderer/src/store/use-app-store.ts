@@ -15,7 +15,7 @@ import type {
   UpdateStatusInfo
 } from '@shared/types';
 import { resolveLocale } from '@shared/i18n';
-import { DEFAULT_APP_SETTINGS, resolveBridge } from './fallbackBridge';
+import { DEFAULT_APP_SETTINGS, resolveBridge } from './fallback-bridge';
 
 export type AppScreen = 'hub' | 'project' | 'studio';
 export type ModalId = 'audioSettings' | 'about';

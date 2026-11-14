@@ -1,5 +1,10 @@
 import type { WavFormatConfig } from '@shared/types';
-import { WaveFile } from 'wavefile';
+import * as wavefileNs from 'wavefile';
+
+const cjsDefault = (wavefileNs as Record<string, unknown>)['default'] as
+  | { WaveFile: typeof wavefileNs.WaveFile }
+  | undefined;
+const WaveFile: typeof wavefileNs.WaveFile = wavefileNs.WaveFile ?? cjsDefault!.WaveFile;
 
 export const MIN_DBFS = -100;
 export const CLIPPING_THRESHOLD_DBFS = -0.1;

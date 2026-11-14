@@ -6,7 +6,7 @@ import i18next from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import { afterEach, describe, expect, it } from 'vitest';
 import { PromptStage } from '@renderer/components/studio';
-import { LiveVisualFeed } from '@renderer/components/studio/liveVisualFeed';
+import { LiveVisualFeed } from '@renderer/components/studio/live-visual-feed';
 import {
   type StudioDrawContext,
   type StudioFrameInput,
@@ -16,8 +16,8 @@ import {
   drawStudioFrame,
   formatPitchReadout,
   heatColor
-} from '@renderer/components/studio/studioCanvasDraw';
-import { computeReviewVisual } from '@renderer/components/studio/StudioCanvas';
+} from '@renderer/components/studio/studio-canvas-draw';
+import { computeReviewVisual } from '@renderer/components/studio/studio-canvas';
 import {
   analyzeTake,
   buildOtoMarkers,
@@ -31,7 +31,7 @@ import {
   formatCents,
   joinPath,
   otoEntriesForFile
-} from '@renderer/components/studio/studioMath';
+} from '@renderer/components/studio/studio-math';
 import { makeCleanTake, makeClippedTake, makeCutoffTake, makeEntries } from './fixtures';
 
 afterEach(() => cleanup());

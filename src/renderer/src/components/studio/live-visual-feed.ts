@@ -1,5 +1,5 @@
 import type { LiveAudioTelemetry } from '@shared/types';
-import { SPECTRUM_BAND_COUNT } from './studioMath';
+import { SPECTRUM_BAND_COUNT } from './studio-math';
 
 /**
  * Ring-buffered history of live telemetry frames, read by the 60 fps canvas

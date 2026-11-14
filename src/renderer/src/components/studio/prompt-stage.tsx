@@ -1,5 +1,5 @@
 import type { ReclistEntry } from '@shared/types';
-import { useStudioT } from './studioStrings';
+import { useStudioT } from './studio-strings';
 
 export interface PromptStageProps {
   previous: ReclistEntry | null;

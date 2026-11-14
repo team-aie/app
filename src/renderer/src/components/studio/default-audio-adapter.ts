@@ -1,7 +1,7 @@
 import { frequencyHzToPitchDelta, scaleNoteToFrequencyHz } from '@shared/music/chromatic';
 import type { GuideAudioMode, LiveAudioTelemetry, ReferenceToneRequest, ScaleNote } from '@shared/types';
 import { PitchDetector } from 'pitchy';
-import { CLIP_THRESHOLD, amplitudeToDb, computePeak, computeRms, foldSpectrumToBands } from './studioMath';
+import { CLIP_THRESHOLD, amplitudeToDb, computePeak, computeRms, foldSpectrumToBands } from './studio-math';
 import type {
   StudioAudioAdapter,
   StudioPlaybackOptions,

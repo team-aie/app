@@ -8,12 +8,12 @@ import type {
   RecordingSetConfig,
   StudioWorkflowPrefs
 } from '@shared/types';
+import type { StudioAudioAdapter } from '@renderer/components/studio';
 import { Badge, Button, Card, ProgressBar, cx } from './ui';
 
 /**
  * Props contract for Screen 3. Mirrors `RecordingStudioProps` exported by
- * `@renderer/components/studio` (minus the optional `audioAdapter`), so the
- * real `RecordingStudioScreen` is assignable to `StudioScreenComponent`.
+ * `@renderer/components/studio`, including the optional `audioAdapter`.
  */
 export interface StudioScreenProps {
   manifest: AieProjectManifest;
@@ -25,6 +25,7 @@ export interface StudioScreenProps {
   onCursorChange?: (index: number) => void;
   onBackToProject: () => void;
   onOpenAudioSettings: () => void;
+  audioAdapter?: StudioAudioAdapter;
 }
 
 export type StudioScreenComponent = ComponentType<StudioScreenProps>;

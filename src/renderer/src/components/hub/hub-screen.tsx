@@ -2,10 +2,10 @@ import { FolderInput, FolderPlus, Mic2 } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { RecentProjectSummary } from '@shared/types';
-import { useAppStore } from '@renderer/store/useAppStore';
-import { ContinueSessionCard } from './ContinueSessionCard';
-import { CreateProjectDialog } from './CreateProjectDialog';
-import { RecentProjectsList } from './RecentProjectsList';
+import { useAppStore } from '@renderer/store/use-app-store';
+import { ContinueSessionCard } from './continue-session-card';
+import { CreateProjectDialog } from './create-project-dialog';
+import { RecentProjectsList } from './recent-projects-list';
 
 function ActionTile({
   icon,

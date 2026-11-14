@@ -7,10 +7,10 @@ import type {
   StudioWorkflowPrefs
 } from '@shared/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { createDefaultStudioAudioAdapter } from './defaultAudioAdapter';
-import { LiveVisualFeed } from './liveVisualFeed';
-import { analyzeTake, clampIndex, findNextUnrecordedIndex, joinPath, otoEntriesForFile } from './studioMath';
-import type { StudioTranslate } from './studioStrings';
+import { createDefaultStudioAudioAdapter } from './default-audio-adapter';
+import { LiveVisualFeed } from './live-visual-feed';
+import { analyzeTake, clampIndex, findNextUnrecordedIndex, joinPath, otoEntriesForFile } from './studio-math';
+import type { StudioTranslate } from './studio-strings';
 import type {
   PlaybackClock,
   StudioAudioAdapter,

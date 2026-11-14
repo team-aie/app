@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { LocaleCode, ThemeMode } from '@shared/types';
-import { useAppStore } from '@renderer/store/useAppStore';
+import { useAppStore } from '@renderer/store/use-app-store';
 
 export type ResolvedTheme = 'light' | 'dark';
 

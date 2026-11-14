@@ -2,7 +2,7 @@ import { ArrowUpCircle, ChevronRight, Info, Monitor, Moon, SlidersHorizontal, Su
 import { useTranslation } from 'react-i18next';
 import type { LocaleCode, ThemeMode } from '@shared/types';
 import { SUPPORTED_LOCALES } from '@shared/i18n';
-import { selectActiveSet, useAppStore } from '@renderer/store/useAppStore';
+import { selectActiveSet, useAppStore } from '@renderer/store/use-app-store';
 import { Badge, IconButton, Segmented, cx } from './ui';
 
 function Wordmark() {

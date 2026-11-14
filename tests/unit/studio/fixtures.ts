@@ -9,7 +9,7 @@ import type {
   SavedTakeSummary
 } from '@shared/types';
 import { vi } from 'vitest';
-import { analyzeTake } from '@renderer/components/studio/studioMath';
+import { analyzeTake } from '@renderer/components/studio/studio-math';
 import type {
   RecordingStudioProps,
   StudioAudioAdapter,

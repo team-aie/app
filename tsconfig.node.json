@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "composite": true,
+    "noEmit": true,
     "target": "ES2023",
     "module": "ESNext",
     "moduleResolution": "bundler",
@@ -21,6 +21,10 @@
     "playwright.config.ts",
     "src/main/**/*",
     "src/preload/**/*",
-    "src/shared/**/*"
+    "src/shared/**/*",
+    "tests/unit/filename-conventions.test.ts",
+    "tests/unit/domain/**/*",
+    "tests/unit/main/**/*",
+    "tests/e2e/**/*"
   ]
 }

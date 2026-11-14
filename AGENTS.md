@@ -40,6 +40,7 @@ Non-interactive shells in macOS sandboxes do **not** source `~/.zshrc`. Always i
    - **Diagnostics**: **100% offline / zero external cloud accounts** (`electron-log` v5 rotated logs + 1-click *Export Diagnostic Zip* via `fflate` + 5-click version badge DevTools unlock). Do **not** add `@sentry/electron`.
    - **macOS Target**: **Apple Silicon (`arm64`) only** (plus Windows `x64` NSIS and Linux `x64` AppImage/deb).
    - **i18n**: Static bundled `i18next` JSON namespaces across `en-US`, `zh-CN`, and `ja-JP` (**all 3 locales must have 100% complete translations**—never leave English placeholders in `ja-JP` or `zh-CN`).
+   - **Strict `kebab-case` Filenames**: Every file across `src/**`, `tests/**`, and `scripts/**` MUST use strict lowercase `kebab-case` (`^[a-z0-9]+(-[a-z0-9]+)*(\.[a-z0-9]+)+$`, e.g., `app.tsx`, `studio-canvas.tsx`, `use-studio-hotkeys.ts`), and every directory segment must be `kebab-case` (`^[a-z0-9]+(-[a-z0-9]+)*$`) except BCP-47 locale directories (`en-US`, `zh-CN`, `ja-JP`) under `src/shared/i18n/locales/`. Enforced by `tests/unit/filename-conventions.test.ts`.
 
 ## 3. Parallel Swarm Ownership Boundaries (Zero File Collisions)
 
@@ -50,6 +51,6 @@ Shared contracts live in `src/shared/types/*` and `src/shared/music/chromatic.ts
 | **`domain-core`** | `src/shared/parsers/**`, `src/main/services/voicebank/**`, `src/main/services/project/**`, `resources/reclists/**`, `tests/unit/domain/**` | `src/renderer/**`, `electron.vite.config.ts` |
 | **`audio-dsp`** | `src/renderer/src/audio/**`, `tests/unit/audio/**` | `src/main/**`, `src/renderer/src/components/**` |
 | **`main-devops`** | `src/main/**` *(except `services/{voicebank,project}`)*, `src/preload/**`, `.github/workflows/**`, `electron-builder.yml`, `tests/unit/main/**` | `src/renderer/**`, `src/shared/parsers/**` |
-| **`i18n-hub-project`** | `src/shared/i18n/**`, `src/renderer/src/store/**`, `src/renderer/src/components/{shell,hub,project,modals}/**`, `src/renderer/src/App.tsx`, `tests/unit/ui-hub/**` | `src/renderer/src/components/studio/**`, `src/main/**` |
+| **`i18n-hub-project`** | `src/shared/i18n/**`, `src/renderer/src/store/**`, `src/renderer/src/components/{shell,hub,project,modals}/**`, `src/renderer/src/app.tsx`, `tests/unit/ui-hub/**` | `src/renderer/src/components/studio/**`, `src/main/**` |
 | **`studio-ui`** | `src/renderer/src/components/studio/**`, `tests/unit/studio/**` | `src/renderer/src/components/{hub,project}/**`, `src/main/**` |
 | **`verifier`** | `tests/e2e/**` *(plus read-only inspection & running `tsc`, `vitest`, `electron-vite build`, `playwright` across merged work)* | Production source files (report bugs to the owning author!) |

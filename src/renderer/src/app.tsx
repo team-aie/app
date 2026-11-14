@@ -1,15 +1,13 @@
 import { useEffect } from 'react';
-import { AppHeader } from '@renderer/components/shell/AppHeader';
-import { StudioHost } from '@renderer/components/shell/StudioHost';
-import { Toaster } from '@renderer/components/shell/Toaster';
-import { useDocumentSync } from '@renderer/components/shell/useDocumentSync';
+import { AppHeader } from '@renderer/components/shell/app-header';
+import { StudioHost } from '@renderer/components/shell/studio-host';
+import { Toaster } from '@renderer/components/shell/toaster';
+import { useDocumentSync } from '@renderer/components/shell/use-document-sync';
 import { HubScreen } from '@renderer/components/hub';
 import { ProjectScreen } from '@renderer/components/project';
 import { AboutModal, AudioSettingsModal } from '@renderer/components/modals';
-import { useAppStore } from '@renderer/store/useAppStore';
-// Stage 3 merge: replace this single line with
-// `import { RecordingStudioScreen as StudioScreen } from '@renderer/components/studio';`
-import { StudioScreenSlot as StudioScreen } from '@renderer/components/shell/StudioScreenSlot';
+import { useAppStore } from '@renderer/store/use-app-store';
+import { RecordingStudioScreen as StudioScreen } from '@renderer/components/studio';
 
 export function App() {
   const screen = useAppStore((state) => state.screen);

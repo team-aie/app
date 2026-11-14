@@ -1,0 +1,3 @@
+# Preserve exact byte sequences on character-encoding & audio test fixtures
+tests/fixtures/encodings/*.txt -text
+*.wav binary

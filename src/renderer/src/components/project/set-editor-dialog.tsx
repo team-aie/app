@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } 
 import { useTranslation } from 'react-i18next';
 import type { RecordingSetConfig, ReclistManifest, ScaleNote, SupportedEncoding } from '@shared/types';
 import { ALL_SCALE_NOTES, OCTAVES } from '@shared/music/chromatic';
-import { useAppStore } from '@renderer/store/useAppStore';
+import { useAppStore } from '@renderer/store/use-app-store';
 import {
   Badge,
   Button,
@@ -15,7 +15,7 @@ import {
   TextInput,
   cx
 } from '../shell/ui';
-import { playAuditionTone, type AuditionHandle } from './auditionPitch';
+import { playAuditionTone, type AuditionHandle } from './audition-pitch';
 import {
   basename,
   configFromDraft,
@@ -28,7 +28,7 @@ import {
   validateDraft,
   type GuideKind,
   type SetDraft
-} from './setForm';
+} from './set-form';
 
 export type PlayTone = (note: ScaleNote) => AuditionHandle | null;
 

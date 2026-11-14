@@ -1,11 +1,11 @@
-export { RecordingStudioScreen } from './RecordingStudioScreen';
-export { StudioCanvas } from './StudioCanvas';
-export { PromptStage } from './PromptStage';
-export { StudioSidebar } from './StudioSidebar';
-export { StudioWorkflowBar, TakeHygieneBadges, TrashTakeDialog } from './StudioWorkflowBar';
-export { createDefaultStudioAudioAdapter } from './defaultAudioAdapter';
-export { useStudioHotkeys } from './useStudioHotkeys';
-export { STUDIO_STRINGS_EN } from './studioStrings';
+export { RecordingStudioScreen } from './recording-studio-screen';
+export { StudioCanvas } from './studio-canvas';
+export { PromptStage } from './prompt-stage';
+export { StudioSidebar } from './studio-sidebar';
+export { StudioWorkflowBar, TakeHygieneBadges, TrashTakeDialog } from './studio-workflow-bar';
+export { createDefaultStudioAudioAdapter } from './default-audio-adapter';
+export { useStudioHotkeys } from './use-studio-hotkeys';
+export { STUDIO_STRINGS_EN } from './studio-strings';
 export type {
   RecordingStudioProps,
   StudioAudioAdapter,

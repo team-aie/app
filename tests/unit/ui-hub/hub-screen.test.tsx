@@ -2,8 +2,8 @@ import '@testing-library/jest-dom/vitest';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import { App } from '@renderer/App';
-import { resetAppStore, useAppStore } from '@renderer/store/useAppStore';
+import { App } from '@renderer/app';
+import { resetAppStore, useAppStore } from '@renderer/store/use-app-store';
 import {
   installDomShims,
   makeBridge,
@@ -11,7 +11,7 @@ import {
   makeRecent,
   makeSet,
   renderWithI18n
-} from './testUtils';
+} from './test-utils';
 
 installDomShims();
 
@@ -46,9 +46,9 @@ describe('Screen 1 — Welcome & Project Hub + Top Shell Header', () => {
 
     await user.click(screen.getByTestId('hub-continue-btn'));
 
-    expect(await screen.findByTestId('studio-slot')).toBeInTheDocument();
+    expect(await screen.findByTestId('studio-screen')).toBeInTheDocument();
     expect(useAppStore.getState().screen).toBe('studio');
-    expect(screen.getByTestId('studio-slot-current')).toHaveTextContent('_ka_ki_ku_3');
+    expect(screen.getByTestId('studio-prompt-current')).toHaveTextContent('_ka_ki_ku_3');
 
     // Breadcrumb supports navigating Studio -> Project -> Hub
     await user.click(screen.getByTestId('breadcrumb-project'));

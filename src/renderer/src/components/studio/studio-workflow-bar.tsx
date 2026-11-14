@@ -1,6 +1,6 @@
 import type { StudioWorkflowPrefs } from '@shared/types';
 import { AlertDialog } from 'radix-ui';
-import { useStudioT } from './studioStrings';
+import { useStudioT } from './studio-strings';
 import type { TakeHygiene } from './types';
 
 interface ToggleProps {

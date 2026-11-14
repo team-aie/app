@@ -3,10 +3,10 @@ import { ExternalLink, Loader2, Search, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { AieProjectManifest, ParsedRecordingListBundle, RecordingSetConfig } from '@shared/types';
-import { useAppStore } from '@renderer/store/useAppStore';
+import { useAppStore } from '@renderer/store/use-app-store';
 import { Button, IconButton, Segmented, TextInput, cx } from '../shell/ui';
-import { buildCharacterYamlPreview } from './characterYaml';
-import { MarkdownView } from './MarkdownView';
+import { buildCharacterYamlPreview } from './character-yaml';
+import { MarkdownView } from './markdown-view';
 
 type DrawerTab = 'reclist' | 'oto' | 'character' | 'readme';
 

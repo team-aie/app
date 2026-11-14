@@ -81,6 +81,15 @@ export function registerIpc(deps: IpcDependencies): () => void {
     return manifest;
   };
 
+  const refreshProjectProgress = async (projectRootPath: string): Promise<void> => {
+    try {
+      const manifest = await domain.project.openProject(projectRootPath);
+      await rememberProject(manifest);
+    } catch {
+      // Ignore missing manifests when audioStorage is exercised outside a full project directory.
+    }
+  };
+
   // ---- app ----
   handle(IPC.app.getVersion, () => app.getVersion());
   handle(IPC.app.getSettings, () => appState.getSettings());
@@ -165,10 +174,24 @@ export function registerIpc(deps: IpcDependencies): () => void {
   );
 
   // ---- audio files ----
-  handle(IPC.audioFile.saveTake, (_e, payload) => audioStorage.saveTake(payload as RecordedTakePayload));
+  handle(IPC.audioFile.saveTake, async (_e, rawPayload) => {
+    const payload = rawPayload as RecordedTakePayload;
+    const result = await audioStorage.saveTake(payload);
+    await refreshProjectProgress(payload.projectRootPath);
+    return result;
+  });
   handle(IPC.audioFile.readTakeSamples, (_e, params) => audioStorage.readTakeSamples(takeLocation(params)));
-  handle(IPC.audioFile.undoLastRetake, (_e, params) => audioStorage.undoLastRetake(takeLocation(params)));
-  handle(IPC.audioFile.trashTake, (_e, params) => audioStorage.trashTake(takeLocation(params)));
+  handle(IPC.audioFile.undoLastRetake, async (_e, params) => {
+    const loc = takeLocation(params);
+    const restored = await audioStorage.undoLastRetake(loc);
+    await refreshProjectProgress(loc.projectRootPath);
+    return restored;
+  });
+  handle(IPC.audioFile.trashTake, async (_e, params) => {
+    const loc = takeLocation(params);
+    await audioStorage.trashTake(loc);
+    await refreshProjectProgress(loc.projectRootPath);
+  });
   handle(IPC.audioFile.readAudioFileBytes, async (_e, filePath) => {
     const target = path.resolve(str(filePath, 'filePath'));
     if (!AUDIO_EXTENSIONS.has(path.extname(target).toLowerCase())) {

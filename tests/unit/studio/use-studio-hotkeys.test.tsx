@@ -6,7 +6,7 @@ import {
   isTypingTarget,
   resolveHotkeyAction,
   useStudioHotkeys
-} from '@renderer/components/studio/useStudioHotkeys';
+} from '@renderer/components/studio/use-studio-hotkeys';
 
 function makeOptions(overrides: Partial<UseStudioHotkeysOptions> = {}): UseStudioHotkeysOptions {
   return {

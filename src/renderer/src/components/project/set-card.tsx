@@ -2,7 +2,7 @@ import { CheckCircle2, FileSearch, Folder, ListMusic, Pencil, Play, Trash2 } fro
 import { useTranslation } from 'react-i18next';
 import type { RecordingSetConfig, ReclistManifest, SetProgressSummary } from '@shared/types';
 import { Badge, Button, IconButton, ProgressBar, cx } from '../shell/ui';
-import { basename } from './setForm';
+import { basename } from './set-form';
 
 export function SetCard({
   setConfig,

@@ -2,7 +2,7 @@ import { Mic, RefreshCw, Square } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { SampleRateHz, WavBitDepth } from '@shared/types';
-import { useAppStore } from '@renderer/store/useAppStore';
+import { useAppStore } from '@renderer/store/use-app-store';
 import { Button, Field, ModalShell, NativeSelect, Segmented, Switch, TextInput, cx } from '../shell/ui';
 
 interface DeviceOption {

@@ -1,12 +1,12 @@
 import type { OtoEntry, ScaleNote } from '@shared/types';
 import { useEffect, useMemo, useRef } from 'react';
-import type { LiveVisualFeed } from './liveVisualFeed';
+import type { LiveVisualFeed } from './live-visual-feed';
 import {
   type ReviewVisual,
   type StudioCanvasLabels,
   drawStudioFrame,
   formatPitchReadout
-} from './studioCanvasDraw';
+} from './studio-canvas-draw';
 import {
   amplitudeToDb,
   buildOtoMarkers,
@@ -15,8 +15,8 @@ import {
   computePeak,
   computePitchTrack,
   computeSpectrogramColumns
-} from './studioMath';
-import { useStudioT } from './studioStrings';
+} from './studio-math';
+import { useStudioT } from './studio-strings';
 import type { PlaybackClock, StudioTakeBuffer } from './types';
 
 export interface StudioCanvasProps {

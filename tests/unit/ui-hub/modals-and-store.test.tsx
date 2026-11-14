@@ -10,14 +10,14 @@ import {
   DEVTOOLS_CLICK_WINDOW_MS,
   peakToDb
 } from '@renderer/components/modals';
-import { Toaster } from '@renderer/components/shell/Toaster';
+import { Toaster } from '@renderer/components/shell/toaster';
 import {
   createAppStore,
   CURSOR_SAVE_DEBOUNCE_MS,
   resetAppStore,
   useAppStore
-} from '@renderer/store/useAppStore';
-import { installDomShims, makeBridge, makeManifest, renderWithI18n } from './testUtils';
+} from '@renderer/store/use-app-store';
+import { installDomShims, makeBridge, makeManifest, renderWithI18n } from './test-utils';
 
 installDomShims();
 

@@ -2,12 +2,12 @@ import { AudioWaveform, FolderOpen, Piano, Plus, Settings2, TriangleAlert, X } f
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { RecordingSetConfig } from '@shared/types';
-import { useAppStore } from '@renderer/store/useAppStore';
+import { useAppStore } from '@renderer/store/use-app-store';
 import { Button, IconButton } from '../shell/ui';
-import { MetadataDrawer } from './MetadataDrawer';
-import { RemoveSetDialog } from './RemoveSetDialog';
-import { SetCard } from './SetCard';
-import { SetEditorDialog, type PlayTone } from './SetEditorDialog';
+import { MetadataDrawer } from './metadata-drawer';
+import { RemoveSetDialog } from './remove-set-dialog';
+import { SetCard } from './set-card';
+import { SetEditorDialog, type PlayTone } from './set-editor-dialog';
 
 type ExternalTool = 'vlabeler' | 'openutau';
 const TOOL_NAMES: Record<ExternalTool, string> = { vlabeler: 'vLabeler', openutau: 'OpenUtau' };

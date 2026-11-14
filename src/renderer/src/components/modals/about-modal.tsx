@@ -3,7 +3,7 @@ import { ChevronDown, ExternalLink, FileArchive, Loader2, Search } from 'lucide-
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { OssLicenseEntry } from '@shared/types';
-import { useAppStore } from '@renderer/store/useAppStore';
+import { useAppStore } from '@renderer/store/use-app-store';
 import { Badge, Button, ModalShell, TextInput, cx } from '../shell/ui';
 
 export const DEVTOOLS_UNLOCK_CLICKS = 5;

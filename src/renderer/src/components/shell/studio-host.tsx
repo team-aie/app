@@ -1,14 +1,16 @@
 import { ArrowLeft, Loader2, TriangleAlert } from 'lucide-react';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { StudioWorkflowPrefs } from '@shared/types';
-import { selectActiveSet, useAppStore } from '@renderer/store/useAppStore';
-import type { StudioScreenComponent } from './StudioScreenSlot';
+import { createStudioEngineAdapter } from '@renderer/audio';
+import { selectActiveSet, useAppStore } from '@renderer/store/use-app-store';
+import type { StudioScreenComponent } from './studio-screen-slot';
 import { Button, Card } from './ui';
 
 /**
  * Screen 3 host: loads the recording list for the active set from the store
- * and renders whichever studio component is plugged in.
+ * and renders whichever studio component is plugged in, wired to the real
+ * `StudioAudioEngine` (`AudioWorklet` + `pitchy` f0 + 64-band FFT + sample-clock guide synth).
  */
 export function StudioHost({ Screen }: { Screen: StudioScreenComponent }) {
   const { t } = useTranslation('studio');
@@ -22,6 +24,9 @@ export function StudioHost({ Screen }: { Screen: StudioScreenComponent }) {
   const goToProject = useAppStore((state) => state.goToProject);
   const openModal = useAppStore((state) => state.openModal);
   const enterStudio = useAppStore((state) => state.enterStudio);
+
+  const audioAdapter = useMemo(() => createStudioEngineAdapter(), []);
+  useEffect(() => () => audioAdapter.dispose(), [audioAdapter]);
 
   const onUpdateWorkflow = useCallback(
     (patch: Partial<StudioWorkflowPrefs>) => void updateWorkflow(patch),
@@ -73,6 +78,7 @@ export function StudioHost({ Screen }: { Screen: StudioScreenComponent }) {
       onCursorChange={updateCursor}
       onBackToProject={goToProject}
       onOpenAudioSettings={onOpenAudioSettings}
+      audioAdapter={audioAdapter}
     />
   );
 }

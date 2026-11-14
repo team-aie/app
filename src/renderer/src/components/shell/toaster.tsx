@@ -2,7 +2,7 @@ import { CheckCircle2, Info, TriangleAlert, X, XCircle } from 'lucide-react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NAMESPACES } from '@shared/i18n';
-import { useAppStore, type ToastItem } from '@renderer/store/useAppStore';
+import { useAppStore, type ToastItem } from '@renderer/store/use-app-store';
 import { cx } from './ui';
 
 const TOAST_TIMEOUT_MS = 4500;

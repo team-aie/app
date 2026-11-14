@@ -12,15 +12,15 @@ import {
   validateDraft
 } from '@renderer/components/project';
 import { AudioSettingsModal } from '@renderer/components/modals';
-import { PREVIEW_BUILTIN_RECLISTS } from '@renderer/store/fallbackBridge';
-import { resetAppStore, useAppStore } from '@renderer/store/useAppStore';
+import { PREVIEW_BUILTIN_RECLISTS } from '@renderer/store/fallback-bridge';
+import { resetAppStore, useAppStore } from '@renderer/store/use-app-store';
 import {
   installDomShims,
   makeBridge,
   makeManifest,
   makeSet,
   renderWithI18n
-} from './testUtils';
+} from './test-utils';
 
 installDomShims();
 

@@ -52,6 +52,11 @@ function createMainWindow(openDevTools: boolean): BrowserWindow {
   return win;
 }
 
+const customUserDataDir = process.env['AIE_USER_DATA_DIR'];
+if (customUserDataDir) {
+  app.setPath('userData', path.resolve(customUserDataDir));
+}
+
 if (!app.requestSingleInstanceLock()) {
   app.quit();
 } else {

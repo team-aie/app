@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "composite": true,
+    "noEmit": true,
     "target": "ES2023",
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "module": "ESNext",
@@ -20,6 +20,9 @@
   "include": [
     "src/renderer/src/**/*",
     "src/shared/**/*",
-    "tests/**/*"
+    "tests/unit/foundation.test.ts",
+    "tests/unit/audio/**/*",
+    "tests/unit/studio/**/*",
+    "tests/unit/ui-hub/**/*"
   ]
 }

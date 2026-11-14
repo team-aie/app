@@ -50,11 +50,11 @@ jobs:
 
       - name: Playwright _electron E2E (Linux, virtual display)
         if: runner.os == 'Linux'
-        run: xvfb-run -a npm run test:e2e -- --pass-with-no-tests
+        run: xvfb-run -a npm run test:e2e
 
       - name: Playwright _electron E2E
         if: runner.os != 'Linux'
-        run: npm run test:e2e -- --pass-with-no-tests
+        run: npm run test:e2e
 
       - name: Upload E2E artifacts on failure
         if: failure()

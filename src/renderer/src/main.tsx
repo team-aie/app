@@ -2,7 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import { createI18n, resolveLocale } from '@shared/i18n';
-import { App } from './App';
+import { App } from './app';
 import './styles/globals.css';
 
 const rootEl = document.getElementById('root');

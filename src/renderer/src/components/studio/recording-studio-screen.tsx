@@ -1,13 +1,13 @@
 import type { StudioWorkflowPrefs } from '@shared/types';
 import { useCallback, useEffect, useState } from 'react';
-import { PromptStage } from './PromptStage';
-import { StudioCanvas } from './StudioCanvas';
-import { StudioSidebar } from './StudioSidebar';
-import { StudioWorkflowBar, TakeHygieneBadges, TrashTakeDialog } from './StudioWorkflowBar';
-import { useStudioT } from './studioStrings';
+import { PromptStage } from './prompt-stage';
+import { StudioCanvas } from './studio-canvas';
+import { StudioSidebar } from './studio-sidebar';
+import { StudioWorkflowBar, TakeHygieneBadges, TrashTakeDialog } from './studio-workflow-bar';
+import { useStudioT } from './studio-strings';
 import type { RecordingStudioProps } from './types';
-import { useStudioHotkeys } from './useStudioHotkeys';
-import { useStudioSession } from './useStudioSession';
+import { useStudioHotkeys } from './use-studio-hotkeys';
+import { useStudioSession } from './use-studio-session';
 
 /** Screen 3: The Recording Studio. */
 export function RecordingStudioScreen(props: RecordingStudioProps) {
@@ -59,7 +59,7 @@ export function RecordingStudioScreen(props: RecordingStudioProps) {
     'rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40';
 
   return (
-    <div data-testid="studio-screen" data-phase={phase} className="flex h-screen min-h-0 bg-zinc-950 text-zinc-100">
+    <div data-testid="studio-screen" data-phase={phase} className="flex min-h-0 flex-1 bg-zinc-950 text-zinc-100">
       <StudioSidebar
         entries={entries}
         cursor={cursor}

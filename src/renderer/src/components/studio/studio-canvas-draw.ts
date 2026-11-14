@@ -1,5 +1,5 @@
-import type { LiveVisualFeed } from './liveVisualFeed';
-import { type OtoMarker, type OtoMarkerKind, formatCents } from './studioMath';
+import type { LiveVisualFeed } from './live-visual-feed';
+import { type OtoMarker, type OtoMarkerKind, formatCents } from './studio-math';
 
 /** Minimal 2D context surface used by the renderer (lets tests pass a recording mock). */
 export type StudioDrawContext = Pick<

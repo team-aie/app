@@ -1,12 +1,13 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import type { AieBridgeApi } from '@shared/types';
 import { isInside } from '../services/audio-storage/safe-path';
+import * as defaultProjectModule from '../services/project';
+import * as defaultVoicebankModule from '../services/voicebank';
 
 /**
- * Seam with `domain-core`: binds `src/main/services/{voicebank,project}/index.ts`
- * when they exist (resolved at build time by `import.meta.glob`, so a missing
- * module never breaks `tsc`/`electron-vite build`) and falls back to stubs that
- * reject with a clear error until that workstream is merged.
+ * Seam with `domain-core`: statically binds `src/main/services/{voicebank,project}/index.ts`
+ * in production while retaining injectable `options.modules` overrides for isolated unit tests.
  */
 export type VoicebankService = AieBridgeApi['voicebank'];
 export type ProjectService = Pick<
@@ -21,9 +22,6 @@ export type ProjectService = Pick<
 
 type Loose = Record<string, unknown>;
 
-const voicebankGlob = import.meta.glob<Loose>('../services/voicebank/index.ts', { eager: true });
-const projectGlob = import.meta.glob<Loose>('../services/project/index.ts', { eager: true });
-
 export interface DomainServices {
   voicebank: VoicebankService;
   project: ProjectService;
@@ -33,7 +31,7 @@ export interface DomainServices {
 export interface DomainServicesOptions {
   /** Electron `shell.trashItem`: used so deleting a set never permanently unlinks `.wav` files. */
   trashItem: (targetPath: string) => Promise<void>;
-  /** Test seam: replaces the build-time discovered modules. */
+  /** Test seam: replaces the statically bound domain modules. */
   modules?: { voicebank?: Loose; project?: Loose };
 }
 
@@ -45,8 +43,8 @@ function bind<T extends (...args: never[]) => unknown>(mod: Loose | undefined, n
 }
 
 export function createDomainServices(options: DomainServicesOptions): DomainServices {
-  const vbMod = options.modules?.voicebank ?? Object.values(voicebankGlob)[0];
-  const prMod = options.modules?.project ?? Object.values(projectGlob)[0];
+  const vbMod = options.modules?.voicebank ?? (defaultVoicebankModule as Loose);
+  const prMod = options.modules?.project ?? (defaultProjectModule as Loose);
 
   const voicebank: VoicebankService = {
     listBuiltinReclists:
@@ -69,15 +67,24 @@ export function createDomainServices(options: DomainServicesOptions): DomainServ
     getSetProgress,
     async deleteRecordingSet(params) {
       if (params.trashWavFiles) {
-        // Trash through the OS here so the behaviour never depends on how the domain layer deletes.
+        // Trash through OS Trash once here, then invoke domain delete with trashWavFiles: false.
         const manifest = await openProject(params.rootPath);
         const set = manifest.sets.find((s) => s.id === params.setId);
         if (set) {
-          const progress = await getSetProgress(params.rootPath, set);
           const root = path.resolve(params.rootPath);
           const dir = set.targetLocation === 'root' ? root : path.resolve(root, set.subfolderName);
           if (isInside(root, dir)) {
-            for (const fileName of progress.recordedFileNames) {
+            let fileNamesToTrash: string[];
+            try {
+              const progress = await getSetProgress(params.rootPath, set);
+              fileNamesToTrash = progress.recordedFileNames;
+            } catch {
+              const dirents = await fs.promises.readdir(dir, { withFileTypes: true }).catch(() => []);
+              fileNamesToTrash = dirents
+                .filter((d) => d.isFile() && d.name.toLowerCase().endsWith('.wav'))
+                .map((d) => d.name);
+            }
+            for (const fileName of fileNamesToTrash) {
               if (fileName.includes('/') || fileName.includes('\\')) continue;
               await options.trashItem(path.join(dir, fileName));
             }

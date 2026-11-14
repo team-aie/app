@@ -1,7 +1,7 @@
 import type { ReclistEntry } from '@shared/types';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { filterEntries, formatSeconds } from './studioMath';
-import { useStudioT } from './studioStrings';
+import { filterEntries, formatSeconds } from './studio-math';
+import { useStudioT } from './studio-strings';
 import type { SidebarFilter } from './types';
 
 export interface StudioSidebarProps {
