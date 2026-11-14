@@ -22,6 +22,7 @@ async function launchAieApp(userDataDir: string): Promise<{
       `--use-file-for-fake-audio-capture=${FAKE_MIC_WAV}`,
       '--autoplay-policy=no-user-gesture-required',
       '--mute-audio',
+      '--disable-audio-output',
       '--no-sandbox',
       MAIN_ENTRY
     ],
@@ -83,7 +84,8 @@ test.describe('aie v1 Full-Stack Electron Fake-Mic E2E', () => {
       await expect(page.getByTestId('hub-screen')).toBeVisible();
       await page.getByTestId('header-lang-en-US').click();
       await expect(page.locator('html')).toHaveAttribute('lang', 'en-US');
-      await expect(page.getByText('Link Start')).toBeVisible();
+      await expect(page.getByText('Vocal Booth')).toBeVisible();
+      await expect(page.getByText('Link Start')).toHaveCount(0);
 
       // Stub Electron's native OS folder picker so clicking "Choose Folder" selects `singerRootDir`.
       await firstLaunch.app.evaluate(({ dialog }, targetDir) => {
@@ -93,10 +95,22 @@ test.describe('aie v1 Full-Stack Electron Fake-Mic E2E', () => {
         })) as typeof dialog.showOpenDialog;
       }, singerRootDir);
 
-      // ---- 1. Screen 1 Hub: Create New Singer Project ----
+      // ---- 1. Screen 1 Hub: Create New Singer Project with Selective Singer Files ----
       await page.getByTestId('hub-create-btn').click();
       const createDialog = page.getByTestId('create-project-dialog');
       await expect(createDialog).toBeVisible();
+      await expect(createDialog.getByTestId('create-singer-files')).toBeVisible();
+
+      const createCharTxt = createDialog.getByTestId('create-singer-file-character-txt');
+      const createCharYaml = createDialog.getByTestId('create-singer-file-character-yaml');
+      const createPrefixMap = createDialog.getByTestId('create-singer-file-prefix-map');
+      await expect(createCharTxt).toHaveAttribute('aria-checked', 'true');
+      await expect(createCharYaml).toHaveAttribute('aria-checked', 'true');
+      await expect(createPrefixMap).toHaveAttribute('aria-checked', 'true');
+
+      // Uncheck `prefix.map` during project creation while keeping `character.txt` & `character.yaml` enabled.
+      await createPrefixMap.click();
+      await expect(createPrefixMap).toHaveAttribute('aria-checked', 'false');
 
       await createDialog.getByTestId('create-project-name').fill('Astra');
       await createDialog.getByTestId('create-project-author').fill('Team aie');
@@ -104,45 +118,90 @@ test.describe('aie v1 Full-Stack Electron Fake-Mic E2E', () => {
       await expect(createDialog.getByTestId('create-project-folder')).toHaveValue(singerRootDir);
       await createDialog.getByTestId('create-project-submit').click();
 
-      // Verify transition to Screen 2 and turnkey singer files on disk.
+      // Verify transition to Screen 2 and selective singer files on disk (`prefix.map` omitted).
       await expect(page.getByTestId('project-screen')).toBeVisible();
       await expect(page.getByTestId('project-name')).toHaveText('Astra');
 
       const manifestPath = path.join(singerRootDir, 'aie.project.json');
       const characterTxtPath = path.join(singerRootDir, 'character.txt');
       const characterYamlPath = path.join(singerRootDir, 'character.yaml');
+      const prefixMapPath = path.join(singerRootDir, 'prefix.map');
 
       expect(fs.existsSync(manifestPath)).toBe(true);
       expect(fs.existsSync(characterTxtPath)).toBe(true);
       expect(fs.existsSync(characterYamlPath)).toBe(true);
+      expect(fs.existsSync(prefixMapPath)).toBe(false);
 
       const initialManifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8')) as {
         schemaVersion: number;
         name: string;
         author?: string;
+        singerFiles?: { characterTxt: boolean; characterYaml: boolean; prefixMap: boolean };
       };
       expect(initialManifest.schemaVersion).toBe(1);
       expect(initialManifest.name).toBe('Astra');
       expect(initialManifest.author).toBe('Team aie');
+      expect(initialManifest.singerFiles).toEqual({
+        characterTxt: true,
+        characterYaml: true,
+        prefixMap: false
+      });
       expect(fs.readFileSync(characterTxtPath, 'utf8')).toContain('name=Astra');
 
-      // ---- 2. Screen 2 Project Sets: Create A4 Subbank with Built-in Reclist ----
+      // Verify Project header `Open In ▾` menu and re-enable `prefix.map` via `project-singer-files-btn`.
+      await page.getByTestId('project-open-in-btn').click();
+      const projectOpenInMenu = page.getByTestId('project-open-in-menu');
+      await expect(projectOpenInMenu).toBeVisible();
+      await expect(projectOpenInMenu.getByTestId('handoff-reveal')).toBeVisible();
+      await expect(projectOpenInMenu.getByTestId('handoff-vlabeler')).toBeVisible();
+      await expect(projectOpenInMenu.getByTestId('handoff-openutau')).toBeVisible();
+      await page.keyboard.press('Escape');
+      await expect(projectOpenInMenu).toBeHidden();
+
+      await expect(page.getByTestId('project-singer-files-btn')).toContainText('2/3');
+      await page.getByTestId('project-singer-files-btn').click();
+      const projectSingerFiles = page.getByTestId('project-singer-files');
+      await expect(projectSingerFiles).toBeVisible();
+      const projectPrefixMap = projectSingerFiles.getByTestId('project-singer-file-prefix-map');
+      await expect(projectPrefixMap).toHaveAttribute('aria-checked', 'false');
+      await projectPrefixMap.click();
+      await expect(projectPrefixMap).toHaveAttribute('aria-checked', 'true');
+      await expect(page.getByTestId('project-singer-files-btn')).toContainText('3/3');
+      await page.keyboard.press('Escape');
+      await expect(projectSingerFiles).toBeHidden();
+
+      // ---- 2. Screen 2 Project Sets: Verify Section #1 Reclist & Create A4 Subbank ----
       await page.getByTestId('set-add-btn').click();
       const setEditor = page.getByTestId('set-editor');
       await expect(setEditor).toBeVisible();
 
+      const reclistBuiltinBtn = setEditor.getByTestId('set-reclist-mode-builtin');
+      const reclistCustomBtn = setEditor.getByTestId('set-reclist-mode-custom');
+      await expect(reclistBuiltinBtn).toBeVisible();
+      await expect(reclistCustomBtn).toBeVisible();
+
+      const reclistBox = await reclistBuiltinBtn.boundingBox();
+      const setNameBox = await setEditor.getByTestId('set-name-input').boundingBox();
+      const setScaleBox = await setEditor.getByTestId('set-scale-select').boundingBox();
+      expect(reclistBox).not.toBeNull();
+      expect(setNameBox).not.toBeNull();
+      expect(setScaleBox).not.toBeNull();
+      expect(reclistBox!.y).toBeLessThan(setNameBox!.y);
+      expect(reclistBox!.y).toBeLessThan(setScaleBox!.y);
+
+      await setEditor.getByTestId('set-reclist-builtin-z_cvvc_normal').click();
       await setEditor.getByTestId('set-scale-select').selectOption('A4');
       await expect(setEditor.getByTestId('set-alias-input')).toHaveValue('_A4');
       await expect(setEditor.getByTestId('set-subfolder-input')).toHaveValue('A4');
-
-      await setEditor.getByTestId('set-reclist-builtin-z_cvvc_normal').click();
       await setEditor.getByTestId('set-name-input').fill('Normal A4');
       await setEditor.getByTestId('set-save-btn').click();
 
       await expect(page.getByTestId('set-card')).toBeVisible();
       await expect(page.getByTestId('set-card-scale')).toHaveText('A4');
+      await expect(page.getByTestId('set-card-hz')).toHaveText('440 Hz');
+      await expect(page.getByTestId('set-card-reclist-btn')).toBeVisible();
 
-      // Verify `_A4` suffixed `oto.ini` and OpenUtau `character.yaml` `subbanks` on disk.
+      // Verify `_A4` suffixed `oto.ini`, OpenUtau `character.yaml` `subbanks`, and enabled `prefix.map` on disk.
       const subbankOtoPath = path.join(singerRootDir, 'A4', 'oto.ini');
       expect(fs.existsSync(subbankOtoPath)).toBe(true);
       const otoContent = fs.readFileSync(subbankOtoPath, 'utf8');
@@ -157,7 +216,8 @@ test.describe('aie v1 Full-Stack Electron Fake-Mic E2E', () => {
       expect(parsedCharYaml.text_file_encoding).toBe('utf-8');
       expect(parsedCharYaml.singer_type).toBe('utau');
       expect(parsedCharYaml.subbanks?.some((sb) => sb.suffix === '_A4')).toBe(true);
-      expect(fs.readFileSync(path.join(singerRootDir, 'prefix.map'), 'utf8')).toContain('_A4');
+      expect(fs.existsSync(prefixMapPath)).toBe(true);
+      expect(fs.readFileSync(prefixMapPath, 'utf8')).toContain('_A4');
 
       // Enter Screen 3: The Recording Studio.
       await page.getByTestId('set-start-btn').click();
@@ -165,7 +225,64 @@ test.describe('aie v1 Full-Stack Electron Fake-Mic E2E', () => {
       await expect(studioScreen).toBeVisible();
       await expect(studioScreen).toHaveAttribute('data-phase', 'idle');
 
-      // ---- 3. Screen 3 Studio: Navigate, Record 440 Hz Take, Play Back, Overwrite & Undo Retake ----
+      // ---- 3. Screen 3 Studio: Viewport Fit, Pagination, Header Menus & Inline Target Pitch ----
+      const viewportMetrics = await page.evaluate(() => ({
+        innerHeight: window.innerHeight,
+        scrollHeight: document.documentElement.scrollHeight
+      }));
+      expect(viewportMetrics.scrollHeight).toBeLessThanOrEqual(viewportMetrics.innerHeight);
+
+      const initialTransportBox = await page.getByTestId('studio-transport').boundingBox();
+      expect(initialTransportBox).not.toBeNull();
+      expect(initialTransportBox!.y + initialTransportBox!.height).toBeLessThanOrEqual(
+        viewportMetrics.innerHeight
+      );
+
+      // Verify 30-item pagination on `z_cvvc_normal` (> 30 prompts).
+      await expect(page.getByTestId('studio-pagination')).toBeVisible();
+      await expect(page.getByTestId('studio-page-indicator')).toContainText('Page 1 /');
+      await expect(page.getByTestId('studio-item-list').locator('> li')).toHaveCount(30);
+      await page.getByTestId('studio-page-next').click();
+      await expect(page.getByTestId('studio-page-indicator')).toContainText('Page 2 /');
+      await expect(page.getByTestId('studio-item-30')).toBeVisible();
+      await page.getByTestId('studio-page-prev').click();
+      await expect(page.getByTestId('studio-page-indicator')).toContainText('Page 1 /');
+
+      // Verify header `Booth Options ▾`, `Open In ▾`, and `?` Shortcuts popovers.
+      await page.getByTestId('studio-options-btn').click();
+      const studioOptionsPopover = page.getByTestId('studio-options-popover');
+      await expect(studioOptionsPopover).toBeVisible();
+      await expect(studioOptionsPopover.getByTestId('studio-mode-toggle')).toBeVisible();
+      await expect(studioOptionsPopover.getByTestId('studio-toggle-listen-back')).toBeVisible();
+      await expect(studioOptionsPopover.getByTestId('studio-toggle-oto')).toBeVisible();
+      await page.keyboard.press('Escape');
+      await expect(studioOptionsPopover).toBeHidden();
+
+      await page.getByTestId('studio-open-in-btn').click();
+      const studioOpenInMenu = page.getByTestId('studio-open-in-menu');
+      await expect(studioOpenInMenu).toBeVisible();
+      await expect(studioOpenInMenu.getByTestId('studio-reveal-folder')).toBeVisible();
+      await expect(studioOpenInMenu.getByTestId('studio-open-vlabeler')).toBeVisible();
+      await expect(studioOpenInMenu.getByTestId('studio-open-openutau')).toBeVisible();
+      await page.keyboard.press('Escape');
+      await expect(studioOpenInMenu).toBeHidden();
+
+      await page.getByTestId('studio-hotkeys-btn').click();
+      const studioHotkeysPopover = page.getByTestId('studio-hotkeys-popover');
+      await expect(studioHotkeysPopover).toBeVisible();
+      await page.keyboard.press('Escape');
+      await expect(studioHotkeysPopover).toBeHidden();
+
+      // Switch inline Target Pitch selector to G3 (196 Hz) and back to A4 (440 Hz).
+      const targetPitchSelect = page.getByTestId('studio-target-pitch-select');
+      const studioScaleBtn = page.getByTestId('studio-scale-btn');
+      await expect(studioScaleBtn).toContainText('A4 (440 Hz)');
+      await targetPitchSelect.selectOption('G3');
+      await expect(studioScaleBtn).toContainText('G3 (196 Hz)');
+      await targetPitchSelect.selectOption('A4');
+      await expect(studioScaleBtn).toContainText('A4 (440 Hz)');
+
+      // ---- 4. Navigate, Record 440 Hz Take, Focus-Safe Space, Overwrite & Undo Retake ----
       // Ensure keyboard focus is on the Studio document body (not a button) and advance to prompt index 1.
       await page.getByTestId('studio-prompt-current').click();
       await page.keyboard.press('ArrowRight');
@@ -231,6 +348,36 @@ test.describe('aie v1 Full-Stack Electron Fake-Mic E2E', () => {
       expect(detectedPitch.noteLabel).toBe('A4');
       expect(Math.abs(detectedPitch.frequencyHz - 440)).toBeLessThan(8);
 
+      // Verify G4 (392 Hz) vs G3 (196 Hz) subharmonic disambiguation on a modulated G4 vowel frame.
+      const g4Frame = new Float32Array(2048);
+      for (let i = 0; i < g4Frame.length; i++) {
+        const tSec = i / 44100;
+        g4Frame[i] =
+          0.45 * Math.sin(2 * Math.PI * 392 * tSec) +
+          0.25 * Math.sin(2 * Math.PI * 784 * tSec) +
+          0.14 * Math.sin(2 * Math.PI * 196 * tSec);
+      }
+      const g4Pitch = estimateVocalPitch(g4Frame, 44100, 'G4');
+      expect(g4Pitch.noteLabel).toBe('G4');
+      expect(g4Pitch.frequencyHz).not.toBeNull();
+      expect(Math.abs((g4Pitch.frequencyHz ?? 0) - 392)).toBeLessThan(6);
+
+      // Focus-safe `Space` on `Reference Tone`: while `studio-scale-btn` is keyboard-focused,
+      // `Space` must toggle the reference tone (`aria-pressed`) without hijacking take playback!
+      await studioScaleBtn.focus();
+      await page.keyboard.press('Space');
+      await expect(studioScaleBtn).toHaveAttribute('aria-pressed', 'true');
+      await expect(studioScreen).toHaveAttribute('data-phase', 'idle');
+      await page.keyboard.press('Space');
+      await expect(studioScaleBtn).toHaveAttribute('aria-pressed', 'false');
+      await expect(studioScreen).toHaveAttribute('data-phase', 'idle');
+
+      // Pointer-clicking `studio-scale-btn` blurs focus so global `Space` playback works right away.
+      await studioScaleBtn.click();
+      await expect(studioScaleBtn).toHaveAttribute('aria-pressed', 'true');
+      await studioScaleBtn.click();
+      await expect(studioScaleBtn).toHaveAttribute('aria-pressed', 'false');
+
       // Test manual playback via `Space` (start -> playing -> stop -> idle).
       await page.keyboard.press('Space');
       await expect(studioScreen).toHaveAttribute('data-phase', 'playing');
@@ -262,6 +409,22 @@ test.describe('aie v1 Full-Stack Electron Fake-Mic E2E', () => {
           timeout: 5_000
         })
         .toBe(take1SampleCount);
+
+      // Verify eye-level feedback/warning strip sits visually ABOVE `studio-canvas` (never below transport)
+      // and `studio-transport` remains 100% inside the viewport even with status/warnings visible.
+      const feedbackStrip = page.getByTestId('studio-feedback-strip');
+      await expect(feedbackStrip).toBeVisible();
+      await expect(page.getByTestId('studio-status')).toBeVisible();
+      const feedbackBox = await feedbackStrip.boundingBox();
+      const canvasBox = await page.getByTestId('studio-canvas').boundingBox();
+      const transportAfterUndoBox = await page.getByTestId('studio-transport').boundingBox();
+      expect(feedbackBox).not.toBeNull();
+      expect(canvasBox).not.toBeNull();
+      expect(transportAfterUndoBox).not.toBeNull();
+      expect(feedbackBox!.y).toBeLessThan(canvasBox!.y);
+      expect(transportAfterUndoBox!.y + transportAfterUndoBox!.height).toBeLessThanOrEqual(
+        viewportMetrics.innerHeight
+      );
 
       // ---- 4. Live 3-Locale Switching (`EN` / `简` / `日`) ----
       await page.getByTestId('header-lang-zh-CN').click();
@@ -296,12 +459,15 @@ test.describe('aie v1 Full-Stack Electron Fake-Mic E2E', () => {
       await firstLaunch.app.close();
       activeApp = null;
 
-      // ---- 5. App Relaunch & 1-Click Continue Last Session ----
+      // ---- 6. App Relaunch & 1-Click Resume Session ----
       const secondLaunch = await launchAieApp(userDataDir);
       activeApp = secondLaunch.app;
       const relaunchedPage = secondLaunch.page;
 
+      await expect(relaunchedPage.getByText('Vocal Booth')).toBeVisible();
+      await expect(relaunchedPage.getByText('Link Start')).toHaveCount(0);
       await expect(relaunchedPage.getByTestId('hub-continue-card')).toBeVisible();
+      await expect(relaunchedPage.getByTestId('hub-continue-btn')).toHaveText('Resume Session');
       await expect(relaunchedPage.getByTestId('hub-continue-name')).toHaveText('Astra');
       await expect(relaunchedPage.getByTestId('hub-continue-scale')).toHaveText('A4');
       await expect(relaunchedPage.getByTestId('hub-continue-progress')).toContainText('1 /');
