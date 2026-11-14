@@ -153,7 +153,7 @@ describe('domain services adapter', () => {
     expect(d.available).toEqual({ voicebank: true, project: true });
     await d.project.deleteRecordingSet({ rootPath: '/root', setId: 's', trashWavFiles: true });
     expect(trashItem).toHaveBeenCalledTimes(1);
-    expect(trashItem).toHaveBeenCalledWith(path.join('/root', 'G4', 'a.wav'));
+    expect(trashItem).toHaveBeenCalledWith(path.resolve('/root', 'G4', 'a.wav'));
     expect(deleteRecordingSet).toHaveBeenCalledWith({ rootPath: '/root', setId: 's', trashWavFiles: false });
   });
 });

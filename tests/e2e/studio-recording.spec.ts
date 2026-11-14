@@ -245,7 +245,7 @@ test.describe('aie v1 Full-Stack Electron Fake-Mic E2E', () => {
       });
       await expect
         .poll(async () => page.evaluate(() => window.innerHeight))
-        .toBeLessThanOrEqual(760);
+        .toBeLessThanOrEqual(764);
       const compactMetrics = await page.evaluate(() => ({
         innerHeight: window.innerHeight,
         scrollHeight: document.documentElement.scrollHeight

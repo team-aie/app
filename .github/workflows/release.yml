@@ -67,6 +67,7 @@ jobs:
         run: npm version "${{ needs.meta.outputs.version }}" --no-git-tag-version --allow-same-version
 
       - name: Typecheck, test & build
+        shell: bash
         run: |
           npm run typecheck
           npm test

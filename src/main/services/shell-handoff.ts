@@ -32,7 +32,7 @@ export function discoverToolCandidates(
 ): string[] {
   const app = TOOL_LABEL[tool];
   if (platform === 'darwin') {
-    return [`/Applications/${app}.app`, path.join(homeDir, 'Applications', `${app}.app`)];
+    return [`/Applications/${app}.app`, path.posix.join(homeDir, 'Applications', `${app}.app`)];
   }
   if (platform === 'win32') {
     const roots = [env['LOCALAPPDATA'], env['ProgramFiles'], env['ProgramFiles(x86)']].filter(
@@ -44,9 +44,13 @@ export function discoverToolCandidates(
     ]);
   }
   const names = tool === 'vlabeler' ? ['vlabeler', 'vLabeler'] : ['OpenUtau', 'openutau'];
-  const dirs = (env['PATH'] ?? '').split(path.delimiter).filter(Boolean);
-  const onPath = dirs.flatMap((dir) => names.map((n) => path.join(dir, n)));
-  return [...onPath, path.join(homeDir, 'Applications', `${app}.AppImage`), path.join(homeDir, app, app)];
+  const dirs = (env['PATH'] ?? '').split(':').filter(Boolean);
+  const onPath = dirs.flatMap((dir) => names.map((n) => path.posix.join(dir, n)));
+  return [
+    ...onPath,
+    path.posix.join(homeDir, 'Applications', `${app}.AppImage`),
+    path.posix.join(homeDir, app, app)
+  ];
 }
 
 export interface ShellLike {
