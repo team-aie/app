@@ -343,4 +343,57 @@ describe('voicebank service (built-in reclists, loader & singer scaffolding)', (
     expect(mkototempBuf[0]).not.toBe(0xef);
     expect(mkototempBuf.toString('utf8')).toContain('[TEMPO]');
   });
+
+  it('respects manifest.singerFiles in syncSingerScaffolding without deleting existing unchecked files', async () => {
+    const noneDir = await makeTempDir('aie-vb-singer-none-');
+    const now = '2026-11-14T00:00:00.000Z';
+
+    await syncSingerScaffolding({
+      schemaVersion: 1,
+      id: 'proj-none',
+      name: 'No Root Metadata',
+      rootPath: noneDir,
+      singerFiles: {
+        characterTxt: false,
+        characterYaml: false,
+        prefixMap: false
+      },
+      sets: [createSetConfig({ generateCompanionFiles: true })],
+      activeSetId: 'set-1',
+      createdAt: now,
+      updatedAt: now
+    });
+
+    await expect(fs.stat(path.join(noneDir, 'character.txt'))).rejects.toThrow();
+    await expect(fs.stat(path.join(noneDir, 'character.yaml'))).rejects.toThrow();
+    await expect(fs.stat(path.join(noneDir, 'prefix.map'))).rejects.toThrow();
+    // Per-set oto.ini still follows setConfig.generateCompanionFiles
+    const setOto = await fs.readFile(path.join(noneDir, 'G4', 'oto.ini'), 'utf8');
+    expect(setOto).toContain('- a_G4');
+
+    // Enable only characterYaml and verify only character.yaml is written
+    await syncSingerScaffolding({
+      schemaVersion: 1,
+      id: 'proj-yaml-only',
+      name: 'YAML Only Singer',
+      rootPath: noneDir,
+      singerFiles: {
+        characterTxt: false,
+        characterYaml: true,
+        prefixMap: false
+      },
+      sets: [createSetConfig({ generateCompanionFiles: true })],
+      activeSetId: 'set-1',
+      createdAt: now,
+      updatedAt: now
+    });
+
+    await expect(fs.stat(path.join(noneDir, 'character.txt'))).rejects.toThrow();
+    await expect(fs.stat(path.join(noneDir, 'prefix.map'))).rejects.toThrow();
+    const yamlText = await fs.readFile(
+      path.join(noneDir, 'character.yaml'),
+      'utf8'
+    );
+    expect(yamlText).toContain('name: YAML Only Singer');
+  });
 });

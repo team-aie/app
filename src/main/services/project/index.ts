@@ -9,14 +9,16 @@ import {
   parseOtoIni,
   sanitizeFileStem
 } from '@shared/parsers';
-import type {
-  AieProjectManifest,
-  GuideAudioMode,
-  LegacyAieV0Config,
-  ReclistSource,
-  RecordingSetConfig,
-  ScaleNote,
-  SetProgressSummary
+import {
+  type AieProjectManifest,
+  DEFAULT_SINGER_FILES,
+  type GuideAudioMode,
+  type LegacyAieV0Config,
+  type ReclistSource,
+  type RecordingSetConfig,
+  type ScaleNote,
+  type SetProgressSummary,
+  type SingerFileSelection
 } from '@shared/types';
 import {
   listBuiltinReclists,
@@ -205,6 +207,25 @@ async function writeProjectManifestJson(
   );
 }
 
+function resolveSingerFiles(
+  singerFiles?: Partial<SingerFileSelection>
+): SingerFileSelection {
+  return {
+    characterTxt:
+      typeof singerFiles?.characterTxt === 'boolean'
+        ? singerFiles.characterTxt
+        : DEFAULT_SINGER_FILES.characterTxt,
+    characterYaml:
+      typeof singerFiles?.characterYaml === 'boolean'
+        ? singerFiles.characterYaml
+        : DEFAULT_SINGER_FILES.characterYaml,
+    prefixMap:
+      typeof singerFiles?.prefixMap === 'boolean'
+        ? singerFiles.prefixMap
+        : DEFAULT_SINGER_FILES.prefixMap
+  };
+}
+
 function normalizeActiveSetId(
   manifest: AieProjectManifest
 ): AieProjectManifest {
@@ -326,6 +347,7 @@ async function migrateLegacyV0Config(
     rootPath: resolvedRoot,
     ...(charMeta.author ? { author: charMeta.author } : {}),
     ...(defaultPhonemizer ? { defaultPhonemizer } : {}),
+    singerFiles: { ...DEFAULT_SINGER_FILES },
     sets: migratedSets,
     createdAt: now,
     updatedAt: now
@@ -594,6 +616,7 @@ async function adoptRawOremoFolder(
     name: charMeta.name || path.basename(resolvedRoot) || 'Imported Singer',
     rootPath: resolvedRoot,
     ...(charMeta.author ? { author: charMeta.author } : {}),
+    singerFiles: { ...DEFAULT_SINGER_FILES },
     sets: adoptedSets,
     createdAt: now,
     updatedAt: now
@@ -609,6 +632,7 @@ export async function createProject(
     name: string;
     rootPath: string;
     author?: string;
+    singerFiles?: SingerFileSelection;
   },
   resourcesRoot?: string
 ): Promise<AieProjectManifest> {
@@ -626,6 +650,7 @@ export async function createProject(
     name: singerName,
     rootPath: resolvedRoot,
     ...(author ? { author } : {}),
+    singerFiles: resolveSingerFiles(params.singerFiles),
     sets: [],
     createdAt: now,
     updatedAt: now
@@ -656,6 +681,7 @@ export async function openProject(
       ...parsed,
       schemaVersion: 1,
       rootPath: resolvedRoot,
+      singerFiles: resolveSingerFiles(parsed.singerFiles),
       sets: Array.isArray(parsed.sets) ? parsed.sets : []
     });
   }
@@ -681,6 +707,7 @@ export async function saveProject(
     ...manifest,
     schemaVersion: 1,
     rootPath: resolvedRoot,
+    singerFiles: resolveSingerFiles(manifest.singerFiles),
     updatedAt: new Date().toISOString()
   });
 
@@ -743,6 +770,7 @@ export async function upsertRecordingSet(
 
   const updatedManifest: AieProjectManifest = normalizeActiveSetId({
     ...current,
+    singerFiles: resolveSingerFiles(current.singerFiles),
     sets: nextSets,
     activeSetId: current.activeSetId ?? normalizedSet.id,
     updatedAt: now
@@ -811,6 +839,7 @@ export async function deleteRecordingSet(
 
   const updated: AieProjectManifest = normalizeActiveSetId({
     ...current,
+    singerFiles: resolveSingerFiles(current.singerFiles),
     sets: remainingSets,
     ...(nextActiveSetId ? { activeSetId: nextActiveSetId } : {}),
     updatedAt: new Date().toISOString()

@@ -1,11 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { app, BrowserWindow, dialog, ipcMain, type IpcMainInvokeEvent, type WebContents } from 'electron';
-import type {
-  AieProjectManifest,
-  RecordedTakePayload,
-  RecordingSetConfig,
-  UpdateStatusInfo
+import {
+  type AieProjectManifest,
+  DEFAULT_SINGER_FILES,
+  type RecordedTakePayload,
+  type RecordingSetConfig,
+  type SingerFileSelection,
+  type UpdateStatusInfo
 } from '@shared/types';
 import { IPC } from '../../preload/channels';
 import type { AppStateStore } from '../services/app-state';
@@ -41,6 +43,22 @@ function str(value: unknown, name: string): string {
 function obj(value: unknown, name: string): Record<string, unknown> {
   if (typeof value !== 'object' || value === null) throw new Error(`${name} must be an object`);
   return value as Record<string, unknown>;
+}
+
+function optionalBool(value: unknown, fallback: boolean, name: string): boolean {
+  if (value === undefined) return fallback;
+  if (typeof value !== 'boolean') throw new Error(`${name} must be a boolean`);
+  return value;
+}
+
+function optionalSingerFiles(value: unknown): SingerFileSelection | undefined {
+  if (value === undefined) return undefined;
+  const s = obj(value, 'singerFiles');
+  return {
+    characterTxt: optionalBool(s['characterTxt'], DEFAULT_SINGER_FILES.characterTxt, 'singerFiles.characterTxt'),
+    characterYaml: optionalBool(s['characterYaml'], DEFAULT_SINGER_FILES.characterYaml, 'singerFiles.characterYaml'),
+    prefixMap: optionalBool(s['prefixMap'], DEFAULT_SINGER_FILES.prefixMap, 'singerFiles.prefixMap')
+  };
 }
 
 function takeLocation(value: unknown): { projectRootPath: string; relativeDirectory: string; fileName: string } {
@@ -129,19 +147,27 @@ export function registerIpc(deps: IpcDependencies): () => void {
   });
   handle(IPC.project.createProject, async (_e, params) => {
     const p = obj(params, 'params');
+    const singerFiles = optionalSingerFiles(p['singerFiles']);
     const manifest = await domain.project.createProject({
       name: str(p['name'], 'name'),
       rootPath: str(p['rootPath'], 'rootPath'),
-      ...(typeof p['author'] === 'string' ? { author: p['author'] } : {})
+      ...(typeof p['author'] === 'string' ? { author: p['author'] } : {}),
+      ...(singerFiles ? { singerFiles } : {})
     });
     return rememberProject(manifest);
   });
   handle(IPC.project.openProject, async (_e, rootPath) =>
     rememberProject(await domain.project.openProject(str(rootPath, 'rootPath')))
   );
-  handle(IPC.project.saveProject, async (_e, manifest) =>
-    rememberProject(await domain.project.saveProject(manifest as AieProjectManifest))
-  );
+  handle(IPC.project.saveProject, async (_e, rawManifest) => {
+    const m = obj(rawManifest, 'manifest');
+    const singerFiles = optionalSingerFiles(m['singerFiles']);
+    const manifest = {
+      ...(rawManifest as AieProjectManifest),
+      ...(singerFiles ? { singerFiles } : {})
+    };
+    return rememberProject(await domain.project.saveProject(manifest));
+  });
   handle(IPC.project.upsertRecordingSet, async (_e, rootPath, setConfig) =>
     rememberProject(
       await domain.project.upsertRecordingSet(str(rootPath, 'rootPath'), setConfig as RecordingSetConfig)
@@ -169,9 +195,14 @@ export function registerIpc(deps: IpcDependencies): () => void {
   handle(IPC.voicebank.loadRecordingList, (_e, rootPath, setConfig) =>
     domain.voicebank.loadRecordingList(str(rootPath, 'rootPath'), setConfig as RecordingSetConfig)
   );
-  handle(IPC.voicebank.syncSingerScaffolding, (_e, manifest) =>
-    domain.voicebank.syncSingerScaffolding(manifest as AieProjectManifest)
-  );
+  handle(IPC.voicebank.syncSingerScaffolding, (_e, rawManifest) => {
+    const m = obj(rawManifest, 'manifest');
+    const singerFiles = optionalSingerFiles(m['singerFiles']);
+    return domain.voicebank.syncSingerScaffolding({
+      ...(rawManifest as AieProjectManifest),
+      ...(singerFiles ? { singerFiles } : {})
+    });
+  });
 
   // ---- audio files ----
   handle(IPC.audioFile.saveTake, async (_e, rawPayload) => {
