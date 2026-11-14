@@ -1,7 +1,7 @@
 import { ArrowLeft, Loader2, TriangleAlert } from 'lucide-react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { StudioWorkflowPrefs } from '@shared/types';
+import type { ScaleNote, StudioWorkflowPrefs } from '@shared/types';
 import { createStudioEngineAdapter } from '@renderer/audio';
 import { selectActiveSet, useAppStore } from '@renderer/store/use-app-store';
 import type { StudioScreenComponent } from './studio-screen-slot';
@@ -19,8 +19,11 @@ export function StudioHost({ Screen }: { Screen: StudioScreenComponent }) {
   const activeSet = useAppStore(selectActiveSet);
   const studio = useAppStore((state) => state.studio);
   const settings = useAppStore((state) => state.settings);
+  const bridge = useAppStore((state) => state.bridge);
+  const bridgeAvailable = useAppStore((state) => state.bridgeAvailable);
   const updateWorkflow = useAppStore((state) => state.updateWorkflow);
   const updateCursor = useAppStore((state) => state.updateCursor);
+  const changeActiveSetScale = useAppStore((state) => state.changeActiveSetScale);
   const goToProject = useAppStore((state) => state.goToProject);
   const openModal = useAppStore((state) => state.openModal);
   const enterStudio = useAppStore((state) => state.enterStudio);
@@ -32,6 +35,18 @@ export function StudioHost({ Screen }: { Screen: StudioScreenComponent }) {
     (patch: Partial<StudioWorkflowPrefs>) => void updateWorkflow(patch),
     [updateWorkflow]
   );
+  const onChangeScale = useCallback(
+    (scale: ScaleNote) => void changeActiveSetScale(scale),
+    [changeActiveSetScale]
+  );
+  const onRevealProjectFolder = useCallback(() => {
+    if (!manifest) {
+      return;
+    }
+    const targetBridge =
+      bridgeAvailable || typeof window === 'undefined' || !window.aie ? bridge : window.aie;
+    void targetBridge.shell.revealInFileManager(manifest.rootPath).catch(() => undefined);
+  }, [bridge, bridgeAvailable, manifest]);
   const onOpenAudioSettings = useCallback(() => openModal('audioSettings'), [openModal]);
 
   if (!manifest || !activeSet || studio.status === 'idle' || studio.status === 'loading') {
@@ -76,6 +91,8 @@ export function StudioHost({ Screen }: { Screen: StudioScreenComponent }) {
       settings={settings}
       onUpdateWorkflow={onUpdateWorkflow}
       onCursorChange={updateCursor}
+      onChangeScale={onChangeScale}
+      onRevealProjectFolder={onRevealProjectFolder}
       onBackToProject={goToProject}
       onOpenAudioSettings={onOpenAudioSettings}
       audioAdapter={audioAdapter}

@@ -1,9 +1,21 @@
-import { AudioWaveform, FolderOpen, Piano, Plus, Settings2, TriangleAlert, X } from 'lucide-react';
+import {
+  AudioWaveform,
+  ChevronDown,
+  ExternalLink,
+  FileCheck2,
+  FolderOpen,
+  Piano,
+  Plus,
+  Settings2,
+  TriangleAlert,
+  X
+} from 'lucide-react';
+import { Popover } from 'radix-ui';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { RecordingSetConfig } from '@shared/types';
-import { useAppStore } from '@renderer/store/use-app-store';
-import { Button, IconButton } from '../shell/ui';
+import { resolveSingerFiles, useAppStore } from '@renderer/store/use-app-store';
+import { Badge, Button, CheckboxItem, IconButton } from '../shell/ui';
 import { MetadataDrawer } from './metadata-drawer';
 import { RemoveSetDialog } from './remove-set-dialog';
 import { SetCard } from './set-card';
@@ -20,6 +32,7 @@ export function ProjectScreen({ playTone }: { playTone?: PlayTone }) {
   const setProgress = useAppStore((state) => state.setProgress);
   const builtins = useAppStore((state) => state.builtinReclists);
   const bridge = useAppStore((state) => state.bridge);
+  const updateSingerFiles = useAppStore((state) => state.updateSingerFiles);
   const upsertRecordingSet = useAppStore((state) => state.upsertRecordingSet);
   const deleteRecordingSet = useAppStore((state) => state.deleteRecordingSet);
   const enterStudio = useAppStore((state) => state.enterStudio);
@@ -31,12 +44,21 @@ export function ProjectScreen({ playTone }: { playTone?: PlayTone }) {
   const [previewSet, setPreviewSet] = useState<RecordingSetConfig | null>(null);
   const [removeSet, setRemoveSet] = useState<RecordingSetConfig | null>(null);
   const [missingTool, setMissingTool] = useState<ExternalTool | null>(null);
+  const [singerFilesOpen, setSingerFilesOpen] = useState(false);
+  const [openInOpen, setOpenInOpen] = useState(false);
 
   if (!manifest) {
     return null;
   }
 
+  const singerFiles = resolveSingerFiles(manifest);
+  const enabledSingerFilesCount =
+    Number(singerFiles.characterTxt) +
+    Number(singerFiles.characterYaml) +
+    Number(singerFiles.prefixMap);
+
   const openTool = async (tool: ExternalTool): Promise<void> => {
+    setOpenInOpen(false);
     try {
       const result = await bridge.shell.openInExternalTool({ tool, projectRootPath: manifest.rootPath });
       if (result.ok) {
@@ -51,11 +73,17 @@ export function ProjectScreen({ playTone }: { playTone?: PlayTone }) {
   };
 
   const reveal = (): void => {
+    setOpenInOpen(false);
     void bridge.shell.revealInFileManager(manifest.rootPath).catch(() => undefined);
   };
 
   const openCreate = (): void => {
     setEditing(undefined);
+    setEditorOpen(true);
+  };
+
+  const openEditSet = (setConfig: RecordingSetConfig): void => {
+    setEditing(setConfig);
     setEditorOpen(true);
   };
 
@@ -74,65 +102,174 @@ export function ProjectScreen({ playTone }: { playTone?: PlayTone }) {
             </span>
           </p>
         </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <Popover.Root open={singerFilesOpen} onOpenChange={setSingerFilesOpen}>
+            <Popover.Trigger asChild>
+              <Button
+                variant="secondary"
+                icon={<FileCheck2 aria-hidden className="size-4 text-accent" />}
+                data-testid="project-singer-files-btn"
+              >
+                <span>{t('singerFiles.title')}</span>
+                <Badge mono>{enabledSingerFilesCount}/3</Badge>
+                <ChevronDown aria-hidden className="size-3.5 text-subtle" />
+              </Button>
+            </Popover.Trigger>
+            <Popover.Portal>
+              <Popover.Content
+                align="end"
+                sideOffset={8}
+                data-testid="project-singer-files"
+                className="z-50 flex w-88 max-w-[calc(100vw-2rem)] flex-col gap-3 rounded-2xl border border-line bg-panel p-4 text-fg shadow-2xl shadow-black/40"
+              >
+                <div className="flex flex-col gap-1">
+                  <p className="text-xs font-semibold tracking-wide text-fg">
+                    {t('singerFiles.title')}
+                  </p>
+                  <p className="text-xs leading-relaxed text-subtle">
+                    {t('singerFiles.description')}
+                  </p>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <CheckboxItem
+                    checked={singerFiles.characterTxt}
+                    onCheckedChange={(checked) =>
+                      void updateSingerFiles({ ...singerFiles, characterTxt: checked })
+                    }
+                    label={t('singerFiles.characterTxt')}
+                    description={t('singerFiles.characterTxtHint')}
+                    testId="project-singer-file-character-txt"
+                    monoLabel
+                  />
+                  <CheckboxItem
+                    checked={singerFiles.characterYaml}
+                    onCheckedChange={(checked) =>
+                      void updateSingerFiles({ ...singerFiles, characterYaml: checked })
+                    }
+                    label={t('singerFiles.characterYaml')}
+                    description={t('singerFiles.characterYamlHint')}
+                    testId="project-singer-file-character-yaml"
+                    monoLabel
+                  />
+                  <CheckboxItem
+                    checked={singerFiles.prefixMap}
+                    onCheckedChange={(checked) =>
+                      void updateSingerFiles({ ...singerFiles, prefixMap: checked })
+                    }
+                    label={t('singerFiles.prefixMap')}
+                    description={t('singerFiles.prefixMapHint')}
+                    testId="project-singer-file-prefix-map"
+                    monoLabel
+                  />
+                </div>
+              </Popover.Content>
+            </Popover.Portal>
+          </Popover.Root>
+
+          <Popover.Root open={openInOpen} onOpenChange={setOpenInOpen}>
+            <Popover.Trigger asChild>
+              <Button
+                variant="secondary"
+                icon={<ExternalLink aria-hidden className="size-4 text-accent" />}
+                data-testid="project-open-in-btn"
+              >
+                <span>{t('handoff.menuButton')}</span>
+                <ChevronDown aria-hidden className="size-3.5 text-subtle" />
+              </Button>
+            </Popover.Trigger>
+            <Popover.Portal>
+              <Popover.Content
+                align="end"
+                sideOffset={8}
+                data-testid="project-open-in-menu"
+                aria-label={t('handoff.title')}
+                className="z-50 flex w-84 max-w-[calc(100vw-2rem)] flex-col gap-1 rounded-2xl border border-line bg-panel p-2 text-fg shadow-2xl shadow-black/40"
+              >
+                <button
+                  type="button"
+                  onClick={reveal}
+                  data-testid="handoff-reveal"
+                  className="flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-raised"
+                >
+                  <FolderOpen aria-hidden className="mt-0.5 size-4 shrink-0 text-accent" />
+                  <span className="flex min-w-0 flex-col gap-0.5">
+                    <span className="text-sm font-medium text-fg">{t('handoff.reveal')}</span>
+                    <span className="text-xs leading-snug text-subtle">
+                      {t('handoff.revealDescription')}
+                    </span>
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void openTool('vlabeler')}
+                  data-testid="handoff-vlabeler"
+                  className="flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-raised"
+                >
+                  <AudioWaveform aria-hidden className="mt-0.5 size-4 shrink-0 text-accent" />
+                  <span className="flex min-w-0 flex-col gap-0.5">
+                    <span className="text-sm font-medium text-fg">{t('handoff.openVLabeler')}</span>
+                    <span className="text-xs leading-snug text-subtle">
+                      {t('handoff.vlabelerDescription')}
+                    </span>
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void openTool('openutau')}
+                  data-testid="handoff-openutau"
+                  className="flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-raised"
+                >
+                  <Piano aria-hidden className="mt-0.5 size-4 shrink-0 text-accent" />
+                  <span className="flex min-w-0 flex-col gap-0.5">
+                    <span className="text-sm font-medium text-fg">{t('handoff.openOpenUtau')}</span>
+                    <span className="text-xs leading-snug text-subtle">
+                      {t('handoff.openutauDescription')}
+                    </span>
+                  </span>
+                </button>
+                <div className="mt-1 border-t border-line pt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOpenInOpen(false);
+                      openModal('audioSettings');
+                    }}
+                    data-testid="project-open-in-settings"
+                    className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs font-medium text-muted transition-colors hover:bg-raised hover:text-fg"
+                  >
+                    <Settings2 aria-hidden className="size-3.5 shrink-0" />
+                    <span>{t('handoff.openSettings')}</span>
+                  </button>
+                </div>
+              </Popover.Content>
+            </Popover.Portal>
+          </Popover.Root>
+        </div>
       </header>
 
-      <section
-        aria-label={t('handoff.title')}
-        data-testid="handoff-bar"
-        className="flex flex-col gap-3 rounded-2xl border border-line bg-panel p-3"
-      >
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="px-2 text-[11px] font-semibold tracking-[0.14em] text-subtle uppercase">
-            {t('handoff.title')}
-          </span>
+      {missingTool ? (
+        <div
+          role="status"
+          data-testid="handoff-tool-missing"
+          className="flex items-center gap-3 rounded-xl border border-warn/30 bg-warn-soft px-3.5 py-2.5 text-sm text-warn"
+        >
+          <TriangleAlert aria-hidden className="size-4 shrink-0" />
+          <span className="flex-1">{t('handoff.toolMissing', { tool: TOOL_NAMES[missingTool] })}</span>
           <Button
-            variant="ghost"
-            icon={<FolderOpen aria-hidden className="size-4" />}
-            onClick={reveal}
-            data-testid="handoff-reveal"
+            size="sm"
+            variant="secondary"
+            icon={<Settings2 aria-hidden className="size-3.5" />}
+            onClick={() => openModal('audioSettings')}
+            data-testid="handoff-open-settings"
           >
-            {t('handoff.reveal')}
+            {t('handoff.openSettings')}
           </Button>
-          <Button
-            variant="ghost"
-            icon={<AudioWaveform aria-hidden className="size-4" />}
-            onClick={() => void openTool('vlabeler')}
-            data-testid="handoff-vlabeler"
-          >
-            {t('handoff.openVLabeler')}
-          </Button>
-          <Button
-            variant="ghost"
-            icon={<Piano aria-hidden className="size-4" />}
-            onClick={() => void openTool('openutau')}
-            data-testid="handoff-openutau"
-          >
-            {t('handoff.openOpenUtau')}
-          </Button>
+          <IconButton label={tc('actions.dismiss')} onClick={() => setMissingTool(null)} className="size-7">
+            <X className="size-3.5" />
+          </IconButton>
         </div>
-        {missingTool ? (
-          <div
-            role="status"
-            data-testid="handoff-tool-missing"
-            className="flex items-center gap-3 rounded-xl bg-warn-soft px-3 py-2 text-sm text-warn"
-          >
-            <TriangleAlert aria-hidden className="size-4 shrink-0" />
-            <span className="flex-1">{t('handoff.toolMissing', { tool: TOOL_NAMES[missingTool] })}</span>
-            <Button
-              size="sm"
-              variant="secondary"
-              icon={<Settings2 aria-hidden className="size-3.5" />}
-              onClick={() => openModal('audioSettings')}
-              data-testid="handoff-open-settings"
-            >
-              {t('handoff.openSettings')}
-            </Button>
-            <IconButton label={tc('actions.dismiss')} onClick={() => setMissingTool(null)} className="size-7">
-              <X className="size-3.5" />
-            </IconButton>
-          </div>
-        ) : null}
-      </section>
+      ) : null}
 
       <section aria-labelledby="sets-title" className="flex flex-col gap-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
@@ -173,10 +310,8 @@ export function ProjectScreen({ playTone }: { playTone?: PlayTone }) {
                 builtins={builtins}
                 active={manifest.activeSetId === setConfig.id}
                 onStart={() => void enterStudio(setConfig.id)}
-                onEdit={() => {
-                  setEditing(setConfig);
-                  setEditorOpen(true);
-                }}
+                onEdit={() => openEditSet(setConfig)}
+                onChangeReclist={() => openEditSet(setConfig)}
                 onPreview={() => setPreviewSet(setConfig)}
                 onRemove={() => setRemoveSet(setConfig)}
               />

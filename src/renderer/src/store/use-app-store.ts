@@ -1,18 +1,21 @@
 import type { ParseKeys } from 'i18next';
 import { create, type StoreApi, type UseBoundStore } from 'zustand';
-import type {
-  AieBridgeApi,
-  AieProjectManifest,
-  AppSettings,
-  LocaleCode,
-  ParsedRecordingListBundle,
-  ReclistManifest,
-  RecentProjectSummary,
-  RecordingSetConfig,
-  SetProgressSummary,
-  StudioWorkflowPrefs,
-  ThemeMode,
-  UpdateStatusInfo
+import {
+  DEFAULT_SINGER_FILES,
+  type AieBridgeApi,
+  type AieProjectManifest,
+  type AppSettings,
+  type LocaleCode,
+  type ParsedRecordingListBundle,
+  type ReclistManifest,
+  type RecentProjectSummary,
+  type RecordingSetConfig,
+  type ScaleNote,
+  type SetProgressSummary,
+  type SingerFileSelection,
+  type StudioWorkflowPrefs,
+  type ThemeMode,
+  type UpdateStatusInfo
 } from '@shared/types';
 import { resolveLocale } from '@shared/i18n';
 import { DEFAULT_APP_SETTINGS, resolveBridge } from './fallback-bridge';
@@ -69,6 +72,7 @@ export interface AppStateActions {
     name: string;
     rootPath: string;
     author?: string;
+    singerFiles?: SingerFileSelection;
   }): Promise<AieProjectManifest | null>;
   openProject(rootPath: string): Promise<AieProjectManifest | null>;
   pickAndOpenProject(title?: string): Promise<AieProjectManifest | null>;
@@ -76,9 +80,11 @@ export interface AppStateActions {
   goToHub(): void;
   goToProject(): void;
   refreshSetProgress(): Promise<void>;
+  updateSingerFiles(singerFiles: SingerFileSelection): Promise<AieProjectManifest | null>;
   upsertRecordingSet(config: RecordingSetConfig): Promise<AieProjectManifest | null>;
   deleteRecordingSet(setId: string, trashWavFiles: boolean): Promise<boolean>;
   enterStudio(setId: string): Promise<void>;
+  changeActiveSetScale(nextScale: ScaleNote): Promise<void>;
   updateCursor(index: number): void;
   flushPendingSave(): Promise<void>;
   updateSettings(partial: Partial<AppSettings>): Promise<void>;
@@ -337,6 +343,48 @@ export function createAppStore(
         }
       },
 
+      async updateSingerFiles(singerFiles) {
+        await get().flushPendingSave();
+        const manifest = get().manifest;
+        if (!manifest) {
+          return null;
+        }
+        const nextSelection: SingerFileSelection = { ...singerFiles };
+        const optimistic: AieProjectManifest = {
+          ...manifest,
+          singerFiles: nextSelection,
+          updatedAt: new Date().toISOString()
+        };
+        set({ manifest: optimistic });
+        try {
+          const saved = await get().bridge.project.saveProject(optimistic);
+          const merged: AieProjectManifest = {
+            ...saved,
+            singerFiles: saved.singerFiles ?? nextSelection
+          };
+          set({ manifest: merged });
+          if (
+            nextSelection.characterTxt ||
+            nextSelection.characterYaml ||
+            nextSelection.prefixMap
+          ) {
+            try {
+              await get().bridge.voicebank.syncSingerScaffolding(merged);
+            } catch (error) {
+              toastError(error);
+            }
+          }
+          get().pushToast({
+            kind: 'success',
+            messageKey: 'project:singerFiles.saved'
+          });
+          return merged;
+        } catch (error) {
+          toastError(error);
+          return null;
+        }
+      },
+
       async upsertRecordingSet(config) {
         const manifest = get().manifest;
         if (!manifest) {
@@ -430,6 +478,56 @@ export function createAppStore(
           if (current.status === 'loading' && current.setId === setId) {
             set({ studio: { status: 'error', setId, error: errorMessage(error) } });
           }
+        }
+      },
+
+      async changeActiveSetScale(nextScale) {
+        await get().flushPendingSave();
+        const manifest = get().manifest;
+        const activeSet = selectActiveSet(get());
+        if (!manifest || !activeSet || activeSet.scale === nextScale) {
+          return;
+        }
+        const updatedSet: RecordingSetConfig = {
+          ...activeSet,
+          scale: nextScale,
+          updatedAt: new Date().toISOString()
+        };
+        set((state) => ({
+          manifest: state.manifest
+            ? {
+                ...state.manifest,
+                sets: state.manifest.sets.map((candidate) =>
+                  candidate.id === activeSet.id ? updatedSet : candidate
+                )
+              }
+            : state.manifest
+        }));
+        try {
+          const saved = await get().bridge.project.upsertRecordingSet(
+            manifest.rootPath,
+            updatedSet
+          );
+          const latestActive = selectActiveSet(get());
+          const merged: AieProjectManifest = {
+            ...saved,
+            activeSetId: manifest.activeSetId ?? saved.activeSetId,
+            sets: saved.sets.map((candidate) =>
+              candidate.id === activeSet.id && latestActive
+                ? { ...candidate, lastCursorIndex: latestActive.lastCursorIndex }
+                : candidate
+            )
+          };
+          set({ manifest: merged });
+          if (updatedSet.generateCompanionFiles) {
+            try {
+              await get().bridge.voicebank.syncSingerScaffolding(merged);
+            } catch (error) {
+              toastError(error);
+            }
+          }
+        } catch (error) {
+          toastError(error);
         }
       },
 
@@ -532,3 +630,10 @@ export function resetAppStore(bridge: AieBridgeApi, available = true): void {
 /** Selector helpers. */
 export const selectActiveSet = (state: AppState): RecordingSetConfig | undefined =>
   state.manifest?.sets.find((candidate) => candidate.id === state.manifest?.activeSetId);
+
+export const resolveSingerFiles = (
+  manifest: AieProjectManifest | null | undefined
+): SingerFileSelection => ({
+  ...DEFAULT_SINGER_FILES,
+  ...manifest?.singerFiles
+});

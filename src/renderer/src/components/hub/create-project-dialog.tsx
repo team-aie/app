@@ -1,8 +1,9 @@
 import { FolderOpen, Loader2 } from 'lucide-react';
 import { useEffect, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
+import { DEFAULT_SINGER_FILES, type SingerFileSelection } from '@shared/types';
 import { useAppStore } from '@renderer/store/use-app-store';
-import { Button, Field, ModalShell, TextInput } from '../shell/ui';
+import { Button, CheckboxItem, Field, ModalShell, TextInput } from '../shell/ui';
 
 export function CreateProjectDialog({
   open,
@@ -20,6 +21,9 @@ export function CreateProjectDialog({
   const [name, setName] = useState('');
   const [author, setAuthor] = useState('');
   const [rootPath, setRootPath] = useState('');
+  const [singerFiles, setSingerFiles] = useState<SingerFileSelection>(() => ({
+    ...DEFAULT_SINGER_FILES
+  }));
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
@@ -27,6 +31,7 @@ export function CreateProjectDialog({
       setName('');
       setAuthor('');
       setRootPath('');
+      setSingerFiles({ ...DEFAULT_SINGER_FILES });
       setSubmitted(false);
     }
   }, [open]);
@@ -54,7 +59,8 @@ export function CreateProjectDialog({
     const created = await createProject({
       name: name.trim(),
       rootPath,
-      author: author.trim() || undefined
+      author: author.trim() || undefined,
+      singerFiles
     });
     if (created) {
       onOpenChange(false);
@@ -118,7 +124,7 @@ export function CreateProjectDialog({
             />
           )}
         </Field>
-        <Field label={t('create.folder')} error={folderError} hint={t('create.turnkeyNote')}>
+        <Field label={t('create.folder')} error={folderError}>
           {({ inputId, describedBy, invalid }) => (
             <div className="flex gap-2">
               <TextInput
@@ -141,6 +147,48 @@ export function CreateProjectDialog({
             </div>
           )}
         </Field>
+
+        <fieldset
+          data-testid="create-singer-files"
+          className="flex flex-col gap-2.5 rounded-xl border border-line bg-raised/40 p-3.5"
+        >
+          <legend className="px-1 text-xs font-semibold tracking-wide text-muted">
+            {t('create.singerFiles.title')}
+          </legend>
+          <p className="text-xs leading-relaxed text-subtle">{t('create.singerFiles.hint')}</p>
+          <div className="flex flex-col gap-2">
+            <CheckboxItem
+              checked={singerFiles.characterTxt}
+              onCheckedChange={(checked) =>
+                setSingerFiles((prev) => ({ ...prev, characterTxt: checked }))
+              }
+              label={t('create.singerFiles.characterTxt')}
+              description={t('create.singerFiles.characterTxtHint')}
+              testId="create-singer-file-character-txt"
+              monoLabel
+            />
+            <CheckboxItem
+              checked={singerFiles.characterYaml}
+              onCheckedChange={(checked) =>
+                setSingerFiles((prev) => ({ ...prev, characterYaml: checked }))
+              }
+              label={t('create.singerFiles.characterYaml')}
+              description={t('create.singerFiles.characterYamlHint')}
+              testId="create-singer-file-character-yaml"
+              monoLabel
+            />
+            <CheckboxItem
+              checked={singerFiles.prefixMap}
+              onCheckedChange={(checked) =>
+                setSingerFiles((prev) => ({ ...prev, prefixMap: checked }))
+              }
+              label={t('create.singerFiles.prefixMap')}
+              description={t('create.singerFiles.prefixMapHint')}
+              testId="create-singer-file-prefix-map"
+              monoLabel
+            />
+          </div>
+        </fieldset>
       </form>
     </ModalShell>
   );

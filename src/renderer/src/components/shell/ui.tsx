@@ -1,5 +1,5 @@
-import { Dialog, Switch as RadixSwitch, ToggleGroup } from 'radix-ui';
-import { X } from 'lucide-react';
+import { Checkbox, Dialog, Switch as RadixSwitch, ToggleGroup } from 'radix-ui';
+import { Check, X } from 'lucide-react';
 import {
   forwardRef,
   useId,
@@ -310,6 +310,51 @@ export function Switch({
       >
         <RadixSwitch.Thumb className="block size-3.5 translate-x-0.5 rounded-full bg-fg shadow transition-transform data-[state=checked]:translate-x-[18px] data-[state=checked]:bg-on-accent" />
       </RadixSwitch.Root>
+    </div>
+  );
+}
+
+export function CheckboxItem({
+  checked,
+  onCheckedChange,
+  label,
+  description,
+  testId,
+  disabled,
+  monoLabel
+}: {
+  checked: boolean;
+  onCheckedChange: (checked: boolean) => void;
+  label: ReactNode;
+  description?: ReactNode;
+  testId?: string;
+  disabled?: boolean;
+  monoLabel?: boolean;
+}) {
+  const id = useId();
+  return (
+    <div className="flex items-start gap-3 rounded-xl border border-line bg-panel/70 px-3 py-2.5 transition-colors hover:border-line-strong">
+      <Checkbox.Root
+        id={id}
+        checked={checked}
+        disabled={disabled}
+        onCheckedChange={(next) => onCheckedChange(next === true)}
+        data-testid={testId}
+        className={cx(
+          'mt-0.5 grid size-4 shrink-0 cursor-pointer place-items-center rounded border border-line-strong bg-sunken transition-colors',
+          'data-[state=checked]:border-accent data-[state=checked]:bg-accent disabled:pointer-events-none disabled:opacity-50'
+        )}
+      >
+        <Checkbox.Indicator>
+          <Check aria-hidden className="size-3 text-on-accent" strokeWidth={3} />
+        </Checkbox.Indicator>
+      </Checkbox.Root>
+      <label htmlFor={id} className="flex min-w-0 flex-1 cursor-pointer flex-col gap-0.5">
+        <span className={cx('text-xs font-semibold text-fg', monoLabel && 'font-mono')}>
+          {label}
+        </span>
+        {description ? <span className="text-xs leading-snug text-subtle">{description}</span> : null}
+      </label>
     </div>
   );
 }

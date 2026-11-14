@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { AppHeader } from '@renderer/components/shell/app-header';
 import { StudioHost } from '@renderer/components/shell/studio-host';
 import { Toaster } from '@renderer/components/shell/toaster';
+import { cx } from '@renderer/components/shell/ui';
 import { useDocumentSync } from '@renderer/components/shell/use-document-sync';
 import { HubScreen } from '@renderer/components/hub';
 import { ProjectScreen } from '@renderer/components/project';
@@ -13,6 +14,7 @@ export function App() {
   const screen = useAppStore((state) => state.screen);
   const init = useAppStore((state) => state.init);
   const resolvedTheme = useDocumentSync();
+  const isStudio = screen === 'studio';
 
   useEffect(() => {
     void init();
@@ -23,10 +25,10 @@ export function App() {
       data-testid="app-root"
       data-screen={screen}
       data-resolved-theme={resolvedTheme}
-      className="flex min-h-screen flex-col"
+      className={cx('flex flex-col', isStudio ? 'h-screen overflow-hidden' : 'min-h-screen')}
     >
       <AppHeader />
-      <main className="flex min-h-0 flex-1 flex-col">
+      <main className={cx('flex min-h-0 flex-1 flex-col', isStudio && 'overflow-hidden')}>
         {screen === 'hub' ? <HubScreen /> : null}
         {screen === 'project' ? <ProjectScreen /> : null}
         {screen === 'studio' ? <StudioHost Screen={StudioScreen} /> : null}

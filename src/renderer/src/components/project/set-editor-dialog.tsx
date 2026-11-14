@@ -1,8 +1,19 @@
-import { FileText, Loader2, Music2, Square, Volume2 } from 'lucide-react';
+import { FileText, FileUp, ListMusic, Loader2, Music2, Square, Volume2 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { RecordingSetConfig, ReclistManifest, ScaleNote, SupportedEncoding } from '@shared/types';
-import { ALL_SCALE_NOTES, OCTAVES } from '@shared/music/chromatic';
+import type {
+  OctaveNumber,
+  RecordingSetConfig,
+  ReclistManifest,
+  ScaleNote,
+  SupportedEncoding
+} from '@shared/types';
+import {
+  ALL_SCALE_NOTES,
+  OCTAVES,
+  scaleNoteToFrequencyHz,
+  scaleNoteToMidi
+} from '@shared/music/chromatic';
 import { useAppStore } from '@renderer/store/use-app-store';
 import {
   Badge,
@@ -259,8 +270,33 @@ export function SetEditorDialog({
     }
   };
 
+  const registerLabelForOctave = (octave: OctaveNumber): string => {
+    if (octave <= 3) {
+      return t('editor.registerLow');
+    }
+    if (octave === 4) {
+      return t('editor.registerMid');
+    }
+    return t('editor.registerHigh');
+  };
+
+  const registerLabelForNote = (note: ScaleNote): string => {
+    const midi = scaleNoteToMidi(note);
+    if (midi < 60) {
+      return t('editor.registerLow');
+    }
+    if (midi < 67) {
+      return t('editor.registerMid');
+    }
+    return t('editor.registerHigh');
+  };
+
+  const selectedHz = Math.round(scaleNoteToFrequencyHz(draft.scale));
+  const selectedScaleWithHz = t('editor.scaleWithHz', { note: draft.scale, hz: selectedHz });
+
   const scaleGroups = OCTAVES.map((octave) => ({
     octave,
+    registerLabel: registerLabelForOctave(octave),
     notes: ALL_SCALE_NOTES.filter((note) => note.endsWith(String(octave)))
   }));
 
@@ -297,12 +333,217 @@ export function SetEditorDialog({
         onSubmit={(event) => void onSubmit(event)}
         className="flex flex-col gap-6"
       >
+        <Section title={t('editor.sections.reclist')}>
+          <div
+            role="radiogroup"
+            aria-label={t('editor.reclistSource')}
+            className="grid gap-2.5 sm:grid-cols-2"
+          >
+            <button
+              type="button"
+              role="radio"
+              aria-checked={draft.reclistKind === 'builtin'}
+              data-testid="set-reclist-mode-builtin"
+              onClick={() => update({ reclistKind: 'builtin' })}
+              className={cx(
+                'flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors',
+                draft.reclistKind === 'builtin'
+                  ? 'border-accent bg-accent-soft text-fg shadow-sm'
+                  : 'border-line bg-raised/40 text-muted hover:border-line-strong hover:text-fg'
+              )}
+            >
+              <span
+                className={cx(
+                  'grid size-8 shrink-0 place-items-center rounded-lg',
+                  draft.reclistKind === 'builtin'
+                    ? 'bg-accent text-on-accent'
+                    : 'bg-sunken text-subtle'
+                )}
+              >
+                <ListMusic aria-hidden className="size-4" />
+              </span>
+              <span className="text-sm font-semibold">{t('editor.builtin')}</span>
+            </button>
+
+            <button
+              type="button"
+              role="radio"
+              aria-checked={draft.reclistKind === 'custom'}
+              data-testid="set-reclist-mode-custom"
+              onClick={() => update({ reclistKind: 'custom' })}
+              className={cx(
+                'flex cursor-pointer items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left transition-colors',
+                draft.reclistKind === 'custom'
+                  ? 'border-accent bg-accent-soft text-fg shadow-sm'
+                  : 'border-line bg-raised/40 text-muted hover:border-line-strong hover:text-fg'
+              )}
+            >
+              <span className="flex items-center gap-3">
+                <span
+                  className={cx(
+                    'grid size-8 shrink-0 place-items-center rounded-lg',
+                    draft.reclistKind === 'custom'
+                      ? 'bg-accent text-on-accent'
+                      : 'bg-sunken text-subtle'
+                  )}
+                >
+                  <FileUp aria-hidden className="size-4" />
+                </span>
+                <span className="text-sm font-semibold">{t('editor.importCustomCta')}</span>
+              </span>
+              <Badge tone={draft.reclistKind === 'custom' ? 'accent' : 'neutral'}>
+                {t('editor.custom')}
+              </Badge>
+            </button>
+          </div>
+
+          {draft.reclistKind === 'builtin' ? (
+            builtins.length === 0 ? (
+              <p className="text-sm text-subtle">{t('editor.noBuiltins')}</p>
+            ) : (
+              <div role="radiogroup" aria-label={t('editor.builtin')} className="grid gap-2 sm:grid-cols-2">
+                {builtins.map((manifest) => {
+                  const selected = draft.builtinId === manifest.id;
+                  return (
+                    <label
+                      key={manifest.id}
+                      data-testid={`set-reclist-builtin-${manifest.id}`}
+                      className={cx(
+                        'flex cursor-pointer flex-col gap-1.5 rounded-xl border p-3 transition-colors',
+                        selected ? 'border-accent bg-accent-soft' : 'border-line hover:border-line-strong'
+                      )}
+                    >
+                      <span className="flex items-start gap-2">
+                        <input
+                          type="radio"
+                          name="set-builtin"
+                          value={manifest.id}
+                          checked={selected}
+                          onChange={() => onBuiltinChange(manifest.id)}
+                          className="mt-1 accent-[var(--aie-accent)]"
+                        />
+                        <span className="text-sm font-medium text-fg">{manifest.displayName}</span>
+                      </span>
+                      <span className="pl-5 text-xs text-muted">
+                        {t('editor.builtinMeta', { author: manifest.author, style: manifest.style })}
+                      </span>
+                      <span className="flex flex-wrap gap-1.5 pl-5">
+                        <Badge>{t(`editor.reclistLanguage.${manifest.language}`)}</Badge>
+                        {manifest.recommendedBpm ? (
+                          <Badge tone="accent">
+                            {t('editor.recommendedBpm', { bpm: manifest.recommendedBpm })}
+                          </Badge>
+                        ) : null}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+            )
+          ) : (
+            <div className="flex flex-col gap-3 rounded-xl border border-line bg-raised/30 p-3.5">
+              <FilePickRow
+                label={t('editor.reclistFile')}
+                value={draft.reclistPath}
+                error={submitted ? errorText(errors.reclist) : undefined}
+                onPick={() => void pick('reclistPath', ['txt'])}
+                testId="set-reclist-file"
+              />
+              <FilePickRow
+                label={t('editor.commentFile')}
+                value={draft.commentFilePath}
+                onPick={() => void pick('commentFilePath', ['txt'])}
+                onClear={() => update({ commentFilePath: '' })}
+                testId="set-comment-file"
+              />
+              <FilePickRow
+                label={t('editor.otoFile')}
+                value={draft.otoFilePath}
+                onPick={() => void pick('otoFilePath', ['ini'])}
+                onClear={() => update({ otoFilePath: '' })}
+                testId="set-oto-file"
+              />
+              <Field label={t('editor.encoding')}>
+                {({ inputId }) => (
+                  <NativeSelect
+                    id={inputId}
+                    value={draft.encoding}
+                    onChange={(event) => update({ encoding: event.target.value as SupportedEncoding })}
+                    className="max-w-64"
+                    data-testid="set-encoding-select"
+                  >
+                    {SUPPORTED_ENCODINGS.map((encoding) => (
+                      <option key={encoding} value={encoding}>
+                        {t(`editor.encodingOptions.${encoding}`)}
+                      </option>
+                    ))}
+                  </NativeSelect>
+                )}
+              </Field>
+            </div>
+          )}
+        </Section>
+
+        <Section title={t('editor.sections.pitch')}>
+          <Field label={t('editor.scale')} hint={t('editor.scaleHint')}>
+            {({ inputId, describedBy }) => (
+              <div className="flex flex-wrap items-center gap-2">
+                <NativeSelect
+                  id={inputId}
+                  value={draft.scale}
+                  onChange={(event) => onScaleChange(event.target.value as ScaleNote)}
+                  aria-describedby={describedBy}
+                  className="max-w-52 font-mono"
+                  data-testid="set-scale-select"
+                >
+                  {scaleGroups.map((group) => (
+                    <optgroup
+                      key={group.octave}
+                      label={`${t('editor.octave', { octave: group.octave })} · ${group.registerLabel}`}
+                    >
+                      {group.notes.map((note) => (
+                        <option key={note} value={note}>
+                          {t('editor.scaleWithHz', {
+                            note,
+                            hz: Math.round(scaleNoteToFrequencyHz(note))
+                          })}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </NativeSelect>
+                <Badge tone="accent" data-testid="set-scale-register-badge">
+                  {registerLabelForNote(draft.scale)}
+                </Badge>
+                <Button
+                  onClick={audition}
+                  data-testid="set-audition-btn"
+                  aria-pressed={auditioning}
+                  icon={
+                    auditioning ? (
+                      <Square aria-hidden className="size-3.5 fill-current" />
+                    ) : (
+                      <Volume2 aria-hidden className="size-4" />
+                    )
+                  }
+                >
+                  {auditioning
+                    ? t('editor.auditionPlaying', { note: selectedScaleWithHz })
+                    : `${t('editor.audition')} · ${selectedScaleWithHz}`}
+                </Button>
+              </div>
+            )}
+          </Field>
+          <p data-testid="set-octave-guide" className="text-xs leading-relaxed text-muted">
+            {t('editor.octaveGuide')}
+          </p>
+        </Section>
+
         <Section title={t('editor.sections.basics')}>
           <Field label={t('editor.name')} error={errorText(visibleErrors.name)}>
             {({ inputId, describedBy, invalid }) => (
               <TextInput
                 id={inputId}
-                autoFocus
                 value={draft.name}
                 placeholder={t('editor.namePlaceholder')}
                 onChange={(event) => update({ name: event.target.value })}
@@ -420,147 +661,6 @@ export function SetEditorDialog({
           <p data-testid="set-path-preview" className="truncate font-mono text-[11px] text-subtle" title={previewPath}>
             {t('editor.subfolderPreview', { path: previewPath })}
           </p>
-        </Section>
-
-        <Section title={t('editor.sections.pitch')}>
-          <Field label={t('editor.scale')} hint={t('editor.scaleHint')}>
-            {({ inputId, describedBy }) => (
-              <div className="flex gap-2">
-                <NativeSelect
-                  id={inputId}
-                  value={draft.scale}
-                  onChange={(event) => onScaleChange(event.target.value as ScaleNote)}
-                  aria-describedby={describedBy}
-                  className="max-w-40 font-mono"
-                  data-testid="set-scale-select"
-                >
-                  {scaleGroups.map((group) => (
-                    <optgroup key={group.octave} label={t('editor.octave', { octave: group.octave })}>
-                      {group.notes.map((note) => (
-                        <option key={note} value={note}>
-                          {note}
-                        </option>
-                      ))}
-                    </optgroup>
-                  ))}
-                </NativeSelect>
-                <Button
-                  onClick={audition}
-                  data-testid="set-audition-btn"
-                  aria-pressed={auditioning}
-                  icon={
-                    auditioning ? (
-                      <Square aria-hidden className="size-3.5 fill-current" />
-                    ) : (
-                      <Volume2 aria-hidden className="size-4" />
-                    )
-                  }
-                >
-                  {auditioning
-                    ? t('editor.auditionPlaying', { note: draft.scale })
-                    : t('editor.audition')}
-                </Button>
-              </div>
-            )}
-          </Field>
-        </Section>
-
-        <Section title={t('editor.sections.reclist')}>
-          <Segmented<'builtin' | 'custom'>
-            label={t('editor.reclistSource')}
-            value={draft.reclistKind}
-            onChange={(kind) => update({ reclistKind: kind })}
-            size="md"
-            options={[
-              { value: 'builtin', label: t('editor.builtin'), testId: 'set-reclist-kind-builtin' },
-              { value: 'custom', label: t('editor.custom'), testId: 'set-reclist-kind-custom' }
-            ]}
-          />
-          {draft.reclistKind === 'builtin' ? (
-            builtins.length === 0 ? (
-              <p className="text-sm text-subtle">{t('editor.noBuiltins')}</p>
-            ) : (
-              <div role="radiogroup" aria-label={t('editor.builtin')} className="grid gap-2 sm:grid-cols-2">
-                {builtins.map((manifest) => {
-                  const selected = draft.builtinId === manifest.id;
-                  return (
-                    <label
-                      key={manifest.id}
-                      data-testid={`set-reclist-builtin-${manifest.id}`}
-                      className={cx(
-                        'flex cursor-pointer flex-col gap-1.5 rounded-xl border p-3 transition-colors',
-                        selected ? 'border-accent bg-accent-soft' : 'border-line hover:border-line-strong'
-                      )}
-                    >
-                      <span className="flex items-start gap-2">
-                        <input
-                          type="radio"
-                          name="set-builtin"
-                          value={manifest.id}
-                          checked={selected}
-                          onChange={() => onBuiltinChange(manifest.id)}
-                          className="mt-1 accent-[var(--aie-accent)]"
-                        />
-                        <span className="text-sm font-medium text-fg">{manifest.displayName}</span>
-                      </span>
-                      <span className="pl-5 text-xs text-muted">
-                        {t('editor.builtinMeta', { author: manifest.author, style: manifest.style })}
-                      </span>
-                      <span className="flex flex-wrap gap-1.5 pl-5">
-                        <Badge>{t(`editor.reclistLanguage.${manifest.language}`)}</Badge>
-                        {manifest.recommendedBpm ? (
-                          <Badge tone="accent">
-                            {t('editor.recommendedBpm', { bpm: manifest.recommendedBpm })}
-                          </Badge>
-                        ) : null}
-                      </span>
-                    </label>
-                  );
-                })}
-              </div>
-            )
-          ) : (
-            <div className="flex flex-col gap-3">
-              <FilePickRow
-                label={t('editor.reclistFile')}
-                value={draft.reclistPath}
-                error={submitted ? errorText(errors.reclist) : undefined}
-                onPick={() => void pick('reclistPath', ['txt'])}
-                testId="set-reclist-file"
-              />
-              <FilePickRow
-                label={t('editor.commentFile')}
-                value={draft.commentFilePath}
-                onPick={() => void pick('commentFilePath', ['txt'])}
-                onClear={() => update({ commentFilePath: '' })}
-                testId="set-comment-file"
-              />
-              <FilePickRow
-                label={t('editor.otoFile')}
-                value={draft.otoFilePath}
-                onPick={() => void pick('otoFilePath', ['ini'])}
-                onClear={() => update({ otoFilePath: '' })}
-                testId="set-oto-file"
-              />
-              <Field label={t('editor.encoding')}>
-                {({ inputId }) => (
-                  <NativeSelect
-                    id={inputId}
-                    value={draft.encoding}
-                    onChange={(event) => update({ encoding: event.target.value as SupportedEncoding })}
-                    className="max-w-64"
-                    data-testid="set-encoding-select"
-                  >
-                    {SUPPORTED_ENCODINGS.map((encoding) => (
-                      <option key={encoding} value={encoding}>
-                        {t(`editor.encodingOptions.${encoding}`)}
-                      </option>
-                    ))}
-                  </NativeSelect>
-                )}
-              </Field>
-            </div>
-          )}
         </Section>
 
         <Section title={t('editor.sections.guide')}>

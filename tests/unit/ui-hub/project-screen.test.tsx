@@ -95,22 +95,50 @@ describe('Screen 2 — Project Workspace, Recording Sets, Drawer & Safe Removal'
     await user.click(screen.getByTestId('set-add-btn'));
 
     const editor = await screen.findByTestId('set-editor');
+
+    // Recording List (Reclist) selection is Section #1 at the very top of the dialog
+    const sections = editor.querySelectorAll('fieldset');
+    expect(sections.length).toBeGreaterThanOrEqual(5);
+    expect(within(sections[0]!).getByTestId('set-reclist-mode-builtin')).toBeInTheDocument();
+    expect(within(sections[0]!).getByTestId('set-reclist-mode-custom')).toBeInTheDocument();
+
     const scaleSelect = within(editor).getByTestId('set-scale-select') as HTMLSelectElement;
-    const optionValues = Array.from(scaleSelect.querySelectorAll('option'), (opt) => opt.value);
+    const optionElements = Array.from(scaleSelect.querySelectorAll('option'));
+    const optionValues = optionElements.map((opt) => opt.value);
     expect(optionValues).toEqual([...ALL_SCALE_NOTES]);
     expect(optionValues).toContain('C#3');
     expect(optionValues).toContain('F#4');
 
+    // Options show acoustic Hz (e.g. G3 · 196 Hz vs G4 · 392 Hz) & optgroups show register labels
+    expect(optionElements.find((opt) => opt.value === 'G3')?.textContent).toBe('G3 · 196 Hz');
+    expect(optionElements.find((opt) => opt.value === 'G4')?.textContent).toBe('G4 · 392 Hz');
+    expect(optionElements.find((opt) => opt.value === 'A4')?.textContent).toBe('A4 · 440 Hz');
+    const optgroupLabels = Array.from(scaleSelect.querySelectorAll('optgroup'), (og) => og.label);
+    expect(optgroupLabels.some((label) => label.includes('Low / Chest'))).toBe(true);
+    expect(optgroupLabels.some((label) => label.includes('Mid'))).toBe(true);
+    expect(optgroupLabels.some((label) => label.includes('High / Treble'))).toBe(true);
+    expect(within(editor).getByTestId('set-octave-guide')).toHaveTextContent('G3 (196 Hz)');
+    expect(within(editor).getByTestId('set-octave-guide')).toHaveTextContent('G4 (392 Hz)');
+    expect(within(editor).getByTestId('set-scale-register-badge')).toHaveTextContent(
+      'High / Treble'
+    );
+
     // Default subfolder 'G4' collides with existing set -> visible collision alert
     expect(within(editor).getByRole('alert')).toHaveTextContent('G4');
 
+    // Selecting G3 updates register badge to Low / Chest, then F#4 updates to Mid
+    await user.selectOptions(scaleSelect, 'G3');
+    expect(within(editor).getByTestId('set-scale-register-badge')).toHaveTextContent('Low / Chest');
+
     // Pick sharp scale F#4 -> auto-updates alias suffix to _F#4 and subfolder to F#4
     await user.selectOptions(scaleSelect, 'F#4');
+    expect(within(editor).getByTestId('set-scale-register-badge')).toHaveTextContent('Mid');
     expect(within(editor).getByTestId('set-alias-input')).toHaveValue('_F#4');
     expect(within(editor).getByTestId('set-subfolder-input')).toHaveValue('F#4');
 
-    // Audition Pitch plays & stops cleanly
+    // Audition Pitch plays & stops cleanly with Hz label
     const auditionBtn = within(editor).getByTestId('set-audition-btn');
+    expect(auditionBtn).toHaveTextContent('F#4 · 370 Hz');
     await user.click(auditionBtn);
     expect(playTone).toHaveBeenCalledWith('F#4');
     expect(auditionBtn).toHaveAttribute('aria-pressed', 'true');
@@ -132,8 +160,8 @@ describe('Screen 2 — Project Workspace, Recording Sets, Drawer & Safe Removal'
     await user.click(within(editor).getByTestId('set-guide-metronome'));
     expect(within(editor).getByTestId('set-guide-bpm')).toHaveValue(120);
 
-    // Also verify Custom .txt mode exposes all 6 encodings before switching back
-    await user.click(within(editor).getByTestId('set-reclist-kind-custom'));
+    // Also verify Import Custom .txt… mode exposes all 6 encodings before switching back
+    await user.click(within(editor).getByTestId('set-reclist-mode-custom'));
     const encodingSelect = within(editor).getByTestId('set-encoding-select') as HTMLSelectElement;
     expect(Array.from(encodingSelect.options, (o) => o.value)).toEqual([
       'auto',
@@ -143,7 +171,7 @@ describe('Screen 2 — Project Workspace, Recording Sets, Drawer & Safe Removal'
       'shift_jis',
       'gb18030'
     ]);
-    await user.click(within(editor).getByTestId('set-reclist-kind-builtin'));
+    await user.click(within(editor).getByTestId('set-reclist-mode-builtin'));
 
     await user.type(within(editor).getByTestId('set-name-input'), 'Power F#4');
     await user.click(within(editor).getByTestId('set-save-btn'));
@@ -163,12 +191,69 @@ describe('Screen 2 — Project Workspace, Recording Sets, Drawer & Safe Removal'
     expect(syncSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('shows Ecosystem Handoff setup prompt when external tool is missing and opens Settings modal', async () => {
+  it('opens SetEditorDialog from SetCard Change / Import Reclist button and saves a custom .txt reclist flow', async () => {
+    const user = userEvent.setup();
+    const manifest = makeManifest({ sets: [makeSet({ id: 'set-g4', name: 'Normal G4', scale: 'G4' })] });
+    const bridge = makeBridge({ manifest });
+    const pickedFiles = [
+      '/reclists/custom_jpn_vcv.txt',
+      '/reclists/OREMO-comment.txt',
+      '/reclists/oto.ini'
+    ];
+    bridge.project.pickFile = vi.fn(async () => pickedFiles.shift() ?? null);
+    const upsertSpy = vi.spyOn(bridge.project, 'upsertRecordingSet');
+
+    resetAppStore(bridge);
+    await useAppStore.getState().init();
+    await useAppStore.getState().openProject(manifest.rootPath);
+
+    renderWithI18n(<ProjectScreen />);
+
+    expect(await screen.findByTestId('set-card-reclist-badge')).toHaveTextContent(
+      'Z.CVVC Normal (Chinese)'
+    );
+    await user.click(screen.getByTestId('set-card-reclist-btn'));
+
+    const editor = await screen.findByTestId('set-editor');
+    await user.click(within(editor).getByTestId('set-reclist-mode-custom'));
+
+    await user.click(within(editor).getByTestId('set-reclist-file-pick'));
+    await waitFor(() =>
+      expect(within(editor).getByTestId('set-reclist-file-path')).toHaveValue('custom_jpn_vcv.txt')
+    );
+    await user.click(within(editor).getByTestId('set-comment-file-pick'));
+    await waitFor(() =>
+      expect(within(editor).getByTestId('set-comment-file-path')).toHaveValue('OREMO-comment.txt')
+    );
+    await user.click(within(editor).getByTestId('set-oto-file-pick'));
+    await waitFor(() =>
+      expect(within(editor).getByTestId('set-oto-file-path')).toHaveValue('oto.ini')
+    );
+
+    await user.selectOptions(within(editor).getByTestId('set-encoding-select'), 'shift_jis');
+    await user.click(within(editor).getByTestId('set-save-btn'));
+
+    await waitFor(() => expect(upsertSpy).toHaveBeenCalledTimes(1));
+    expect(upsertSpy.mock.calls[0]?.[1]?.reclistSource).toEqual({
+      kind: 'custom',
+      reclistPath: '/reclists/custom_jpn_vcv.txt',
+      commentFilePath: '/reclists/OREMO-comment.txt',
+      otoFilePath: '/reclists/oto.ini',
+      encoding: 'shift_jis'
+    });
+    expect(await screen.findByTestId('set-card-reclist-badge')).toHaveTextContent(
+      'custom_jpn_vcv.txt'
+    );
+  });
+
+  it('groups external tools in Open In ▾ menu with workflow descriptions, handles missing tools, and customizes Singer Metadata Files', async () => {
     const user = userEvent.setup();
     const manifest = makeManifest();
     const bridge = makeBridge({ manifest });
     bridge.shell.openInExternalTool = vi.fn(async () => ({ ok: false, error: 'not found' }));
     const revealSpy = vi.spyOn(bridge.shell, 'revealInFileManager');
+    const saveSpy = vi.spyOn(bridge.project, 'saveProject');
+    const syncSpy = vi.spyOn(bridge.voicebank, 'syncSingerScaffolding');
 
     resetAppStore(bridge);
     await useAppStore.getState().init();
@@ -181,10 +266,39 @@ describe('Screen 2 — Project Workspace, Recording Sets, Drawer & Safe Removal'
       </>
     );
 
-    await user.click(await screen.findByTestId('handoff-reveal'));
+    // Customize Companion Singer Metadata Files directly on ProjectScreen
+    const singerFilesBtn = await screen.findByTestId('project-singer-files-btn');
+    expect(singerFilesBtn).toHaveTextContent('3/3');
+    await user.click(singerFilesBtn);
+
+    const singerPopover = await screen.findByTestId('project-singer-files');
+    const prefixCheckbox = within(singerPopover).getByTestId('project-singer-file-prefix-map');
+    expect(prefixCheckbox).toHaveAttribute('aria-checked', 'true');
+    await user.click(prefixCheckbox);
+
+    await waitFor(() => expect(saveSpy).toHaveBeenCalledTimes(1));
+    expect(saveSpy.mock.calls[0]?.[0]?.singerFiles).toEqual({
+      characterTxt: true,
+      characterYaml: true,
+      prefixMap: false
+    });
+    expect(syncSpy).toHaveBeenCalledTimes(1);
+    expect(singerFilesBtn).toHaveTextContent('2/3');
+
+    // Open In ▾ menu groups Reveal Folder, Open in vLabeler, and Open in OpenUtau with 1-line hints
+    await user.click(screen.getByTestId('project-open-in-btn'));
+    const openInMenu = await screen.findByTestId('project-open-in-menu');
+    expect(openInMenu).toHaveTextContent('Finder / Explorer');
+    expect(openInMenu).toHaveTextContent('vLabeler');
+    expect(openInMenu).toHaveTextContent('OpenUtau');
+
+    await user.click(within(openInMenu).getByTestId('handoff-reveal'));
     expect(revealSpy).toHaveBeenCalledWith('/voicebanks/teto');
 
-    await user.click(screen.getByTestId('handoff-vlabeler'));
+    await user.click(screen.getByTestId('project-open-in-btn'));
+    const reopenedMenu = await screen.findByTestId('project-open-in-menu');
+    await user.click(within(reopenedMenu).getByTestId('handoff-vlabeler'));
+
     const banner = await screen.findByTestId('handoff-tool-missing');
     expect(banner).toHaveTextContent('vLabeler');
 
