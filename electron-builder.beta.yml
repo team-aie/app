@@ -1,0 +1,10 @@
+# `aie Beta`: installs side-by-side with Stable and follows the `beta` update channel.
+extends: electron-builder.yml
+appId: com.team-aie.app.beta
+productName: aie Beta
+artifactName: "aie-Beta-${version}-${os}-${arch}.${ext}"
+publish:
+  provider: github
+  owner: team-aie
+  repo: app
+  channel: beta

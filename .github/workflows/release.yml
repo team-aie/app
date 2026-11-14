@@ -1,0 +1,136 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v1.*'
+
+permissions:
+  contents: write
+
+jobs:
+  meta:
+    name: Resolve release channel
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+      prerelease: ${{ steps.meta.outputs.prerelease }}
+      config: ${{ steps.meta.outputs.config }}
+    steps:
+      - id: meta
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+          # v1.0.0-beta.N / v1.0.0-alpha.N => pre-release + `aie Beta` (side-by-side, beta channel)
+          if [[ "$TAG" == *-beta.* || "$TAG" == *-alpha.* ]]; then
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+            echo "config=electron-builder.beta.yml" >> "$GITHUB_OUTPUT"
+          else
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+            echo "config=electron-builder.yml" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    name: Build ${{ matrix.name }}
+    needs: meta
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - { name: macOS arm64 (.dmg/.zip), os: macos-15, flags: '--mac --arm64' }
+          - { name: Windows x64 (NSIS .exe), os: windows-latest, flags: '--win --x64' }
+          - { name: Linux x64 (.AppImage/.deb), os: ubuntu-24.04, flags: '--linux --x64' }
+    env:
+      # Secrets cannot be tested in `if:`; expose presence as booleans instead.
+      HAS_MAC_SIGNING: ${{ secrets.MAC_CSC_LINK != '' && secrets.APPLE_ID != '' && secrets.APPLE_APP_SPECIFIC_PASSWORD != '' && secrets.APPLE_TEAM_ID != '' }}
+      HAS_WIN_SIGNING: ${{ secrets.WIN_CSC_LINK != '' }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Set package version from tag
+        shell: bash
+        run: npm version "${{ needs.meta.outputs.version }}" --no-git-tag-version --allow-same-version
+
+      - name: Typecheck, test & build
+        run: |
+          npm run typecheck
+          npm test
+          npm run build
+
+      # ---- macOS: unsigned by default (Day-1, $0); signed + notarized only when all secrets exist ----
+      - name: Package macOS (unsigned)
+        if: runner.os == 'macOS' && env.HAS_MAC_SIGNING != 'true'
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: npx electron-builder ${{ matrix.flags }} --publish never --config ${{ needs.meta.outputs.config }} -c.mac.identity=null
+
+      - name: Package macOS (signed + notarized)
+        if: runner.os == 'macOS' && env.HAS_MAC_SIGNING == 'true'
+        env:
+          CSC_LINK: ${{ secrets.MAC_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CSC_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: npx electron-builder ${{ matrix.flags }} --publish never --config ${{ needs.meta.outputs.config }} -c.mac.notarize=true
+
+      # ---- Windows: unsigned NSIS by default; Authenticode only when a certificate secret exists ----
+      - name: Package Windows (unsigned)
+        if: runner.os == 'Windows' && env.HAS_WIN_SIGNING != 'true'
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: npx electron-builder ${{ matrix.flags }} --publish never --config ${{ needs.meta.outputs.config }}
+
+      - name: Package Windows (signed)
+        if: runner.os == 'Windows' && env.HAS_WIN_SIGNING == 'true'
+        env:
+          CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
+        run: npx electron-builder ${{ matrix.flags }} --publish never --config ${{ needs.meta.outputs.config }}
+
+      - name: Package Linux
+        if: runner.os == 'Linux'
+        run: npx electron-builder ${{ matrix.flags }} --publish never --config ${{ needs.meta.outputs.config }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ matrix.os }}
+          if-no-files-found: error
+          path: |
+            release/*.dmg
+            release/*.zip
+            release/*.exe
+            release/*.AppImage
+            release/*.deb
+            release/*.blockmap
+            release/latest*.yml
+            release/beta*.yml
+
+  publish:
+    name: Publish GitHub Release
+    needs: [meta, build]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          pattern: release-*
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PRERELEASE: ${{ needs.meta.outputs.prerelease }}
+        run: |
+          FLAGS=(--title "aie ${GITHUB_REF_NAME}" --generate-notes --verify-tag)
+          if [[ "$PRERELEASE" == "true" ]]; then FLAGS+=(--prerelease); fi
+          gh release create "${GITHUB_REF_NAME}" dist/* "${FLAGS[@]}" --repo "${GITHUB_REPOSITORY}"
