@@ -1,0 +1,79 @@
+{
+  "appName": "aie",
+  "tagline": "桌面录音棚 & 音源制作工具",
+  "actions": {
+    "cancel": "取消",
+    "save": "保存",
+    "create": "创建",
+    "delete": "删除",
+    "remove": "移除",
+    "close": "关闭",
+    "back": "返回",
+    "browse": "浏览…",
+    "clear": "清除",
+    "retry": "重试",
+    "copy": "复制",
+    "edit": "编辑",
+    "open": "打开",
+    "reveal": "在访达 / 资源管理器中显示",
+    "learnMore": "了解更多",
+    "dismiss": "忽略"
+  },
+  "nav": {
+    "breadcrumb": "导航路径",
+    "hub": "主页",
+    "project": "项目",
+    "studio": "录音室"
+  },
+  "header": {
+    "language": "语言",
+    "theme": "主题",
+    "audioSettings": "音频设置",
+    "about": "关于 & 许可证"
+  },
+  "language": {
+    "en-US": "English",
+    "zh-CN": "简体中文",
+    "ja-JP": "日本語",
+    "short": {
+      "en-US": "EN",
+      "zh-CN": "简",
+      "ja-JP": "日"
+    }
+  },
+  "theme": {
+    "system": "跟随系统",
+    "light": "浅色",
+    "dark": "深色"
+  },
+  "update": {
+    "available": "有可用更新 {{version}}",
+    "downloaded": "重启以更新至 {{version}}",
+    "checking": "正在检查更新…",
+    "install": "重启并安装",
+    "viewRelease": "查看发行说明",
+    "error": "检查更新失败"
+  },
+  "status": {
+    "loading": "加载中…",
+    "saving": "保存中…",
+    "saved": "已保存",
+    "error": "出现错误：{{message}}",
+    "bridgeUnavailable": "桌面桥接不可用 — 正以预览模式运行",
+    "preview": "预览"
+  },
+  "units": {
+    "progress": "{{recorded}} / {{total}}",
+    "percent": "{{value}}%",
+    "items": "{{count}} 项"
+  },
+  "time": {
+    "justNow": "刚刚",
+    "minutesAgo": "{{count}} 分钟前",
+    "hoursAgo": "{{count}} 小时前",
+    "daysAgo": "{{count}} 天前"
+  },
+  "toast": {
+    "region": "通知"
+  }
+}

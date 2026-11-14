@@ -1,0 +1,61 @@
+{
+  "linkStart": "Link Start",
+  "welcomeTitle": "Welcome to the booth",
+  "welcomeSubtitle": "Record a ready-to-sing OpenUtau & vLabeler voicebank, one prompt at a time.",
+  "continue": {
+    "eyebrow": "Continue Last Session",
+    "button": "Link Start / Continue",
+    "lastOpened": "Last opened {{time}}",
+    "activeSet": "Active set",
+    "scale": "Scale",
+    "progress": "{{recorded}} / {{total}} recorded",
+    "noActiveSet": "No recording set yet — open the project to create one",
+    "missing": "This project folder can no longer be found"
+  },
+  "empty": {
+    "title": "No projects yet",
+    "description": "Create a new singer project or open an existing voicebank folder to get started."
+  },
+  "actions": {
+    "create": "Create New Singer Project",
+    "createDescription": "Pick an empty folder and aie scaffolds aie.project.json, character.txt, and character.yaml.",
+    "open": "Open Existing Folder",
+    "openDescription": "Open an aie project, migrate a v0.x aie.config.json, or adopt a raw OREMO voicebank folder."
+  },
+  "create": {
+    "title": "Create New Singer Project",
+    "description": "Your singer folder stays a 100% standard UTAU voicebank — aie only adds aie.project.json.",
+    "singerName": "Singer Name",
+    "singerNamePlaceholder": "e.g. Kasane Teto",
+    "author": "Author",
+    "authorPlaceholder": "Your name (optional)",
+    "folder": "Voicebank Folder",
+    "folderPlaceholder": "No folder selected",
+    "pickFolder": "Choose Folder…",
+    "pickFolderTitle": "Choose a folder for the new singer",
+    "turnkeyNote": "Creates aie.project.json plus UTF-8 character.txt and character.yaml.",
+    "submit": "Create Project",
+    "creating": "Creating…",
+    "nameRequired": "Enter a singer name",
+    "folderRequired": "Choose a folder",
+    "success": "Created {{name}}"
+  },
+  "open": {
+    "pickTitle": "Open a voicebank or aie project folder",
+    "opening": "Opening…",
+    "success": "Opened {{name}}",
+    "failed": "Could not open the folder: {{error}}"
+  },
+  "recent": {
+    "title": "Recent Projects",
+    "searchPlaceholder": "Search recent projects…",
+    "noResults": "No recent projects match “{{query}}”",
+    "none": "Projects you open will appear here.",
+    "lastOpened": "Opened {{time}}",
+    "progress": "{{recorded}} / {{total}}",
+    "missing": "Folder missing",
+    "missingDescription": "The folder was moved or deleted. Relink it by opening the folder again.",
+    "reveal": "Reveal in Finder / Explorer",
+    "openProject": "Open {{name}}"
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "appName": "aie",
+  "tagline": "Desktop Vocal Booth & Voicebank Builder",
+  "actions": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "create": "Create",
+    "delete": "Delete",
+    "remove": "Remove",
+    "close": "Close",
+    "back": "Back",
+    "browse": "Browse…",
+    "clear": "Clear",
+    "retry": "Retry",
+    "copy": "Copy",
+    "edit": "Edit",
+    "open": "Open",
+    "reveal": "Reveal in Finder / Explorer",
+    "learnMore": "Learn more",
+    "dismiss": "Dismiss"
+  },
+  "nav": {
+    "breadcrumb": "Breadcrumb",
+    "hub": "Hub",
+    "project": "Project",
+    "studio": "Studio"
+  },
+  "header": {
+    "language": "Language",
+    "theme": "Theme",
+    "audioSettings": "Audio Settings",
+    "about": "About & Licenses"
+  },
+  "language": {
+    "en-US": "English",
+    "zh-CN": "简体中文",
+    "ja-JP": "日本語",
+    "short": {
+      "en-US": "EN",
+      "zh-CN": "简",
+      "ja-JP": "日"
+    }
+  },
+  "theme": {
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "update": {
+    "available": "Update {{version}} available",
+    "downloaded": "Restart to update to {{version}}",
+    "checking": "Checking for updates…",
+    "install": "Restart & Install",
+    "viewRelease": "View Release",
+    "error": "Update check failed"
+  },
+  "status": {
+    "loading": "Loading…",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "error": "Something went wrong: {{message}}",
+    "bridgeUnavailable": "Desktop bridge unavailable — running in preview mode",
+    "preview": "Preview"
+  },
+  "units": {
+    "progress": "{{recorded}} / {{total}}",
+    "percent": "{{value}}%",
+    "items": "{{count}} items"
+  },
+  "time": {
+    "justNow": "just now",
+    "minutesAgo": "{{count}} min ago",
+    "hoursAgo": "{{count}} h ago",
+    "daysAgo": "{{count}} d ago"
+  },
+  "toast": {
+    "region": "Notifications"
+  }
+}

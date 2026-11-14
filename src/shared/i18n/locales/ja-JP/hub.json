@@ -1,0 +1,61 @@
+{
+  "linkStart": "リンク・スタート",
+  "welcomeTitle": "録音ブースへようこそ",
+  "welcomeSubtitle": "1 つずつ収録して、すぐに歌える OpenUtau & vLabeler 音源を作りましょう。",
+  "continue": {
+    "eyebrow": "前回のセッションを再開",
+    "button": "リンク・スタート / 再開",
+    "lastOpened": "最終オープン：{{time}}",
+    "activeSet": "現在の録音セット",
+    "scale": "音階",
+    "progress": "{{recorded}} / {{total}} 収録済み",
+    "noActiveSet": "録音セットがまだありません — プロジェクトを開いて作成してください",
+    "missing": "このプロジェクトフォルダが見つかりません"
+  },
+  "empty": {
+    "title": "プロジェクトがまだありません",
+    "description": "新しい歌手プロジェクトを作成するか、既存の音源フォルダを開いて始めましょう。"
+  },
+  "actions": {
+    "create": "新しい歌手プロジェクトを作成",
+    "createDescription": "空のフォルダを選ぶと、aie が aie.project.json・character.txt・character.yaml を自動生成します。",
+    "open": "既存のフォルダを開く",
+    "openDescription": "aie プロジェクトを開く、v0.x の aie.config.json を移行する、または OREMO で収録した音源フォルダを取り込みます。"
+  },
+  "create": {
+    "title": "新しい歌手プロジェクトを作成",
+    "description": "歌手フォルダは 100% 標準の UTAU 音源のまま — aie が追加するのは aie.project.json だけです。",
+    "singerName": "歌手名",
+    "singerNamePlaceholder": "例：重音テト",
+    "author": "作者",
+    "authorPlaceholder": "あなたの名前（任意）",
+    "folder": "音源フォルダ",
+    "folderPlaceholder": "フォルダが選択されていません",
+    "pickFolder": "フォルダを選択…",
+    "pickFolderTitle": "新しい歌手のフォルダを選択",
+    "turnkeyNote": "aie.project.json と UTF-8 の character.txt・character.yaml を作成します。",
+    "submit": "プロジェクトを作成",
+    "creating": "作成中…",
+    "nameRequired": "歌手名を入力してください",
+    "folderRequired": "フォルダを選択してください",
+    "success": "{{name}} を作成しました"
+  },
+  "open": {
+    "pickTitle": "音源または aie プロジェクトのフォルダを開く",
+    "opening": "開いています…",
+    "success": "{{name}} を開きました",
+    "failed": "フォルダを開けませんでした：{{error}}"
+  },
+  "recent": {
+    "title": "最近のプロジェクト",
+    "searchPlaceholder": "最近のプロジェクトを検索…",
+    "noResults": "「{{query}}」に一致する最近のプロジェクトはありません",
+    "none": "開いたプロジェクトがここに表示されます。",
+    "lastOpened": "{{time}} に開きました",
+    "progress": "{{recorded}} / {{total}}",
+    "missing": "フォルダが見つかりません",
+    "missingDescription": "フォルダが移動または削除されました。もう一度フォルダを開いて再リンクしてください。",
+    "reveal": "Finder / エクスプローラーで表示",
+    "openProject": "{{name}} を開く"
+  }
+}

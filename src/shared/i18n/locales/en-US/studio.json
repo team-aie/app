@@ -1,0 +1,131 @@
+{
+  "title": "Recording Studio",
+  "backToProject": "Back to Project",
+  "loading": "Loading recording list…",
+  "loadFailed": "Could not load the recording list: {{error}}",
+  "transport": {
+    "record": "Record",
+    "recording": "Recording…",
+    "stopRecording": "Stop Recording",
+    "play": "Play",
+    "playing": "Playing…",
+    "stop": "Stop",
+    "referenceTone": "Reference Tone",
+    "referenceToneHint": "Hold S to hear {{note}}",
+    "holdToRecord": "Hold R to record",
+    "pressToToggle": "Press R to start / stop recording",
+    "countIn": "Count-in: {{beats}}",
+    "previous": "Previous prompt",
+    "next": "Next prompt",
+    "nextUnrecorded": "Next unrecorded"
+  },
+  "mode": {
+    "label": "Record Mode",
+    "hold": "PTT (Hold R)",
+    "toggle": "Toggle R",
+    "holdDescription": "Recording continues only while R is held down",
+    "toggleDescription": "Press R once to start and again to stop"
+  },
+  "workflow": {
+    "autoListenBack": "Auto-Listen-Back",
+    "autoListenBackDescription": "Play each take back immediately after it is saved",
+    "autoAdvance": "Auto-Advance",
+    "autoAdvanceDescription": "Move to the next prompt after a clean take",
+    "guideBgm": "Guide BGM",
+    "guideBgmDescription": "Play the guide metronome or BGM while recording",
+    "otoGrid": "oto.ini Grid",
+    "otoGridDescription": "Overlay read-only oto.ini timing markers on the waveform",
+    "autoZoom": "Auto-Zoom Quiet Takes",
+    "undoRetake": "Undo Retake",
+    "undoRetakeDone": "Previous take restored",
+    "undoRetakeUnavailable": "No previous take to restore",
+    "trashTake": "Trash Take",
+    "trashTakeConfirm": "Move {{fileName}} to the Trash?",
+    "trashTakeDone": "{{fileName}} moved to the Trash",
+    "openVLabeler": "Open in vLabeler",
+    "openOpenUtau": "Open in OpenUtau",
+    "audioSettings": "Audio Settings",
+    "confirmTrash": "Move to Trash",
+    "cancel": "Cancel"
+  },
+  "warnings": {
+    "clipping": "Clipping detected (0 dBFS) — lower your input gain and retake",
+    "earlyCutoff": "Early cutoff — the take may have ended before the phrase finished",
+    "quietTake": "This take is very quiet — move closer to the microphone",
+    "noMicrophone": "No microphone found. Connect one and check Audio Settings.",
+    "micPermissionDenied": "Microphone access was denied. Allow access in your system privacy settings."
+  },
+  "prompt": {
+    "previous": "Previous",
+    "current": "Current",
+    "next": "Next",
+    "fileName": "File",
+    "hint": "Pronunciation",
+    "comment": "Note",
+    "syllables": "Syllables",
+    "position": "{{current}} / {{total}}",
+    "recorded": "Recorded",
+    "notRecorded": "Not recorded",
+    "endOfList": "End of list"
+  },
+  "sidebar": {
+    "title": "Prompts",
+    "searchPlaceholder": "Search prompts, filenames, or hints…",
+    "filterAll": "All",
+    "filterRecorded": "Recorded",
+    "filterUnrecorded": "Unrecorded",
+    "progress": "{{recorded}} / {{total}} recorded",
+    "noResults": "No prompts match your search",
+    "revealWav": "Reveal in Finder / Explorer",
+    "duration": "{{seconds}} s",
+    "collapse": "Collapse sidebar",
+    "expand": "Expand sidebar"
+  },
+  "pitch": {
+    "target": "Target",
+    "detected": "Detected",
+    "hz": "{{value}} Hz",
+    "cents": "{{value}} cents",
+    "noPitch": "No pitch detected",
+    "inTune": "In tune",
+    "sharp": "Sharp",
+    "flat": "Flat"
+  },
+  "meter": {
+    "peak": "Peak",
+    "rms": "RMS",
+    "db": "{{value}} dB"
+  },
+  "canvas": {
+    "live": "Live",
+    "review": "Review",
+    "waveform": "Waveform",
+    "spectrogram": "Spectrogram",
+    "pitchCurve": "Pitch Curve",
+    "empty": "Press R to record this prompt",
+    "otoOffset": "Offset",
+    "otoConsonant": "Consonant",
+    "otoCutoff": "Cutoff",
+    "otoPreutterance": "Preutterance",
+    "otoOverlap": "Overlap"
+  },
+  "hotkeys": {
+    "title": "Keyboard Shortcuts",
+    "record": "R — Record",
+    "play": "Space — Play / Stop",
+    "reference": "S — Reference tone",
+    "navigate": "↑ ↓ ← → — Previous / Next prompt",
+    "nextUnrecorded": "N — Next unrecorded prompt",
+    "trash": "Delete — Move take to Trash"
+  },
+  "status": {
+    "saved": "Saved {{fileName}}",
+    "saveFailed": "Could not save the take: {{error}}",
+    "allRecorded": "Every prompt in this set has been recorded!",
+    "externalChange": "Recording folder changed on disk — progress refreshed",
+    "recordFailed": "Could not start recording: {{error}}",
+    "playbackFailed": "Could not play the take: {{error}}",
+    "trashFailed": "Could not move the take to the Trash: {{error}}",
+    "openToolFailed": "Could not open {{tool}}: {{error}}"
+  }
+}

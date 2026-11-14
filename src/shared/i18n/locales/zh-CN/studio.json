@@ -1,0 +1,131 @@
+{
+  "title": "录音室",
+  "backToProject": "返回项目",
+  "loading": "正在加载录音表…",
+  "loadFailed": "无法加载录音表：{{error}}",
+  "transport": {
+    "record": "录制",
+    "recording": "录制中…",
+    "stopRecording": "停止录制",
+    "play": "播放",
+    "playing": "播放中…",
+    "stop": "停止",
+    "referenceTone": "参考音",
+    "referenceToneHint": "按住 S 试听 {{note}}",
+    "holdToRecord": "按住 R 录制",
+    "pressToToggle": "按 R 开始 / 停止录制",
+    "countIn": "预备拍：{{beats}}",
+    "previous": "上一条提示词",
+    "next": "下一条提示词",
+    "nextUnrecorded": "下一条未录制"
+  },
+  "mode": {
+    "label": "录制模式",
+    "hold": "PTT（按住 R）",
+    "toggle": "切换（按 R）",
+    "holdDescription": "仅在按住 R 时持续录制",
+    "toggleDescription": "按一次 R 开始，再按一次停止"
+  },
+  "workflow": {
+    "autoListenBack": "自动回放",
+    "autoListenBackDescription": "每条录音保存后立即回放",
+    "autoAdvance": "自动前进",
+    "autoAdvanceDescription": "录制成功后自动跳到下一条提示词",
+    "guideBgm": "引导 BGM",
+    "guideBgmDescription": "录制时播放引导节拍器或伴奏",
+    "otoGrid": "原音设定 (oto.ini) 网格",
+    "otoGridDescription": "在波形上叠加只读的 oto.ini 时间标记",
+    "autoZoom": "自动放大小音量录音",
+    "undoRetake": "撤销重录",
+    "undoRetakeDone": "已恢复上一条录音",
+    "undoRetakeUnavailable": "没有可恢复的上一条录音",
+    "trashTake": "删除录音",
+    "trashTakeConfirm": "将 {{fileName}} 移到废纸篓？",
+    "trashTakeDone": "{{fileName}} 已移到废纸篓",
+    "openVLabeler": "在 vLabeler 中打开",
+    "openOpenUtau": "在 OpenUtau 中打开",
+    "audioSettings": "音频设置",
+    "confirmTrash": "移到废纸篓",
+    "cancel": "取消"
+  },
+  "warnings": {
+    "clipping": "检测到削波（0 dBFS）— 请调低输入增益后重录",
+    "earlyCutoff": "录音过早结束 — 可能在乐句唱完之前就停止了",
+    "quietTake": "这条录音音量很小 — 请靠近麦克风",
+    "noMicrophone": "未找到麦克风。请连接麦克风并检查音频设置。",
+    "micPermissionDenied": "麦克风访问被拒绝。请在系统隐私设置中允许访问。"
+  },
+  "prompt": {
+    "previous": "上一条",
+    "current": "当前",
+    "next": "下一条",
+    "fileName": "文件",
+    "hint": "发音",
+    "comment": "备注",
+    "syllables": "音节",
+    "position": "{{current}} / {{total}}",
+    "recorded": "已录制",
+    "notRecorded": "未录制",
+    "endOfList": "列表结束"
+  },
+  "sidebar": {
+    "title": "提示词",
+    "searchPlaceholder": "搜索提示词、文件名或发音提示…",
+    "filterAll": "全部",
+    "filterRecorded": "已录制",
+    "filterUnrecorded": "未录制",
+    "progress": "已录制 {{recorded}} / {{total}}",
+    "noResults": "没有与搜索匹配的提示词",
+    "revealWav": "在访达 / 资源管理器中显示",
+    "duration": "{{seconds}} 秒",
+    "collapse": "收起侧边栏",
+    "expand": "展开侧边栏"
+  },
+  "pitch": {
+    "target": "目标",
+    "detected": "检测值",
+    "hz": "{{value}} Hz",
+    "cents": "{{value}} 音分",
+    "noPitch": "未检测到音高",
+    "inTune": "音准",
+    "sharp": "偏高",
+    "flat": "偏低"
+  },
+  "meter": {
+    "peak": "峰值",
+    "rms": "均方根",
+    "db": "{{value}} dB"
+  },
+  "canvas": {
+    "live": "实时",
+    "review": "回顾",
+    "waveform": "波形",
+    "spectrogram": "频谱图",
+    "pitchCurve": "音高曲线",
+    "empty": "按 R 录制此提示词",
+    "otoOffset": "左空白",
+    "otoConsonant": "固定",
+    "otoCutoff": "右空白",
+    "otoPreutterance": "先行发声",
+    "otoOverlap": "重叠"
+  },
+  "hotkeys": {
+    "title": "键盘快捷键",
+    "record": "R — 录制",
+    "play": "Space — 播放 / 停止",
+    "reference": "S — 参考音",
+    "navigate": "↑ ↓ ← → — 上一条 / 下一条提示词",
+    "nextUnrecorded": "N — 下一条未录制提示词",
+    "trash": "Delete — 将录音移到废纸篓"
+  },
+  "status": {
+    "saved": "已保存 {{fileName}}",
+    "saveFailed": "无法保存录音：{{error}}",
+    "allRecorded": "此录音组中的所有提示词均已录制完成！",
+    "externalChange": "录音文件夹在磁盘上发生变化 — 已刷新进度",
+    "recordFailed": "无法开始录制：{{error}}",
+    "playbackFailed": "无法播放录音：{{error}}",
+    "trashFailed": "无法将录音移到废纸篓：{{error}}",
+    "openToolFailed": "无法打开 {{tool}}：{{error}}"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "linkStart": "连接开始",
+  "welcomeTitle": "欢迎来到录音棚",
+  "welcomeSubtitle": "逐句录制，打造可直接演唱的 OpenUtau & vLabeler 音源。",
+  "continue": {
+    "eyebrow": "继续上次会话",
+    "button": "连接开始 / 继续",
+    "lastOpened": "上次打开于 {{time}}",
+    "activeSet": "当前录音组",
+    "scale": "音阶",
+    "progress": "已录制 {{recorded}} / {{total}}",
+    "noActiveSet": "尚无录音组 — 打开项目以创建",
+    "missing": "找不到此项目文件夹"
+  },
+  "empty": {
+    "title": "暂无项目",
+    "description": "创建新的歌手项目，或打开已有的声库文件夹以开始使用。"
+  },
+  "actions": {
+    "create": "新建歌手项目",
+    "createDescription": "选择一个空文件夹，aie 将自动生成 aie.project.json、character.txt 和 character.yaml。",
+    "open": "打开已有文件夹",
+    "openDescription": "打开 aie 项目、迁移 v0.x 版的 aie.config.json，或导入原始 OREMO 声库文件夹。"
+  },
+  "create": {
+    "title": "新建歌手项目",
+    "description": "您的歌手文件夹始终是 100% 标准的 UTAU 音源 — aie 只会额外添加 aie.project.json。",
+    "singerName": "歌手名称",
+    "singerNamePlaceholder": "例如：重音テト",
+    "author": "作者",
+    "authorPlaceholder": "您的名字（可选）",
+    "folder": "声库文件夹",
+    "folderPlaceholder": "未选择文件夹",
+    "pickFolder": "选择文件夹…",
+    "pickFolderTitle": "为新歌手选择文件夹",
+    "turnkeyNote": "将创建 aie.project.json 以及 UTF-8 编码的 character.txt 和 character.yaml。",
+    "submit": "创建项目",
+    "creating": "正在创建…",
+    "nameRequired": "请输入歌手名称",
+    "folderRequired": "请选择文件夹",
+    "success": "已创建 {{name}}"
+  },
+  "open": {
+    "pickTitle": "打开声库或 aie 项目文件夹",
+    "opening": "正在打开…",
+    "success": "已打开 {{name}}",
+    "failed": "无法打开文件夹：{{error}}"
+  },
+  "recent": {
+    "title": "最近的项目",
+    "searchPlaceholder": "搜索最近的项目…",
+    "noResults": "没有与“{{query}}”匹配的最近项目",
+    "none": "您打开过的项目将显示在这里。",
+    "lastOpened": "打开于 {{time}}",
+    "progress": "{{recorded}} / {{total}}",
+    "missing": "文件夹丢失",
+    "missingDescription": "该文件夹已被移动或删除。请重新打开该文件夹以恢复关联。",
+    "reveal": "在访达 / 资源管理器中显示",
+    "openProject": "打开 {{name}}"
+  }
+}
