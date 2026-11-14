@@ -1,8 +1,96 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/*
+ * aie booth palette — semantic tokens resolved per theme.
+ * Use as Tailwind utilities: bg-canvas, bg-panel, bg-raised, border-line,
+ * text-fg, text-muted, bg-accent, text-accent, bg-rec, text-ok, ...
+ */
+@theme inline {
+  --color-canvas: var(--aie-canvas);
+  --color-panel: var(--aie-panel);
+  --color-raised: var(--aie-raised);
+  --color-sunken: var(--aie-sunken);
+  --color-line: var(--aie-line);
+  --color-line-strong: var(--aie-line-strong);
+  --color-fg: var(--aie-fg);
+  --color-muted: var(--aie-muted);
+  --color-subtle: var(--aie-subtle);
+  --color-accent: var(--aie-accent);
+  --color-accent-strong: var(--aie-accent-strong);
+  --color-accent-soft: var(--aie-accent-soft);
+  --color-on-accent: var(--aie-on-accent);
+  --color-rec: var(--aie-rec);
+  --color-rec-soft: var(--aie-rec-soft);
+  --color-ok: var(--aie-ok);
+  --color-ok-soft: var(--aie-ok-soft);
+  --color-warn: var(--aie-warn);
+  --color-warn-soft: var(--aie-warn-soft);
+  --color-danger: var(--aie-danger);
+  --color-danger-soft: var(--aie-danger-soft);
+  --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --aie-canvas: #0b0c10;
+  --aie-panel: #12141a;
+  --aie-raised: #1a1d25;
+  --aie-sunken: #08090c;
+  --aie-line: #262a35;
+  --aie-line-strong: #363b49;
+  --aie-fg: #eef0f6;
+  --aie-muted: #a3a9b8;
+  --aie-subtle: #6c7385;
+  --aie-accent: #8b7bff;
+  --aie-accent-strong: #a597ff;
+  --aie-accent-soft: rgb(139 123 255 / 0.14);
+  --aie-on-accent: #0b0c10;
+  --aie-rec: #ff4d6a;
+  --aie-rec-soft: rgb(255 77 106 / 0.14);
+  --aie-ok: #3ddc97;
+  --aie-ok-soft: rgb(61 220 151 / 0.14);
+  --aie-warn: #ffc24b;
+  --aie-warn-soft: rgb(255 194 75 / 0.14);
+  --aie-danger: #ff6b6b;
+  --aie-danger-soft: rgb(255 107 107 / 0.14);
+  --aie-glow: radial-gradient(1200px 500px at 15% -10%, rgb(139 123 255 / 0.18), transparent 60%),
+    radial-gradient(900px 400px at 100% 0%, rgb(255 77 106 / 0.08), transparent 60%);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --aie-canvas: #f5f6fa;
+  --aie-panel: #ffffff;
+  --aie-raised: #f0f1f6;
+  --aie-sunken: #e8eaf1;
+  --aie-line: #dfe2ea;
+  --aie-line-strong: #c7cbd7;
+  --aie-fg: #12141a;
+  --aie-muted: #4f5566;
+  --aie-subtle: #7b8194;
+  --aie-accent: #5a43f0;
+  --aie-accent-strong: #4732d6;
+  --aie-accent-soft: rgb(90 67 240 / 0.1);
+  --aie-on-accent: #ffffff;
+  --aie-rec: #e5193d;
+  --aie-rec-soft: rgb(229 25 61 / 0.1);
+  --aie-ok: #0f9f62;
+  --aie-ok-soft: rgb(15 159 98 / 0.1);
+  --aie-warn: #b77700;
+  --aie-warn-soft: rgb(183 119 0 / 0.1);
+  --aie-danger: #d93636;
+  --aie-danger-soft: rgb(217 54 54 / 0.1);
+  --aie-glow: radial-gradient(1200px 500px at 15% -10%, rgb(90 67 240 / 0.1), transparent 60%),
+    radial-gradient(900px 400px at 100% 0%, rgb(229 25 61 / 0.05), transparent 60%);
+}
+
 :root {
   --font-sans-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
   font-family: var(--font-sans-base);
+  font-feature-settings: "cv11", "ss01";
 }
 
 :root:lang(zh-CN),
@@ -15,10 +103,109 @@
   font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Meiryo", "Noto Sans CJK JP", var(--font-sans-base);
 }
 
-:root[data-theme="light"] {
-  color-scheme: light;
+/* Unlayered: wins over the static body utility classes in index.html. */
+html,
+body {
+  background-color: var(--aie-canvas);
+  color: var(--aie-fg);
 }
 
-:root[data-theme="dark"] {
-  color-scheme: dark;
+body {
+  background-image: var(--aie-glow);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--aie-accent-soft);
+}
+
+/* Crisp, keyboard-only focus rings everywhere. */
+:focus-visible {
+  outline: 2px solid var(--aie-accent);
+  outline-offset: 2px;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--aie-line-strong) transparent;
+}
+
+@keyframes aie-slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes aie-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes aie-pop-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes aie-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes aie-pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgb(255 77 106 / 0.45);
+  }
+  100% {
+    box-shadow: 0 0 0 14px rgb(255 77 106 / 0);
+  }
+}
+
+.aie-anim-drawer {
+  animation: aie-slide-in-right 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.aie-anim-overlay {
+  animation: aie-fade-in 160ms ease-out;
+}
+
+.aie-anim-dialog {
+  animation: aie-pop-in 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.aie-anim-toast {
+  animation: aie-toast-in 180ms ease-out;
+}
+
+.aie-link-start {
+  animation: aie-pulse-ring 1.8s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aie-anim-drawer,
+  .aie-anim-overlay,
+  .aie-anim-dialog,
+  .aie-anim-toast,
+  .aie-link-start {
+    animation: none;
+  }
 }

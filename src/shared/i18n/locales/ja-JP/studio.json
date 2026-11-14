@@ -1,0 +1,131 @@
+{
+  "title": "録音スタジオ",
+  "backToProject": "プロジェクトに戻る",
+  "loading": "録音リストを読み込み中…",
+  "loadFailed": "録音リストを読み込めませんでした：{{error}}",
+  "transport": {
+    "record": "録音",
+    "recording": "録音中…",
+    "stopRecording": "録音を停止",
+    "play": "再生",
+    "playing": "再生中…",
+    "stop": "停止",
+    "referenceTone": "参照音",
+    "referenceToneHint": "S を押し続けると {{note}} を試聴できます",
+    "holdToRecord": "R を押し続けて録音",
+    "pressToToggle": "R を押して録音を開始 / 停止",
+    "countIn": "カウントイン：{{beats}}",
+    "previous": "前の収録文字列",
+    "next": "次の収録文字列",
+    "nextUnrecorded": "次の未収録"
+  },
+  "mode": {
+    "label": "録音モード",
+    "hold": "PTT（R を長押し）",
+    "toggle": "トグル（R で切替）",
+    "holdDescription": "R を押している間だけ録音します",
+    "toggleDescription": "R を 1 回押すと開始、もう一度押すと停止します"
+  },
+  "workflow": {
+    "autoListenBack": "自動試聴",
+    "autoListenBackDescription": "テイクの保存直後に自動で再生します",
+    "autoAdvance": "自動送り",
+    "autoAdvanceDescription": "問題のないテイクの後、次の収録文字列に進みます",
+    "guideBgm": "ガイドBGM",
+    "guideBgmDescription": "録音中にガイドメトロノームまたは BGM を再生します",
+    "otoGrid": "原音設定 (oto.ini) グリッド",
+    "otoGridDescription": "波形に読み取り専用の oto.ini タイミングマーカーを重ねて表示します",
+    "autoZoom": "小音量テイクを自動ズーム",
+    "undoRetake": "リテイクを取り消す",
+    "undoRetakeDone": "前のテイクを復元しました",
+    "undoRetakeUnavailable": "復元できる前のテイクはありません",
+    "trashTake": "テイクを削除",
+    "trashTakeConfirm": "{{fileName}} をゴミ箱に移動しますか？",
+    "trashTakeDone": "{{fileName}} をゴミ箱に移動しました",
+    "openVLabeler": "vLabeler で開く",
+    "openOpenUtau": "OpenUtau で開く",
+    "audioSettings": "オーディオ設定",
+    "confirmTrash": "ゴミ箱に移動",
+    "cancel": "キャンセル"
+  },
+  "warnings": {
+    "clipping": "クリッピングを検出しました（0 dBFS）— 入力ゲインを下げてリテイクしてください",
+    "earlyCutoff": "録音が早く切れています — フレーズの途中でテイクが終わった可能性があります",
+    "quietTake": "このテイクは音量がとても小さいです — マイクに近づいてください",
+    "noMicrophone": "マイクが見つかりません。マイクを接続して、オーディオ設定を確認してください。",
+    "micPermissionDenied": "マイクへのアクセスが拒否されました。システムのプライバシー設定でアクセスを許可してください。"
+  },
+  "prompt": {
+    "previous": "前へ",
+    "current": "現在",
+    "next": "次へ",
+    "fileName": "ファイル",
+    "hint": "読み",
+    "comment": "メモ",
+    "syllables": "音節",
+    "position": "{{current}} / {{total}}",
+    "recorded": "収録済み",
+    "notRecorded": "未収録",
+    "endOfList": "リストの最後です"
+  },
+  "sidebar": {
+    "title": "収録文字列",
+    "searchPlaceholder": "収録文字列・ファイル名・読みを検索…",
+    "filterAll": "すべて",
+    "filterRecorded": "収録済み",
+    "filterUnrecorded": "未収録",
+    "progress": "{{recorded}} / {{total}} 収録済み",
+    "noResults": "検索に一致する収録文字列はありません",
+    "revealWav": "Finder / エクスプローラーで表示",
+    "duration": "{{seconds}} 秒",
+    "collapse": "サイドバーを折りたたむ",
+    "expand": "サイドバーを展開"
+  },
+  "pitch": {
+    "target": "目標",
+    "detected": "検出値",
+    "hz": "{{value}} Hz",
+    "cents": "{{value}} セント",
+    "noPitch": "音程を検出できません",
+    "inTune": "音程ぴったり",
+    "sharp": "高め",
+    "flat": "低め"
+  },
+  "meter": {
+    "peak": "ピーク",
+    "rms": "実効値",
+    "db": "{{value}} dB"
+  },
+  "canvas": {
+    "live": "ライブ",
+    "review": "確認",
+    "waveform": "波形",
+    "spectrogram": "スペクトログラム",
+    "pitchCurve": "ピッチ曲線",
+    "empty": "R を押してこの収録文字列を録音",
+    "otoOffset": "左ブランク",
+    "otoConsonant": "固定範囲",
+    "otoCutoff": "右ブランク",
+    "otoPreutterance": "先行発声",
+    "otoOverlap": "オーバーラップ"
+  },
+  "hotkeys": {
+    "title": "キーボードショートカット",
+    "record": "R — 録音",
+    "play": "Space — 再生 / 停止",
+    "reference": "S — 参照音",
+    "navigate": "↑ ↓ ← → — 前 / 次の収録文字列",
+    "nextUnrecorded": "N — 次の未収録の収録文字列",
+    "trash": "Delete — テイクをゴミ箱に移動"
+  },
+  "status": {
+    "saved": "{{fileName}} を保存しました",
+    "saveFailed": "テイクを保存できませんでした：{{error}}",
+    "allRecorded": "このセットの収録文字列をすべて収録しました！",
+    "externalChange": "ディスク上の録音フォルダが変更されました — 進捗を更新しました",
+    "recordFailed": "録音を開始できませんでした：{{error}}",
+    "playbackFailed": "テイクを再生できませんでした：{{error}}",
+    "trashFailed": "テイクをゴミ箱に移動できませんでした：{{error}}",
+    "openToolFailed": "{{tool}} を開けませんでした：{{error}}"
+  }
+}
