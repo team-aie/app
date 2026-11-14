@@ -16,7 +16,7 @@ import {
 installDomShims();
 
 describe('Screen 1 — Welcome & Project Hub + Top Shell Header', () => {
-  it('renders Link Start branding, Continue Last Session hero card, and jumps straight to Studio at lastCursorIndex', async () => {
+  it('renders Vocal Booth branding, Resume Session hero card, and jumps to a viewport-locked Studio at lastCursorIndex', async () => {
     const user = userEvent.setup();
     const manifest = makeManifest({
       sets: [makeSet({ id: 'set-g4', name: 'Normal G4', scale: 'G4', lastCursorIndex: 3 })],
@@ -39,20 +39,30 @@ describe('Screen 1 — Welcome & Project Hub + Top Shell Header', () => {
     renderWithI18n(<App />);
 
     expect(await screen.findByTestId('hub-continue-card')).toBeInTheDocument();
-    expect(screen.getByText('Link Start')).toBeInTheDocument();
+    expect(screen.getByText('Vocal Booth')).toBeInTheDocument();
+    expect(screen.queryByText(/Link Start/i)).not.toBeInTheDocument();
+    expect(screen.getByTestId('hub-continue-btn')).toHaveTextContent('Resume Session');
     expect(screen.getByTestId('hub-continue-name')).toHaveTextContent('Kasane Teto');
     expect(screen.getByTestId('hub-continue-scale')).toHaveTextContent('G4');
     expect(screen.getByTestId('hub-continue-progress')).toHaveTextContent('142 / 365 recorded');
+
+    const appRoot = screen.getByTestId('app-root');
+    expect(appRoot).toHaveClass('min-h-screen');
+    expect(appRoot).not.toHaveClass('overflow-hidden');
 
     await user.click(screen.getByTestId('hub-continue-btn'));
 
     expect(await screen.findByTestId('studio-screen')).toBeInTheDocument();
     expect(useAppStore.getState().screen).toBe('studio');
     expect(screen.getByTestId('studio-prompt-current')).toHaveTextContent('_ka_ki_ku_3');
+    expect(appRoot).toHaveClass('h-screen', 'overflow-hidden');
+    expect(appRoot.querySelector('main')).toHaveClass('overflow-hidden');
 
-    // Breadcrumb supports navigating Studio -> Project -> Hub
+    // Breadcrumb supports navigating Studio -> Project -> Hub and restores scrollable layout
     await user.click(screen.getByTestId('breadcrumb-project'));
     expect(await screen.findByTestId('project-screen')).toBeInTheDocument();
+    expect(appRoot).toHaveClass('min-h-screen');
+    expect(appRoot).not.toHaveClass('overflow-hidden');
 
     await user.click(screen.getByTestId('breadcrumb-hub'));
     expect(await screen.findByTestId('hub-screen')).toBeInTheDocument();
@@ -80,7 +90,7 @@ describe('Screen 1 — Welcome & Project Hub + Top Shell Header', () => {
     expect(useAppStore.getState().screen).toBe('hub');
   });
 
-  it('validates and creates a new singer project via CreateProjectDialog', async () => {
+  it('validates and creates a new singer project with customizable singer metadata checkboxes', async () => {
     const user = userEvent.setup();
     const bridge = makeBridge({ recent: [] });
     bridge.project.pickDirectory = vi.fn(async () => '/voicebanks/momo');
@@ -93,10 +103,24 @@ describe('Screen 1 — Welcome & Project Hub + Top Shell Header', () => {
     await user.click(screen.getByTestId('hub-create-btn'));
     const dialog = await screen.findByTestId('create-project-dialog');
 
+    // All 3 companion singer metadata checkboxes default to checked
+    const charTxtBox = within(dialog).getByTestId('create-singer-file-character-txt');
+    const charYamlBox = within(dialog).getByTestId('create-singer-file-character-yaml');
+    const prefixMapBox = within(dialog).getByTestId('create-singer-file-prefix-map');
+    expect(charTxtBox).toHaveAttribute('aria-checked', 'true');
+    expect(charYamlBox).toHaveAttribute('aria-checked', 'true');
+    expect(prefixMapBox).toHaveAttribute('aria-checked', 'true');
+
     // Submit empty -> validation messages without closing
     await user.click(within(dialog).getByTestId('create-project-submit'));
     expect(within(dialog).getAllByRole('alert')).toHaveLength(2);
     expect(createSpy).not.toHaveBeenCalled();
+
+    // Uncheck character.yaml and prefix.map so only character.txt is requested
+    await user.click(charYamlBox);
+    await user.click(prefixMapBox);
+    expect(charYamlBox).toHaveAttribute('aria-checked', 'false');
+    expect(prefixMapBox).toHaveAttribute('aria-checked', 'false');
 
     await user.type(within(dialog).getByTestId('create-project-name'), 'Momone Momo');
     await user.type(within(dialog).getByTestId('create-project-author'), 'Fujimoto');
@@ -112,11 +136,29 @@ describe('Screen 1 — Welcome & Project Hub + Top Shell Header', () => {
       expect(createSpy).toHaveBeenCalledWith({
         name: 'Momone Momo',
         rootPath: '/voicebanks/momo',
-        author: 'Fujimoto'
+        author: 'Fujimoto',
+        singerFiles: {
+          characterTxt: true,
+          characterYaml: false,
+          prefixMap: false
+        }
       })
     );
     expect(await screen.findByTestId('project-screen')).toBeInTheDocument();
     expect(screen.getByTestId('project-name')).toHaveTextContent('Momone Momo');
+
+    // Returning to Hub and opening CreateProjectDialog resets checkboxes back to DEFAULT_SINGER_FILES
+    await user.click(screen.getByTestId('breadcrumb-hub'));
+    await user.click(await screen.findByTestId('hub-create-btn'));
+    const reopenedDialog = await screen.findByTestId('create-project-dialog');
+    expect(within(reopenedDialog).getByTestId('create-singer-file-character-yaml')).toHaveAttribute(
+      'aria-checked',
+      'true'
+    );
+    expect(within(reopenedDialog).getByTestId('create-singer-file-prefix-map')).toHaveAttribute(
+      'aria-checked',
+      'true'
+    );
   });
 
   it('filters Recent Projects by search query, reveals in file manager, and opens existing folders', async () => {
@@ -176,12 +218,14 @@ describe('Screen 1 — Welcome & Project Hub + Top Shell Header', () => {
     // Switch locale to Japanese
     await user.click(screen.getByTestId('header-lang-ja-JP'));
     await waitFor(() => expect(document.documentElement.lang).toBe('ja-JP'));
-    expect(screen.getByText('リンク・スタート')).toBeInTheDocument();
+    expect(screen.getByText('ボーカルブース')).toBeInTheDocument();
+    expect(screen.getByTestId('hub-continue-btn')).toHaveTextContent('セッションを再開');
 
     // Switch locale to Simplified Chinese
     await user.click(screen.getByTestId('header-lang-zh-CN'));
     await waitFor(() => expect(document.documentElement.lang).toBe('zh-CN'));
-    expect(screen.getByText('连接开始')).toBeInTheDocument();
+    expect(screen.getByText('人声录音棚')).toBeInTheDocument();
+    expect(screen.getByTestId('hub-continue-btn')).toHaveTextContent('继续录制');
 
     // Switch theme to Light -> Dark
     await user.click(screen.getByTestId('header-theme-light'));

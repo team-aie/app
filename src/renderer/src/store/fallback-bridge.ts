@@ -1,13 +1,14 @@
-import type {
-  AieBridgeApi,
-  AieProjectManifest,
-  AppSettings,
-  ParsedRecordingListBundle,
-  ReclistManifest,
-  RecentProjectSummary,
-  RecordingSetConfig,
-  SetProgressSummary,
-  UpdateStatusInfo
+import {
+  DEFAULT_SINGER_FILES,
+  type AieBridgeApi,
+  type AieProjectManifest,
+  type AppSettings,
+  type ParsedRecordingListBundle,
+  type ReclistManifest,
+  type RecentProjectSummary,
+  type RecordingSetConfig,
+  type SetProgressSummary,
+  type UpdateStatusInfo
 } from '@shared/types';
 
 export const DEFAULT_APP_SETTINGS: AppSettings = {
@@ -184,7 +185,7 @@ export function createFallbackBridge(seed?: {
       getRecentProjects: async () => structuredClone(recent),
       pickDirectory: async () => null,
       pickFile: async () => null,
-      createProject: async ({ name, rootPath, author }) => {
+      createProject: async ({ name, rootPath, author, singerFiles }) => {
         const createdAt = nowIso();
         const manifest: AieProjectManifest = {
           schemaVersion: 1,
@@ -192,6 +193,7 @@ export function createFallbackBridge(seed?: {
           name,
           rootPath,
           author,
+          singerFiles: singerFiles ? { ...singerFiles } : { ...DEFAULT_SINGER_FILES },
           sets: [],
           createdAt,
           updatedAt: createdAt

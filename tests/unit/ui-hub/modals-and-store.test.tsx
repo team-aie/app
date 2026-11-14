@@ -10,14 +10,17 @@ import {
   DEVTOOLS_CLICK_WINDOW_MS,
   peakToDb
 } from '@renderer/components/modals';
+import { StudioHost } from '@renderer/components/shell/studio-host';
+import type { StudioScreenProps } from '@renderer/components/shell/studio-screen-slot';
 import { Toaster } from '@renderer/components/shell/toaster';
 import {
   createAppStore,
   CURSOR_SAVE_DEBOUNCE_MS,
   resetAppStore,
+  selectActiveSet,
   useAppStore
 } from '@renderer/store/use-app-store';
-import { installDomShims, makeBridge, makeManifest, renderWithI18n } from './test-utils';
+import { installDomShims, makeBridge, makeManifest, makeSet, renderWithI18n } from './test-utils';
 
 installDomShims();
 
@@ -242,5 +245,99 @@ describe('Global Modals (About/Diagnostics/Licenses + Audio Settings) & App Stor
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it('quick-switches active set scale in Studio while keeping folder, aliasSuffix, cursor, and live bundle intact', async () => {
+    const user = userEvent.setup();
+    const manifest = makeManifest({
+      rootPath: '/voicebanks/teto',
+      sets: [
+        makeSet({
+          id: 'set-g4',
+          name: 'Normal G4',
+          subfolderName: 'G4',
+          scale: 'G4',
+          aliasSuffix: '_G4',
+          lastCursorIndex: 3
+        })
+      ],
+      activeSetId: 'set-g4'
+    });
+    const bridge = makeBridge({ manifest });
+    const upsertSpy = vi.spyOn(bridge.project, 'upsertRecordingSet');
+    const loadListSpy = vi.spyOn(bridge.voicebank, 'loadRecordingList');
+    const revealSpy = vi.spyOn(bridge.shell, 'revealInFileManager');
+
+    resetAppStore(bridge);
+    await useAppStore.getState().init();
+    await useAppStore.getState().openProject(manifest.rootPath);
+    await useAppStore.getState().enterStudio('set-g4');
+    useAppStore.getState().updateCursor(4);
+
+    const beforeStudio = useAppStore.getState().studio;
+    expect(beforeStudio.status).toBe('ready');
+    expect(loadListSpy).toHaveBeenCalledTimes(1);
+
+    function StudioSeamProbe(props: StudioScreenProps) {
+      return (
+        <div data-testid="studio-probe">
+          <span data-testid="probe-scale">{props.activeSet.scale}</span>
+          <span data-testid="probe-cursor">{props.activeSet.lastCursorIndex}</span>
+          <span data-testid="probe-folder">{props.activeSet.subfolderName}</span>
+          <span data-testid="probe-suffix">{props.activeSet.aliasSuffix}</span>
+          <button
+            type="button"
+            data-testid="probe-switch-g3"
+            onClick={() => props.onChangeScale?.('G3')}
+          >
+            Switch G3
+          </button>
+          <button
+            type="button"
+            data-testid="probe-reveal"
+            onClick={() => props.onRevealProjectFolder?.()}
+          >
+            Reveal
+          </button>
+        </div>
+      );
+    }
+
+    renderWithI18n(<StudioHost Screen={StudioSeamProbe} />);
+
+    expect(screen.getByTestId('probe-scale')).toHaveTextContent('G4');
+    expect(screen.getByTestId('probe-cursor')).toHaveTextContent('4');
+
+    await user.click(screen.getByTestId('probe-switch-g3'));
+
+    await waitFor(() => expect(upsertSpy).toHaveBeenCalledTimes(1));
+    expect(upsertSpy).toHaveBeenCalledWith(
+      '/voicebanks/teto',
+      expect.objectContaining({
+        id: 'set-g4',
+        scale: 'G3',
+        subfolderName: 'G4',
+        aliasSuffix: '_G4',
+        lastCursorIndex: 4
+      })
+    );
+
+    expect(screen.getByTestId('probe-scale')).toHaveTextContent('G3');
+    expect(screen.getByTestId('probe-folder')).toHaveTextContent('G4');
+    expect(screen.getByTestId('probe-suffix')).toHaveTextContent('_G4');
+    expect(screen.getByTestId('probe-cursor')).toHaveTextContent('4');
+    expect(selectActiveSet(useAppStore.getState())?.scale).toBe('G3');
+
+    // Studio bundle & recordedFileNames stay live without reloading
+    const afterStudio = useAppStore.getState().studio;
+    expect(afterStudio.status).toBe('ready');
+    if (beforeStudio.status === 'ready' && afterStudio.status === 'ready') {
+      expect(afterStudio.bundle).toBe(beforeStudio.bundle);
+      expect(afterStudio.recordedFileNames).toEqual(beforeStudio.recordedFileNames);
+    }
+    expect(loadListSpy).toHaveBeenCalledTimes(1);
+
+    await user.click(screen.getByTestId('probe-reveal'));
+    expect(revealSpy).toHaveBeenCalledWith('/voicebanks/teto');
   });
 });

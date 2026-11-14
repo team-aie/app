@@ -1,5 +1,6 @@
 import { CheckCircle2, FileSearch, Folder, ListMusic, Pencil, Play, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { scaleNoteToFrequencyHz } from '@shared/music/chromatic';
 import type { RecordingSetConfig, ReclistManifest, SetProgressSummary } from '@shared/types';
 import { Badge, Button, IconButton, ProgressBar, cx } from '../shell/ui';
 import { basename } from './set-form';
@@ -11,6 +12,7 @@ export function SetCard({
   active,
   onStart,
   onEdit,
+  onChangeReclist,
   onPreview,
   onRemove
 }: {
@@ -20,6 +22,7 @@ export function SetCard({
   active: boolean;
   onStart: () => void;
   onEdit: () => void;
+  onChangeReclist?: () => void;
   onPreview: () => void;
   onRemove: () => void;
 }) {
@@ -33,6 +36,7 @@ export function SetCard({
     source.kind === 'builtin'
       ? (builtins.find((candidate) => candidate.id === source.builtinId)?.displayName ?? source.builtinId)
       : basename(source.reclistPath);
+  const scaleHz = Math.round(scaleNoteToFrequencyHz(setConfig.scale));
 
   return (
     <article
@@ -56,8 +60,16 @@ export function SetCard({
             ) : null}
           </div>
           <div className="flex flex-wrap items-center gap-1.5">
-            <Badge tone="accent" mono title={t('sets.scale')} data-testid="set-card-scale">
+            <Badge
+              tone="accent"
+              mono
+              title={t('editor.scaleWithHz', { note: setConfig.scale, hz: scaleHz })}
+              data-testid="set-card-scale"
+            >
               {setConfig.scale}
+            </Badge>
+            <Badge mono data-testid="set-card-hz">
+              {`${scaleHz} Hz`}
             </Badge>
             <Badge mono title={t('sets.folder')}>
               <Folder aria-hidden className="size-3" />
@@ -84,12 +96,32 @@ export function SetCard({
         </div>
       </header>
 
-      <p className="flex items-center gap-2 truncate text-xs text-muted" title={reclistLabel}>
-        <ListMusic aria-hidden className="size-3.5 shrink-0 text-subtle" />
-        <span className="text-subtle">{t('sets.reclist')}</span>
-        <span className="truncate text-fg">{reclistLabel}</span>
-        {source.kind === 'custom' ? <Badge>{t('sets.customReclist')}</Badge> : null}
-      </p>
+      <div
+        className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-line bg-raised/50 px-3 py-2"
+        title={reclistLabel}
+      >
+        <div className="flex min-w-0 items-center gap-2 text-xs">
+          <ListMusic aria-hidden className="size-3.5 shrink-0 text-accent" />
+          <span className="shrink-0 text-subtle">{t('sets.reclist')}</span>
+          <Badge
+            tone={source.kind === 'custom' ? 'accent' : 'neutral'}
+            data-testid="set-card-reclist-badge"
+            className="max-w-48 truncate"
+          >
+            {reclistLabel}
+          </Badge>
+          {source.kind === 'custom' ? <Badge>{t('sets.customReclist')}</Badge> : null}
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onChangeReclist ?? onEdit}
+          data-testid="set-card-reclist-btn"
+          className="h-7 px-2 text-xs text-accent hover:text-accent-strong"
+        >
+          {t('sets.changeReclist')}
+        </Button>
+      </div>
 
       <div className="flex flex-col gap-1.5">
         <span data-testid="set-card-progress" className="font-mono text-xs text-muted">
