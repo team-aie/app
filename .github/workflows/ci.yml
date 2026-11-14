@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [main, v1]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: macOS arm64, os: macos-15 }
+          - { name: Windows x64, os: windows-latest }
+          - { name: Linux x64, os: ubuntu-24.04 }
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit & component tests
+        run: npm test
+
+      - name: Build (main + preload + renderer)
+        run: npm run build
+
+      # Ubuntu 24.04 restricts unprivileged user namespaces, which Electron's sandbox needs.
+      - name: Allow Electron sandbox (Linux)
+        if: runner.os == 'Linux'
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+
+      - name: Playwright _electron E2E (Linux, virtual display)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a npm run test:e2e -- --pass-with-no-tests
+
+      - name: Playwright _electron E2E
+        if: runner.os != 'Linux'
+        run: npm run test:e2e -- --pass-with-no-tests
+
+      - name: Upload E2E artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-${{ matrix.os }}
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore

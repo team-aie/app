@@ -1,13 +1,24 @@
 import path from 'node:path';
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, shell } from 'electron';
+import electronUpdater from 'electron-updater';
+import { broadcastUpdateStatus, registerIpc } from './ipc/register-ipc';
+import { createDomainServices } from './ipc/domain-services-adapter';
+import { createAppStateStore, APP_STATE_FILE_NAME } from './services/app-state';
+import { createAudioStorage } from './services/audio-storage';
+import { initDiagnostics, isDebugLaunch } from './services/diagnostics';
+import { createShellHandoff, parseSafeExternalUrl } from './services/shell-handoff';
+import { createUpdater, type AutoUpdaterLike } from './services/updater';
 
-function createMainWindow(): BrowserWindow {
+let mainWindow: BrowserWindow | null = null;
+
+function createMainWindow(openDevTools: boolean): BrowserWindow {
   const win = new BrowserWindow({
     width: 1280,
     height: 820,
     minWidth: 980,
     minHeight: 660,
     title: 'aie',
+    backgroundColor: '#0b0d12',
     webPreferences: {
       preload: path.join(import.meta.dirname, '../preload/index.mjs'),
       contextIsolation: true,
@@ -16,30 +27,88 @@ function createMainWindow(): BrowserWindow {
     }
   });
 
-  const rendererUrl = process.env['ELECTRON_RENDERER_URL'];
-  if (rendererUrl) {
-    void win.loadURL(rendererUrl);
-  } else {
-    void win.loadFile(path.join(import.meta.dirname, '../renderer/index.html'));
-  }
+  // Never let the renderer navigate away or spawn windows; web links go to the OS browser.
+  win.webContents.setWindowOpenHandler(({ url }) => {
+    try {
+      void shell.openExternal(parseSafeExternalUrl(url).toString());
+    } catch {
+      // blocked scheme
+    }
+    return { action: 'deny' };
+  });
+  win.webContents.on('will-navigate', (event, url) => {
+    const rendererUrl = process.env['ELECTRON_RENDERER_URL'];
+    if (!(rendererUrl && url.startsWith(rendererUrl)) && !url.startsWith('file://')) event.preventDefault();
+  });
 
+  const rendererUrl = process.env['ELECTRON_RENDERER_URL'];
+  if (rendererUrl) void win.loadURL(rendererUrl);
+  else void win.loadFile(path.join(import.meta.dirname, '../renderer/index.html'));
+
+  if (openDevTools) win.webContents.once('did-finish-load', () => win.webContents.openDevTools({ mode: 'detach' }));
+  win.on('closed', () => {
+    if (mainWindow === win) mainWindow = null;
+  });
   return win;
 }
 
-app.whenReady().then(() => {
-  ipcMain.handle('app:get-version', () => app.getVersion());
-
-  createMainWindow();
-
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createMainWindow();
+if (!app.requestSingleInstanceLock()) {
+  app.quit();
+} else {
+  app.on('second-instance', () => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
     }
   });
-});
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
+  void app.whenReady().then(() => {
+    const appState = createAppStateStore({
+      filePath: path.join(app.getPath('userData'), APP_STATE_FILE_NAME),
+      systemLocale: app.getLocale()
+    });
+    const diagnostics = initDiagnostics({
+      getSettings: () => appState.getSettings(),
+      getMainWindow: () => mainWindow
+    });
+    const log = diagnostics.logger;
+    log.info(`aie ${app.getVersion()} starting (${process.platform}-${process.arch})`);
+
+    const trashItem = (target: string): Promise<void> => shell.trashItem(target);
+    const shellHandoff = createShellHandoff({ shell, getSettings: () => appState.getSettings() });
+    const updater = createUpdater({
+      currentVersion: app.getVersion(),
+      isPackaged: app.isPackaged,
+      loadAutoUpdater: () => electronUpdater.autoUpdater as unknown as AutoUpdaterLike,
+      openExternalUrl: (url) => shellHandoff.openExternalUrl(url),
+      onStatus: broadcastUpdateStatus,
+      logger: log
+    });
+
+    const disposeIpc = registerIpc({
+      appState,
+      domain: createDomainServices({ trashItem }),
+      audioStorage: createAudioStorage({ trashItem }),
+      diagnostics,
+      shellHandoff,
+      updater,
+      getMainWindow: () => mainWindow,
+      logger: log
+    });
+    app.once('will-quit', () => {
+      disposeIpc();
+      void appState.flush();
+    });
+
+    mainWindow = createMainWindow(isDebugLaunch());
+    if (app.isPackaged) setTimeout(() => void updater.checkForUpdates(), 5000);
+
+    app.on('activate', () => {
+      if (BrowserWindow.getAllWindows().length === 0) mainWindow = createMainWindow(isDebugLaunch());
+    });
+  });
+
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') app.quit();
+  });
+}

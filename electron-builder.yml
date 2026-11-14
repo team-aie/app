@@ -1,5 +1,6 @@
 appId: com.team-aie.app
 productName: aie
+artifactName: "${productName}-${version}-${os}-${arch}.${ext}"
 directories:
   buildResources: build
   output: release
@@ -13,9 +14,13 @@ files:
 extraResources:
   - from: resources/reclists
     to: reclists
+# Day-1 releases are unsigned ($0): CI turns on signing / notarization only when secrets exist
+# (`-c.mac.identity=null` / `-c.mac.notarize=true` are passed from release.yml).
 mac:
   category: public.app-category.music
   icon: build/icon.icns
+  hardenedRuntime: true
+  gatekeeperAssess: false
   target:
     - target: dmg
       arch:
@@ -29,6 +34,9 @@ win:
     - target: nsis
       arch:
         - x64
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
 linux:
   category: AudioVideo
   target:
