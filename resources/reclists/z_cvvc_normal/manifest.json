@@ -1,0 +1,17 @@
+{
+  "id": "z_cvvc_normal",
+  "displayName": "Z.CVVC Normal (Chinese)",
+  "version": "1.1.0",
+  "author": "残月 (Zanyue)",
+  "language": "zh",
+  "style": "CVVC",
+  "defaultPhonemizer": "OpenUtau.Plugin.Builtin.ChineseCVVCPhonemizer",
+  "reclistFile": "Reclist.txt",
+  "otoFile": "oto.ini",
+  "companionFiles": [
+    "oto.ini",
+    "presamp.ini"
+  ],
+  "homepageUrl": "",
+  "termsNotice": "Included by arrangement with the original author (残月). Bundling in aie does not grant additional redistribution licenses beyond the author’s original terms."
+}

@@ -1,38 +1,23 @@
-# aie
+# aie (`v1`)
 
-[![CI/CD](https://github.com/team-aie/app/actions/workflows/cicd.yml/badge.svg)](https://github.com/team-aie/app/actions/workflows/cicd.yml)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/team-aie/app.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/team-aie/app/alerts/)
-[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/team-aie/app.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/team-aie/app/context:javascript)
+**Desktop Vocal Booth & Turnkey OpenUtau / vLabeler Voicebank Builder** for macOS (Apple Silicon), Windows, and Linux.
 
-A cross-platform audio recorder designed for recording using recording lists (a.k.a. reclists). Recording lists are
-lists of symbols that denote phonemes to be recorded by human voice suppliers. They are frequently used in the
-production of voice banks.
+- **Product Vision & Anti-Drift Charter**: [`docs/VISION.md`](./docs/VISION.md)
+- **Architecture & User Journey Blueprint**: [`docs/BLUEPRINT.md`](./docs/BLUEPRINT.md)
+- **Parallel Swarm Execution Plan**: [`docs/SWARM_PLAN.md`](./docs/SWARM_PLAN.md)
+- **Agent Engineering Rules**: [`AGENTS.md`](./AGENTS.md)
 
-## Download
+## Quick Start
 
-The latest release page is located [here](https://github.com/team-aie/app/releases/latest). Look for the respective file
-name for your platform:
-
-- Windows: `aie-setup-x.y.z.exe`
-- macOS: `aie-x.y.z.dmg`
-- Linux: `aie.AppImage`
-
-## Usage Notes
-
-### Linux
-
-If you are on a Linux distro, please consider using
-[`AppImageLauncher`](https://github.com/TheAssassin/AppImageLauncher) to execute the `.AppImage` file. Alternatively,
-you can use [`appimaged`](https://github.com/AppImage/appimaged) or simply make the file executable and run it (though
-you will lose some benefits, including seeing the app icon).
-
-## Developer Setup
-
-### Build for Windows
-
-You need to install [Wine](https://wiki.winehq.org/). On macOS, you can install via [HomeBrew](https://brew.sh/):
-
-```bash
-# xquartz is the dependency of wine-stable
-brew cask install xquartz wine-stable
+```sh
+npm install
+npm run dev        # Start Electron + React HMR studio
+npm run typecheck  # Strict TypeScript check (Main + Preload + Renderer)
+npm test           # Run Vitest unit & component suite
+npm run build      # Production bundle + OSS license generation
+npm run test:e2e   # Run Playwright Electron fake-mic E2E suite
 ```
+
+## License
+
+MIT © `team-aie`. Built-in voicebank recording lists under `resources/reclists/` remain under the terms arranged with their respective creators (see each reclist's `manifest.json`).

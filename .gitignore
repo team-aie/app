@@ -1,21 +1,18 @@
-# Logs
-logs
-*.log
-
-# NPM
+# Dependencies
 node_modules/
 
-# Build Ouput
-dist
-coverage
-src/renderer/licenses.ts
+# Build outputs
+out/
+dist/
+release/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
 
-# Visual Studio Code
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-
-# Missed Translations during Development
-*.missing.json
+# OS & Editor
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example

@@ -1,0 +1,44 @@
+appId: com.team-aie.app
+productName: aie
+directories:
+  buildResources: build
+  output: release
+files:
+  - "!**/.vscode/*"
+  - "!src/*"
+  - "!docs/*"
+  - "!tests/*"
+  - "!scripts/*"
+  - "out/**/*"
+extraResources:
+  - from: resources/reclists
+    to: reclists
+mac:
+  category: public.app-category.music
+  icon: build/icon.icns
+  target:
+    - target: dmg
+      arch:
+        - arm64
+    - target: zip
+      arch:
+        - arm64
+win:
+  icon: build/icon.ico
+  target:
+    - target: nsis
+      arch:
+        - x64
+linux:
+  category: AudioVideo
+  target:
+    - target: AppImage
+      arch:
+        - x64
+    - target: deb
+      arch:
+        - x64
+publish:
+  provider: github
+  owner: team-aie
+  repo: app

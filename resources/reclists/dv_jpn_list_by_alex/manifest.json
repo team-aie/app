@@ -1,0 +1,13 @@
+{
+  "id": "dv_jpn_list_by_alex",
+  "displayName": "Japanese CV/CVVC List (DeepVocal / UTAU)",
+  "version": "1.0.0",
+  "author": "Alex",
+  "language": "ja",
+  "style": "CV / DeepVocal",
+  "defaultPhonemizer": "OpenUtau.Core.DefaultPhonemizer",
+  "reclistFile": "DV_JPN_list_by_Alex.txt",
+  "companionFiles": [],
+  "homepageUrl": "",
+  "termsNotice": "Included by arrangement with the original author (Alex). Bundling in aie does not grant additional redistribution licenses beyond the author’s original terms."
+}

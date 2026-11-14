@@ -1,16 +1,27 @@
 {
-  "extends": "./node_modules/electron-webpack/tsconfig-base.json",
   "compilerOptions": {
-    "target": "ES2019",
-    "jsx": "react",
+    "noEmit": true,
+    "target": "ES2023",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@electron/remote": ["./src/common/electron-remote.d.ts"]
+      "@shared/*": ["src/shared/*"],
+      "@renderer/*": ["src/renderer/src/*"]
     }
   },
-  "exclude": [
-    "dist"
+  "include": [
+    "electron.vite.config.ts",
+    "vitest.config.ts",
+    "playwright.config.ts",
+    "src/**/*",
+    "tests/**/*"
   ]
 }

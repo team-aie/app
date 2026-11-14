@@ -1,0 +1,16 @@
+{
+  "id": "delta_eng_ver5",
+  "displayName": "Delta English Ver.5 (CVVC)",
+  "version": "1.0.0",
+  "author": "デルタ (Delta)",
+  "language": "en",
+  "style": "CVVC",
+  "defaultPhonemizer": "OpenUtau.Plugin.Builtin.EnXsampaPhonemizer",
+  "reclistFile": "デルタ式engver5_reclist.txt",
+  "readmeFile": "README.md",
+  "companionFiles": [
+    "mkototemp.ini"
+  ],
+  "homepageUrl": "https://ch.nicovideo.jp/delta_kimigatame/blomaga/ar581614",
+  "termsNotice": "Included by arrangement with the original author (デルタ). Bundling in aie does not grant additional redistribution licenses beyond the author’s original terms."
+}
