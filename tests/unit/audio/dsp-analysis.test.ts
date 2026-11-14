@@ -164,4 +164,128 @@ describe('dsp-analysis — pitchy vocal F0 tracker & 64-band radix-2 FFT spectro
     expect(Math.max(...slice)).toBeCloseTo(0.94, 4);
     expect(Math.min(...slice)).toBeCloseTo(-0.88, 4);
   });
+
+  it('detects noisy / breathy / subharmonic-modulated G4 (392 Hz + 0.20 * 196 Hz + white noise) as G4 (~392 Hz) and never G3', () => {
+    for (const sampleRate of [44100, 48000]) {
+      let seed = 20261114;
+      const nextWhite = (): number => {
+        seed = (1664525 * seed + 1013904223) >>> 0;
+        return (seed / 0xffffffff) * 2 - 1;
+      };
+
+      // (a) Direct G4 (392 Hz) + 20% 196 Hz subharmonic + room white noise across multiple frames
+      for (let trial = 0; trial < 12; trial++) {
+        const frame = new Float32Array(2048);
+        for (let i = 0; i < frame.length; i++) {
+          const t = i / sampleRate;
+          frame[i] =
+            0.85 * Math.sin(2 * Math.PI * 392 * t) +
+            0.2 * Math.sin(2 * Math.PI * 196 * t) +
+            0.18 * nextWhite();
+        }
+        const est = estimateVocalPitch(frame, sampleRate, 'G4');
+        expect(est.frequencyHz).not.toBeNull();
+        expect(est.noteLabel).toBe('G4');
+        expect(Math.abs((est.frequencyHz ?? 0) - 392)).toBeLessThan(5);
+        expect(Math.abs(est.centsFromTarget ?? 999)).toBeLessThanOrEqual(20);
+      }
+
+      // (b) Harmonic G4 (392 Hz + 784 Hz) + 20% 196 Hz subharmonic + breathy room noise
+      const breathyHarmonicG4 = new Float32Array(2048);
+      for (let i = 0; i < breathyHarmonicG4.length; i++) {
+        const t = i / sampleRate;
+        breathyHarmonicG4[i] =
+          0.65 * Math.sin(2 * Math.PI * 392 * t) +
+          0.25 * Math.sin(2 * Math.PI * 784 * t) +
+          0.2 * Math.sin(2 * Math.PI * 196 * t) +
+          0.16 * nextWhite();
+      }
+      const breathyEst = estimateVocalPitch(breathyHarmonicG4, sampleRate, 'G4');
+      expect(breathyEst.noteLabel).toBe('G4');
+      expect(Math.abs((breathyEst.frequencyHz ?? 0) - 392)).toBeLessThan(5);
+
+      // (c) Heavy odd/even period modulation (~33% 196 Hz subharmonic) where raw MPM locks onto 196 Hz
+      const subharmonicLockedG4 = new Float32Array(2048);
+      for (let i = 0; i < subharmonicLockedG4.length; i++) {
+        const t = i / sampleRate;
+        subharmonicLockedG4[i] =
+          1.0 * Math.sin(2 * Math.PI * 392 * t) +
+          0.33 * Math.sin(2 * Math.PI * 196 * t) +
+          0.12 * nextWhite();
+      }
+      const disambiguatedEst = estimateVocalPitch(
+        subharmonicLockedG4,
+        sampleRate,
+        'G4'
+      );
+      expect(disambiguatedEst.noteLabel).toBe('G4');
+      expect(Math.abs((disambiguatedEst.frequencyHz ?? 0) - 392)).toBeLessThan(5);
+    }
+  });
+
+  it('keeps pure and rich harmonic G3 (196 Hz + 0.6 * 392 Hz + 0.35 * 588 Hz) locked at G3 (~196 Hz) and preserves A4 & noise rejection', () => {
+    for (const sampleRate of [44100, 48000]) {
+      // Pure 196 Hz G3
+      const pureG3 = new Float32Array(2048);
+      for (let i = 0; i < pureG3.length; i++) {
+        const t = i / sampleRate;
+        pureG3[i] = 0.8 * Math.sin(2 * Math.PI * 196 * t);
+      }
+      const pureEst = estimateVocalPitch(pureG3, sampleRate, 'G3');
+      expect(pureEst.noteLabel).toBe('G3');
+      expect(Math.abs((pureEst.frequencyHz ?? 0) - 196)).toBeLessThan(2);
+
+      // Rich harmonic G3 (196 Hz + 0.6 * 392 Hz + 0.35 * 588 Hz) + room noise
+      let seed = 987654321;
+      const nextWhite = (): number => {
+        seed = (1664525 * seed + 1013904223) >>> 0;
+        return (seed / 0xffffffff) * 2 - 1;
+      };
+      const richG3 = new Float32Array(2048);
+      const noisyRichG3 = new Float32Array(2048);
+      for (let i = 0; i < richG3.length; i++) {
+        const t = i / sampleRate;
+        const clean =
+          1.0 * Math.sin(2 * Math.PI * 196 * t) +
+          0.6 * Math.sin(2 * Math.PI * 392 * t) +
+          0.35 * Math.sin(2 * Math.PI * 588 * t);
+        richG3[i] = clean;
+        noisyRichG3[i] = clean + 0.14 * nextWhite();
+      }
+
+      const richEst = estimateVocalPitch(richG3, sampleRate, 'G3');
+      expect(richEst.noteLabel).toBe('G3');
+      expect(Math.abs((richEst.frequencyHz ?? 0) - 196)).toBeLessThan(2);
+
+      const noisyRichEst = estimateVocalPitch(noisyRichG3, sampleRate, 'G3');
+      expect(noisyRichEst.noteLabel).toBe('G3');
+      expect(Math.abs((noisyRichEst.frequencyHz ?? 0) - 196)).toBeLessThan(3);
+
+      // Even when targetNote is G4, singing a genuine rich G3 reports G3 (-1200 cents), never G4!
+      const g3AgainstG4Target = estimateVocalPitch(richG3, sampleRate, 'G4');
+      expect(g3AgainstG4Target.noteLabel).toBe('G3');
+      expect(
+        Math.abs((g3AgainstG4Target.centsFromTarget ?? 0) - -1200)
+      ).toBeLessThanOrEqual(5);
+
+      // A4 (440 Hz) and unvoiced breath/fricative noise rejection
+      const a4Est = estimateVocalPitch(
+        synthesizeHarmonicVoice(440, sampleRate, 2048),
+        sampleRate,
+        'A4'
+      );
+      expect(a4Est.noteLabel).toBe('A4');
+      expect(Math.abs((a4Est.frequencyHz ?? 0) - 440)).toBeLessThan(2);
+
+      const breathNoise = new Float32Array(2048);
+      let lp = 0;
+      for (let i = 0; i < breathNoise.length; i++) {
+        lp = 0.85 * lp + 0.15 * nextWhite();
+        breathNoise[i] = lp * 0.5;
+      }
+      expect(
+        estimateVocalPitch(breathNoise, sampleRate, 'G4').frequencyHz
+      ).toBeNull();
+    }
+  });
 });

@@ -16,6 +16,7 @@ import {
 import {
   type AieProjectManifest,
   type CharacterYamlManifest,
+  DEFAULT_SINGER_FILES,
   PITCH_CLASSES,
   type ParsedRecordingListBundle,
   type ReclistManifest,
@@ -690,26 +691,40 @@ export async function syncSingerScaffolding(
   await fs.mkdir(rootPath, { recursive: true });
 
   const reclistsRoot = resolveReclistsRootSync(resourcesRoot);
-  const builtinReclists = await listBuiltinReclists(resourcesRoot);
+  const flags = {
+    ...DEFAULT_SINGER_FILES,
+    ...manifest.singerFiles
+  };
 
-  // 1. Clean UTF-8 character.txt
-  await writeCharacterTxt(rootPath, manifest);
+  // 1. Clean UTF-8 character.txt (only when enabled; never delete existing file when unchecked)
+  if (flags.characterTxt) {
+    await writeCharacterTxt(rootPath, manifest);
+  }
 
-  // 2. Clean UTF-8 OpenUtau character.yaml
-  const charYamlManifest = buildCharacterYamlManifest(
-    manifest,
-    builtinReclists
-  );
-  const yamlContent = serializeCharacterYaml(charYamlManifest);
-  await fs.writeFile(path.join(rootPath, 'character.yaml'), yamlContent, 'utf8');
+  // 2. Clean UTF-8 OpenUtau character.yaml (only when enabled)
+  if (flags.characterYaml) {
+    const builtinReclists = await listBuiltinReclists(resourcesRoot);
+    const charYamlManifest = buildCharacterYamlManifest(
+      manifest,
+      builtinReclists
+    );
+    const yamlContent = serializeCharacterYaml(charYamlManifest);
+    await fs.writeFile(
+      path.join(rootPath, 'character.yaml'),
+      yamlContent,
+      'utf8'
+    );
+  }
 
-  // 3. Clean UTF-8 prefix.map
-  const prefixMapContent = buildPrefixMap(manifest.sets);
-  await fs.writeFile(
-    path.join(rootPath, 'prefix.map'),
-    prefixMapContent,
-    'utf8'
-  );
+  // 3. Clean UTF-8 prefix.map (only when enabled)
+  if (flags.prefixMap) {
+    const prefixMapContent = buildPrefixMap(manifest.sets);
+    await fs.writeFile(
+      path.join(rootPath, 'prefix.map'),
+      prefixMapContent,
+      'utf8'
+    );
+  }
 
   // 4. Companion files per set when generateCompanionFiles is enabled
   for (const setConfig of manifest.sets) {

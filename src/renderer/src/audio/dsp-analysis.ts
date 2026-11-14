@@ -4,8 +4,13 @@ import { PitchDetector } from 'pitchy';
 
 export const VOCAL_MIN_HZ = 55;
 export const VOCAL_MAX_HZ = 1200;
-export const DEFAULT_MIN_PITCH_CLARITY = 0.85;
+export const DEFAULT_MIN_PITCH_CLARITY = 0.75;
 export const PITCH_SILENCE_RMS_THRESHOLD = 1e-3; // -60 dBFS
+
+const PITCHY_CLARITY_THRESHOLD = 0.8;
+const SUBHARMONIC_MAX_DOUBLED_HZ = 1100;
+const SUBHARMONIC_MIN_HALF_CORR = 0.65;
+const SUBHARMONIC_HALF_TO_FULL_RATIO = 0.78;
 
 export const SPECTRUM_BAND_COUNT = 64;
 export const SPECTRUM_MIN_HZ = 60;
@@ -36,13 +41,78 @@ function getCachedPitchDetector(length: number): {
     }
   }
   const detector = PitchDetector.forFloat32Array(length);
-  detector.clarityThreshold = 0.9;
+  detector.clarityThreshold = PITCHY_CLARITY_THRESHOLD;
   const entry = {
     detector,
     centeredBuffer: new Float32Array(length)
   };
   pitchDetectorCache.set(length, entry);
   return entry;
+}
+
+function normalizedAutocorrelationInt(
+  buffer: Float32Array,
+  lag: number
+): number {
+  const length = buffer.length;
+  if (lag <= 0 || lag >= length) {
+    return 0;
+  }
+  const count = length - lag;
+  let dot = 0;
+  let energyA = 0;
+  let energyB = 0;
+  for (let i = 0; i < count; i++) {
+    const a = buffer[i] ?? 0;
+    const b = buffer[i + lag] ?? 0;
+    dot += a * b;
+    energyA += a * a;
+    energyB += b * b;
+  }
+  const denom = Math.sqrt(energyA * energyB);
+  return denom > 0 ? dot / denom : 0;
+}
+
+function findPeakAutocorrelationNearLag(
+  buffer: Float32Array,
+  targetLag: number
+): { corr: number; lag: number } {
+  const length = buffer.length;
+  const center = Math.round(targetLag);
+  const lo = Math.max(2, center - 2);
+  const hi = Math.min(length - 3, center + 2);
+  if (lo > hi) {
+    const clamped = Math.max(1, Math.min(length - 1, center));
+    return {
+      corr: normalizedAutocorrelationInt(buffer, clamped),
+      lag: targetLag
+    };
+  }
+
+  let bestLag = lo;
+  let bestCorr = -Infinity;
+  for (let k = lo; k <= hi; k++) {
+    const c = normalizedAutocorrelationInt(buffer, k);
+    if (c > bestCorr) {
+      bestCorr = c;
+      bestLag = k;
+    }
+  }
+
+  const y0 = normalizedAutocorrelationInt(buffer, bestLag - 1);
+  const y1 = bestCorr;
+  const y2 = normalizedAutocorrelationInt(buffer, bestLag + 1);
+  const denom = 2 * (2 * y1 - y0 - y2);
+  if (y1 >= y0 && y1 >= y2 && Math.abs(denom) > 1e-12) {
+    const delta = (y0 - y2) / denom;
+    if (Math.abs(delta) <= 1) {
+      const refinedLag = bestLag + delta;
+      const refinedCorr = Math.min(1, y1 - 0.25 * (y0 - y2) * delta);
+      return { corr: refinedCorr, lag: refinedLag };
+    }
+  }
+
+  return { corr: bestCorr, lag: bestLag };
 }
 
 const UNVOICED_PITCH_ESTIMATE: PitchEstimate = Object.freeze({
@@ -55,7 +125,8 @@ const UNVOICED_PITCH_ESTIMATE: PitchEstimate = Object.freeze({
 
 /**
  * Estimates human vocal fundamental pitch (`55 Hz – 1,200 Hz`) using McLeod Pitch Method (`pitchy`)
- * and computes MIDI note, scientific pitch label, and signed cents offset relative to `targetNote`.
+ * with subharmonic (`f0` vs `2 * f0`) octave disambiguation, and computes MIDI note, scientific pitch
+ * label, and signed cents offset relative to `targetNote`.
  * Cleanly gates silence, DC-only buffers, low-clarity unvoiced fricatives/noise, and out-of-band frequencies.
  */
 export function estimateVocalPitch(
@@ -100,10 +171,45 @@ export function estimateVocalPitch(
     ? Math.max(0, Math.min(1, rawClarity))
     : 0;
 
+  let resolvedFreqHz = rawFreqHz;
   if (
-    !Number.isFinite(rawFreqHz) ||
-    rawFreqHz < VOCAL_MIN_HZ ||
-    rawFreqHz > VOCAL_MAX_HZ ||
+    Number.isFinite(resolvedFreqHz) &&
+    resolvedFreqHz >= VOCAL_MIN_HZ &&
+    safeClarity >= minClarity
+  ) {
+    // Disambiguate f0 vs 2 * f0 subharmonic octave drops:
+    // Room reflections, breathiness, or slight odd/even glottal cycle modulation can make 2 * T0
+    // exceed T0 in NSDF. Genuine lower-octave vocal notes have odd harmonics that cancel at T0 / 2
+    // (low or negative correlation), whereas a subharmonic-locked note maintains strong positive
+    // correlation at halfLag.
+    for (
+      let step = 0;
+      step < 2 && resolvedFreqHz * 2 <= SUBHARMONIC_MAX_DOUBLED_HZ;
+      step++
+    ) {
+      const lag = sampleRate / resolvedFreqHz;
+      const halfLag = sampleRate / (2 * resolvedFreqHz);
+      if (halfLag < 2 || lag >= length - 2) {
+        break;
+      }
+      const fullPeak = findPeakAutocorrelationNearLag(centeredBuffer, lag);
+      const halfPeak = findPeakAutocorrelationNearLag(centeredBuffer, halfLag);
+      if (
+        halfPeak.corr >= SUBHARMONIC_MIN_HALF_CORR &&
+        halfPeak.corr >= SUBHARMONIC_HALF_TO_FULL_RATIO * fullPeak.corr &&
+        halfPeak.lag > 0
+      ) {
+        resolvedFreqHz = sampleRate / halfPeak.lag;
+      } else {
+        break;
+      }
+    }
+  }
+
+  if (
+    !Number.isFinite(resolvedFreqHz) ||
+    resolvedFreqHz < VOCAL_MIN_HZ ||
+    resolvedFreqHz > VOCAL_MAX_HZ ||
     safeClarity < minClarity
   ) {
     return {
@@ -115,11 +221,11 @@ export function estimateVocalPitch(
     };
   }
 
-  const delta = frequencyHzToPitchDelta(rawFreqHz, targetNote);
+  const delta = frequencyHzToPitchDelta(resolvedFreqHz, targetNote);
   const normalizedCents =
     delta.centsFromTarget === 0 ? 0 : delta.centsFromTarget;
   return {
-    frequencyHz: rawFreqHz,
+    frequencyHz: resolvedFreqHz,
     clarity: safeClarity,
     midiNote: delta.midiNote,
     noteLabel: delta.noteLabel,

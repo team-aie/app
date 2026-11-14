@@ -2,7 +2,11 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import iconv from 'iconv-lite';
-import type { RecordingSetConfig } from '@shared/types';
+import {
+  DEFAULT_SINGER_FILES,
+  type RecordingSetConfig,
+  type SingerFileSelection
+} from '@shared/types';
 import { afterEach, describe, expect, it } from 'vitest';
 import {
   createProject,
@@ -260,5 +264,233 @@ describe('project service (CRUD, progress, legacy aie.config.json migration & ra
     const progress = await getSetProgress(rootOremoDir, adopted.sets[0]!);
     expect(progress.recordedCount).toBe(2);
     expect(progress.totalCount).toBe(2);
+  });
+
+  it('honors every singerFiles checkbox combination on createProject and openProject without creating unchecked files', async () => {
+    const cases: Array<{
+      label: string;
+      singerFiles?: SingerFileSelection;
+      expected: SingerFileSelection;
+    }> = [
+      {
+        label: 'default-all',
+        singerFiles: undefined,
+        expected: DEFAULT_SINGER_FILES
+      },
+      {
+        label: 'explicit-all',
+        singerFiles: {
+          characterTxt: true,
+          characterYaml: true,
+          prefixMap: true
+        },
+        expected: {
+          characterTxt: true,
+          characterYaml: true,
+          prefixMap: true
+        }
+      },
+      {
+        label: 'character-txt-only',
+        singerFiles: {
+          characterTxt: true,
+          characterYaml: false,
+          prefixMap: false
+        },
+        expected: {
+          characterTxt: true,
+          characterYaml: false,
+          prefixMap: false
+        }
+      },
+      {
+        label: 'character-yaml-only',
+        singerFiles: {
+          characterTxt: false,
+          characterYaml: true,
+          prefixMap: false
+        },
+        expected: {
+          characterTxt: false,
+          characterYaml: true,
+          prefixMap: false
+        }
+      },
+      {
+        label: 'prefix-map-only',
+        singerFiles: {
+          characterTxt: false,
+          characterYaml: false,
+          prefixMap: true
+        },
+        expected: {
+          characterTxt: false,
+          characterYaml: false,
+          prefixMap: true
+        }
+      },
+      {
+        label: 'none',
+        singerFiles: {
+          characterTxt: false,
+          characterYaml: false,
+          prefixMap: false
+        },
+        expected: {
+          characterTxt: false,
+          characterYaml: false,
+          prefixMap: false
+        }
+      }
+    ];
+
+    const exists = async (p: string): Promise<boolean> => {
+      try {
+        return (await fs.stat(p)).isFile();
+      } catch {
+        return false;
+      }
+    };
+
+    for (const testCase of cases) {
+      const rootDir = await makeTempDir(`aie-singer-files-${testCase.label}-`);
+      const created = await createProject({
+        name: `Singer ${testCase.label}`,
+        rootPath: rootDir,
+        author: 'Studio Author',
+        ...(testCase.singerFiles ? { singerFiles: testCase.singerFiles } : {})
+      });
+
+      expect(created.singerFiles).toEqual(testCase.expected);
+
+      const rawManifest = JSON.parse(
+        await fs.readFile(path.join(rootDir, 'aie.project.json'), 'utf8')
+      ) as { singerFiles?: SingerFileSelection };
+      expect(rawManifest.singerFiles).toEqual(testCase.expected);
+
+      const reopened = await openProject(rootDir);
+      expect(reopened.singerFiles).toEqual(testCase.expected);
+
+      expect(await exists(path.join(rootDir, 'character.txt'))).toBe(
+        testCase.expected.characterTxt
+      );
+      expect(await exists(path.join(rootDir, 'character.yaml'))).toBe(
+        testCase.expected.characterYaml
+      );
+      expect(await exists(path.join(rootDir, 'prefix.map'))).toBe(
+        testCase.expected.prefixMap
+      );
+    }
+
+    // Also verify opening an older v1 manifest without singerFiles defaults to DEFAULT_SINGER_FILES
+    const legacyManifestDir = await makeTempDir('aie-v1-no-singer-files-');
+    await fs.writeFile(
+      path.join(legacyManifestDir, 'aie.project.json'),
+      JSON.stringify({
+        schemaVersion: 1,
+        id: 'proj-old-v1',
+        name: 'Pre-Polish Singer',
+        rootPath: legacyManifestDir,
+        sets: [],
+        createdAt: '2026-11-14T00:00:00.000Z',
+        updatedAt: '2026-11-14T00:00:00.000Z'
+      }),
+      'utf8'
+    );
+    const openedLegacyV1 = await openProject(legacyManifestDir);
+    expect(openedLegacyV1.singerFiles).toEqual(DEFAULT_SINGER_FILES);
+  });
+
+  it('preserves existing unchecked files without overwriting or deleting them across saveProject, upsertRecordingSet, and deleteRecordingSet', async () => {
+    const rootDir = await makeTempDir('aie-singer-files-update-');
+
+    const created = await createProject({
+      name: 'Initial Name',
+      rootPath: rootDir,
+      author: 'Original Author',
+      singerFiles: {
+        characterTxt: true,
+        characterYaml: true,
+        prefixMap: true
+      }
+    });
+
+    // Customize character.yaml and prefix.map on disk, then uncheck both while keeping characterTxt checked
+    const customYaml = '# hand-edited yaml\nname: Custom YAML\n';
+    const customPrefixMap = '# hand-edited prefix.map\nC4\t\t_CUSTOM\n';
+    await fs.writeFile(path.join(rootDir, 'character.yaml'), customYaml, 'utf8');
+    await fs.writeFile(
+      path.join(rootDir, 'prefix.map'),
+      customPrefixMap,
+      'utf8'
+    );
+
+    const saved = await saveProject({
+      ...created,
+      name: 'Renamed Singer',
+      singerFiles: {
+        characterTxt: true,
+        characterYaml: false,
+        prefixMap: false
+      }
+    });
+    expect(saved.singerFiles).toEqual({
+      characterTxt: true,
+      characterYaml: false,
+      prefixMap: false
+    });
+
+    const setG4: RecordingSetConfig = {
+      id: 'set-g4',
+      name: 'Power G4',
+      targetLocation: 'subfolder',
+      subfolderName: 'G4',
+      scale: 'G4',
+      aliasSuffix: '_G4',
+      reclistSource: { kind: 'builtin', builtinId: 'z_cvvc_normal' },
+      guideAudio: { kind: 'none' },
+      generateCompanionFiles: true,
+      lastCursorIndex: 0,
+      createdAt: saved.createdAt,
+      updatedAt: saved.updatedAt
+    };
+
+    const afterUpsert = await upsertRecordingSet(rootDir, setG4);
+    expect(afterUpsert.singerFiles).toEqual({
+      characterTxt: true,
+      characterYaml: false,
+      prefixMap: false
+    });
+
+    // Checked character.txt WAS updated, per-set oto.ini WAS generated, and unchecked files stayed untouched!
+    expect(await fs.readFile(path.join(rootDir, 'character.txt'), 'utf8')).toContain(
+      'name=Renamed Singer'
+    );
+    expect(await fs.readFile(path.join(rootDir, 'G4', 'oto.ini'), 'utf8')).toContain(
+      '_G4'
+    );
+    expect(await fs.readFile(path.join(rootDir, 'character.yaml'), 'utf8')).toBe(
+      customYaml
+    );
+    expect(await fs.readFile(path.join(rootDir, 'prefix.map'), 'utf8')).toBe(
+      customPrefixMap
+    );
+
+    const afterDelete = await deleteRecordingSet({
+      rootPath: rootDir,
+      setId: 'set-g4',
+      trashWavFiles: false
+    });
+    expect(afterDelete.singerFiles).toEqual({
+      characterTxt: true,
+      characterYaml: false,
+      prefixMap: false
+    });
+    expect(await fs.readFile(path.join(rootDir, 'character.yaml'), 'utf8')).toBe(
+      customYaml
+    );
+    expect(await fs.readFile(path.join(rootDir, 'prefix.map'), 'utf8')).toBe(
+      customPrefixMap
+    );
   });
 });
