@@ -32,6 +32,15 @@ jobs:
           node-version: 22
           cache: npm
 
+      - name: Install Electron & Xvfb dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            xvfb xauth libasound2t64 libnss3 libatk1.0-0t64 libatk-bridge2.0-0t64 \
+            libcups2t64 libdrm2 libgtk-3-0t64 libgbm1 libxss1 libxkbcommon0 \
+            libxcomposite1 libxdamage1 libxfixes3 libxrandr2
+
       - run: npm ci
 
       - name: Typecheck
@@ -50,7 +59,7 @@ jobs:
 
       - name: Playwright _electron E2E (Linux, virtual display)
         if: runner.os == 'Linux'
-        run: xvfb-run -a npm run test:e2e
+        run: xvfb-run -a -s "-screen 0 1440x900x24" npm run test:e2e
 
       - name: Playwright _electron E2E
         if: runner.os != 'Linux'
@@ -58,7 +67,7 @@ jobs:
 
       - name: Upload E2E artifacts on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: e2e-${{ matrix.os }}
           path: |

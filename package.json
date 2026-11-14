@@ -1,8 +1,8 @@
 {
   "name": "aie",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0-beta.1",
   "description": "Desktop Vocal Booth & Turnkey OpenUtau / vLabeler Voicebank Builder",
-  "author": "team-aie",
+  "author": "team-aie <yi.iluminar@gmail.com>",
   "license": "MIT",
   "homepage": "https://github.com/team-aie/app#readme",
   "repository": {

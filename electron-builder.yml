@@ -14,13 +14,17 @@ files:
 extraResources:
   - from: resources/reclists
     to: reclists
-# Day-1 releases are unsigned ($0): CI turns on signing / notarization only when secrets exist
-# (`-c.mac.identity=null` / `-c.mac.notarize=true` are passed from release.yml).
+# Day-1 releases are ad-hoc signed ($0) via `-c.mac.identity=-` on Apple Silicon arm64;
+# CI turns on Developer ID signing + notarization automatically when secrets exist.
 mac:
   category: public.app-category.music
   icon: build/icon.icns
   hardenedRuntime: true
   gatekeeperAssess: false
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+  extendInfo:
+    NSMicrophoneUsageDescription: "aie needs microphone access to record vocal takes in the booth."
   target:
     - target: dmg
       arch:
@@ -39,6 +43,8 @@ nsis:
   allowToChangeInstallationDirectory: true
 linux:
   category: AudioVideo
+  icon: build/icon.png
+  maintainer: "team-aie <yi.iluminar@gmail.com>"
   target:
     - target: AppImage
       arch:

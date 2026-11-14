@@ -54,6 +54,12 @@ jobs:
           node-version: 22
           cache: npm
 
+      - name: Install Linux packaging dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libcrypt1
+
       - run: npm ci
 
       - name: Set package version from tag
@@ -66,12 +72,12 @@ jobs:
           npm test
           npm run build
 
-      # ---- macOS: unsigned by default (Day-1, $0); signed + notarized only when all secrets exist ----
-      - name: Package macOS (unsigned)
+      # ---- macOS: ad-hoc signed (`-`) by default on Apple Silicon ($0); Developer ID + notarized when secrets exist ----
+      - name: Package macOS (ad-hoc signed)
         if: runner.os == 'macOS' && env.HAS_MAC_SIGNING != 'true'
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
-        run: npx electron-builder ${{ matrix.flags }} --publish never --config ${{ needs.meta.outputs.config }} -c.mac.identity=null
+        run: npx electron-builder ${{ matrix.flags }} --publish never --config ${{ needs.meta.outputs.config }} -c.mac.identity=-
 
       - name: Package macOS (signed + notarized)
         if: runner.os == 'macOS' && env.HAS_MAC_SIGNING == 'true'
@@ -101,7 +107,7 @@ jobs:
         if: runner.os == 'Linux'
         run: npx electron-builder ${{ matrix.flags }} --publish never --config ${{ needs.meta.outputs.config }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: release-${{ matrix.os }}
           if-no-files-found: error
@@ -120,17 +126,36 @@ jobs:
     needs: [meta, build]
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           path: dist
           pattern: release-*
           merge-multiple: true
 
-      - name: Create GitHub Release
+      - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PRERELEASE: ${{ needs.meta.outputs.prerelease }}
         run: |
-          FLAGS=(--title "aie ${GITHUB_REF_NAME}" --generate-notes --verify-tag)
-          if [[ "$PRERELEASE" == "true" ]]; then FLAGS+=(--prerelease); fi
-          gh release create "${GITHUB_REF_NAME}" dist/* "${FLAGS[@]}" --repo "${GITHUB_REPOSITORY}"
+          shopt -s nullglob
+          ASSETS=(dist/*)
+          if (( ${#ASSETS[@]} == 0 )); then
+            echo "No release assets found in dist/" >&2
+            exit 1
+          fi
+          if gh release view "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            gh release upload "${GITHUB_REF_NAME}" "${ASSETS[@]}" --clobber --repo "${GITHUB_REPOSITORY}"
+            EDIT_FLAGS=(--title "aie ${GITHUB_REF_NAME}" --draft=false)
+            if [[ "$PRERELEASE" == "true" ]]; then
+              EDIT_FLAGS+=(--prerelease)
+            else
+              EDIT_FLAGS+=(--prerelease=false)
+            fi
+            gh release edit "${GITHUB_REF_NAME}" "${EDIT_FLAGS[@]}" --repo "${GITHUB_REPOSITORY}"
+          else
+            CREATE_FLAGS=(--title "aie ${GITHUB_REF_NAME}" --generate-notes --verify-tag)
+            if [[ "$PRERELEASE" == "true" ]]; then
+              CREATE_FLAGS+=(--prerelease)
+            fi
+            gh release create "${GITHUB_REF_NAME}" "${ASSETS[@]}" "${CREATE_FLAGS[@]}" --repo "${GITHUB_REPOSITORY}"
+          fi

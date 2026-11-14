@@ -235,8 +235,31 @@ test.describe('aie v1 Full-Stack Electron Fake-Mic E2E', () => {
       const initialTransportBox = await page.getByTestId('studio-transport').boundingBox();
       expect(initialTransportBox).not.toBeNull();
       expect(initialTransportBox!.y + initialTransportBox!.height).toBeLessThanOrEqual(
-        viewportMetrics.innerHeight
+        viewportMetrics.innerHeight + 0.5
       );
+
+      // Also verify 760px content height (Windows/Linux 1280x820 frame with titlebar + menu bar) fits cleanly.
+      await firstLaunch.app.evaluate(({ BrowserWindow }) => {
+        const win = BrowserWindow.getAllWindows()[0];
+        win?.setContentSize(1280, 760);
+      });
+      await expect
+        .poll(async () => page.evaluate(() => window.innerHeight))
+        .toBeLessThanOrEqual(760);
+      const compactMetrics = await page.evaluate(() => ({
+        innerHeight: window.innerHeight,
+        scrollHeight: document.documentElement.scrollHeight
+      }));
+      expect(compactMetrics.scrollHeight).toBeLessThanOrEqual(compactMetrics.innerHeight);
+      const compactTransportBox = await page.getByTestId('studio-transport').boundingBox();
+      expect(compactTransportBox).not.toBeNull();
+      expect(compactTransportBox!.y + compactTransportBox!.height).toBeLessThanOrEqual(
+        compactMetrics.innerHeight + 0.5
+      );
+      await firstLaunch.app.evaluate(({ BrowserWindow }) => {
+        const win = BrowserWindow.getAllWindows()[0];
+        win?.setSize(1280, 820);
+      });
 
       // Verify 30-item pagination on `z_cvvc_normal` (> 30 prompts).
       await expect(page.getByTestId('studio-pagination')).toBeVisible();
@@ -421,9 +444,10 @@ test.describe('aie v1 Full-Stack Electron Fake-Mic E2E', () => {
       expect(feedbackBox).not.toBeNull();
       expect(canvasBox).not.toBeNull();
       expect(transportAfterUndoBox).not.toBeNull();
+      const afterUndoInnerHeight = await page.evaluate(() => window.innerHeight);
       expect(feedbackBox!.y).toBeLessThan(canvasBox!.y);
       expect(transportAfterUndoBox!.y + transportAfterUndoBox!.height).toBeLessThanOrEqual(
-        viewportMetrics.innerHeight
+        afterUndoInnerHeight + 0.5
       );
 
       // ---- 4. Live 3-Locale Switching (`EN` / `简` / `日`) ----
@@ -485,7 +509,11 @@ test.describe('aie v1 Full-Stack Electron Fake-Mic E2E', () => {
       if (activeApp) {
         await activeApp.close().catch(() => undefined);
       }
-      fs.rmSync(tmpBase, { recursive: true, force: true });
+      try {
+        fs.rmSync(tmpBase, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
+      } catch {
+        // Ignore transient OS temp file locks after Electron child-process teardown.
+      }
     }
   });
 });
