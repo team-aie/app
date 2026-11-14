@@ -9,7 +9,8 @@
   "reclistFile": "デルタ式engver5_reclist.txt",
   "readmeFile": "README.md",
   "companionFiles": [
-    "mkototemp.ini"
+    "mkototemp.ini",
+    "OREMO-comment.txt"
   ],
   "homepageUrl": "https://ch.nicovideo.jp/delta_kimigatame/blomaga/ar581614",
   "termsNotice": "Included by arrangement with the original author (デルタ). Bundling in aie does not grant additional redistribution licenses beyond the author’s original terms."
