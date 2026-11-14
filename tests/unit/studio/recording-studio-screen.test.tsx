@@ -1,12 +1,14 @@
 import '@testing-library/jest-dom/vitest';
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { RecordingStudioScreen } from '@renderer/components/studio';
+import { RecordingStudioScreen, SIDEBAR_PAGE_SIZE } from '@renderer/components/studio';
 import {
   type MockBridge,
   installMockBridge,
+  makeCleanTake,
   makeClippedTake,
   makeCutoffTake,
+  makeManyEntries,
   makeProps,
   makeSet,
   stubCanvas,
@@ -39,22 +41,43 @@ async function recordWithHold() {
   await waitFor(() => expect(screen.getByTestId('studio-screen')).toHaveAttribute('data-phase', 'idle'));
 }
 
-describe('RecordingStudioScreen — layout & prompt carousel', () => {
-  it('renders every E2E data-testid and the phoneme coach for the current prompt', () => {
+describe('RecordingStudioScreen — viewport layout, header & prompt carousel', () => {
+  it('renders viewport-fitted studio layout, header triggers, pitch selector, and single-row transport', () => {
     render(<RecordingStudioScreen {...makeProps()} />);
     for (const id of [
       'studio-screen',
+      'studio-back-btn',
+      'studio-target-pitch-select',
+      'studio-options-btn',
+      'studio-open-in-btn',
+      'studio-hotkeys-btn',
+      'studio-transport',
+      'studio-prev-btn',
       'studio-record-btn',
       'studio-play-btn',
       'studio-scale-btn',
+      'studio-next-btn',
+      'studio-next-unrecorded-btn',
+      'studio-undo-btn',
+      'studio-trash-btn',
       'studio-canvas',
       'studio-prompt-current',
       'studio-progress',
-      'studio-undo-btn',
-      'studio-mode-toggle'
+      'studio-pagination'
     ]) {
       expect(screen.getByTestId(id)).toBeInTheDocument();
     }
+
+    // Viewport-fitted layout (no vertical scroll overflow on screen or main; dynamic flex canvas)
+    const studioScreen = screen.getByTestId('studio-screen');
+    expect(studioScreen.className).toContain('h-full');
+    expect(studioScreen.className).toContain('overflow-hidden');
+    const main = studioScreen.querySelector('main')!;
+    expect(main.className).toContain('overflow-hidden');
+    expect(main.className).not.toContain('overflow-y-auto');
+    expect(main.querySelector('details')).toBeNull();
+    expect(screen.getByTestId('studio-canvas').className).toContain('h-full');
+
     expect(current()).toHaveTextContent('_a_ka_sa');
     expect(screen.getByTestId('studio-prompt-next')).toHaveTextContent('_i_ki_shi');
     expect(screen.getByTestId('studio-prompt-hint')).toHaveTextContent('[a] - [ka] - [sa]');
@@ -62,9 +85,33 @@ describe('RecordingStudioScreen — layout & prompt carousel', () => {
     expect(screen.getByTestId('studio-prompt-filename')).toHaveTextContent('_a_ka_sa.wav');
     expect(within(screen.getByTestId('studio-prompt-syllables')).getAllByRole('listitem')).toHaveLength(3);
     expect(screen.getByTestId('studio-progress')).toHaveTextContent('1 / 4 recorded');
-    expect(screen.getByTestId('studio-scale-btn')).toHaveTextContent('G4');
+    expect(screen.getByTestId('studio-scale-btn')).toHaveTextContent('G4 (392 Hz)');
     expect(screen.getByTestId('studio-canvas')).toHaveAttribute('data-mode', 'empty');
-    expect(screen.getByTestId('studio-mode-toggle')).toHaveAttribute('data-mode', 'hold');
+
+    //Shortcuts popover opens from header
+    fireEvent.click(screen.getByTestId('studio-hotkeys-btn'));
+    expect(screen.getByTestId('studio-hotkeys-popover')).toHaveTextContent('R — Record');
+  });
+
+  it('inline Target Pitch quick-selector lists chromatic notes with Hz labels and calls onChangeScale', () => {
+    const onChangeScale = vi.fn();
+    const { rerender } = render(<RecordingStudioScreen {...makeProps()} />);
+
+    const pitchSelect = screen.getByTestId('studio-target-pitch-select') as HTMLSelectElement;
+    // Disabled when onChangeScale is not provided
+    expect(pitchSelect).toBeDisabled();
+    expect(pitchSelect.value).toBe('G4');
+    expect(pitchSelect.options).toHaveLength(48);
+    const optionLabels = Array.from(pitchSelect.options).map((o) => o.textContent);
+    expect(optionLabels).toContain('G4 · 392 Hz');
+    expect(optionLabels).toContain('A4 · 440 Hz');
+    expect(optionLabels).toContain('C4 · 262 Hz');
+
+    // Enabled when onChangeScale is provided; selecting a note calls onChangeScale
+    rerender(<RecordingStudioScreen {...makeProps({ onChangeScale })} />);
+    expect(pitchSelect).toBeEnabled();
+    fireEvent.change(pitchSelect, { target: { value: 'A4' } });
+    expect(onChangeScale).toHaveBeenCalledWith('A4');
   });
 
   it('resumes at lastCursorIndex and arrow keys navigate (reporting cursor changes)', () => {
@@ -110,9 +157,140 @@ describe('RecordingStudioScreen — layout & prompt carousel', () => {
     fireEvent.click(screen.getByTestId('studio-filter-unrecorded'));
     expect(within(screen.getByTestId('studio-item-list')).getAllByRole('listitem')).toHaveLength(3);
   });
+
+  it('paginates a 415-item reclist at 30 items/page, opens on cursor page (4 / 14), and syncs with cursor & filters', () => {
+    expect(SIDEBAR_PAGE_SIZE).toBe(30);
+    const entries = makeManyEntries(415);
+    const props = makeProps({
+      activeSet: makeSet({ lastCursorIndex: 116 }),
+      bundle: { entries, otoEntries: [], detectedEncoding: 'utf-8' },
+      initialRecordedFiles: ['prompt_001.wav', 'prompt_117.wav']
+    });
+    render(<RecordingStudioScreen {...props} />);
+
+    // Prompt 117 / 415 (0-indexed cursor 116) opens straight onto Page 4 / 14 (indices 90..119)
+    expect(screen.getByTestId('studio-prompt-position')).toHaveTextContent('117 / 415');
+    expect(screen.getByTestId('studio-page-indicator')).toHaveTextContent('Page 4 / 14');
+    const list = screen.getByTestId('studio-item-list');
+    expect(within(list).getAllByRole('listitem')).toHaveLength(30);
+    expect(screen.getByTestId('studio-item-116')).toBeInTheDocument();
+    expect(screen.queryByTestId('studio-item-0')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('studio-item-120')).not.toBeInTheDocument();
+
+    // Manual previous / next page navigation
+    fireEvent.click(screen.getByTestId('studio-page-prev'));
+    expect(screen.getByTestId('studio-page-indicator')).toHaveTextContent('Page 3 / 14');
+    expect(screen.getByTestId('studio-item-60')).toBeInTheDocument();
+    expect(screen.queryByTestId('studio-item-116')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('studio-page-next'));
+    expect(screen.getByTestId('studio-page-indicator')).toHaveTextContent('Page 4 / 14');
+
+    // Advancing cursor across page boundary (116 -> 117 -> 118 -> 119 -> 120) auto-jumps to Page 5 / 14
+    fireEvent.keyDown(window, { key: 'ArrowDown' }); // 117
+    fireEvent.keyDown(window, { key: 'ArrowDown' }); // 118
+    fireEvent.keyDown(window, { key: 'ArrowDown' }); // 119
+    expect(screen.getByTestId('studio-page-indicator')).toHaveTextContent('Page 4 / 14');
+    fireEvent.keyDown(window, { key: 'ArrowDown' }); // 120 -> Page 5!
+    expect(screen.getByTestId('studio-page-indicator')).toHaveTextContent('Page 5 / 14');
+    expect(screen.getByTestId('studio-item-120')).toBeInTheDocument();
+
+    // Changing filter or search query resets page to 1
+    fireEvent.click(screen.getByTestId('studio-filter-recorded'));
+    expect(screen.getByTestId('studio-page-indicator')).toHaveTextContent('Page 1 / 1');
+    expect(within(list).getAllByRole('listitem')).toHaveLength(2);
+
+    fireEvent.click(screen.getByTestId('studio-filter-all'));
+    expect(screen.getByTestId('studio-page-indicator')).toHaveTextContent('Page 1 / 14');
+    expect(screen.getByTestId('studio-page-prev')).toBeDisabled();
+
+    fireEvent.click(screen.getByTestId('studio-page-next')); // Page 2 / 14
+    expect(screen.getByTestId('studio-page-indicator')).toHaveTextContent('Page 2 / 14');
+    fireEvent.change(screen.getByTestId('studio-search'), { target: { value: 'prompt_41' } });
+    expect(screen.getByTestId('studio-page-indicator')).toHaveTextContent('Page 1 / 1');
+  });
 });
 
-describe('RecordingStudioScreen — recording pipeline', () => {
+describe('RecordingStudioScreen — focus safety & pointer-click blur', () => {
+  it('pressing Space while studio-scale-btn has focus does NOT call onTogglePlayback', async () => {
+    const props = makeProps({ activeSet: makeSet({ lastCursorIndex: 1 }) });
+    render(<RecordingStudioScreen {...props} />);
+    await waitFor(() => expect(screen.getByTestId('studio-canvas')).toHaveAttribute('data-mode', 'review'));
+
+    const scaleBtn = screen.getByTestId('studio-scale-btn');
+    scaleBtn.focus();
+    expect(document.activeElement).toBe(scaleBtn);
+
+    const keyDownNotPrevented = fireEvent.keyDown(scaleBtn, { key: ' ', code: 'Space' });
+    const keyUpNotPrevented = fireEvent.keyUp(scaleBtn, { key: ' ', code: 'Space' });
+    expect(keyDownNotPrevented).toBe(true);
+    expect(keyUpNotPrevented).toBe(true);
+    expect(props.audioAdapter.playSamples).not.toHaveBeenCalled();
+
+    // Keyboard activation (detail: 0) toggles reference tone while keeping focus on scaleBtn
+    fireEvent.click(scaleBtn, { detail: 0 });
+    expect(props.audioAdapter.startReferenceTone).toHaveBeenCalledTimes(1);
+    expect(document.activeElement).toBe(scaleBtn);
+  });
+
+  it('pointer-clicking transport/action buttons blurs them so Space plays back immediately', async () => {
+    const props = makeProps({ activeSet: makeSet({ lastCursorIndex: 1 }) });
+    render(<RecordingStudioScreen {...props} />);
+    await waitFor(() => expect(screen.getByTestId('studio-canvas')).toHaveAttribute('data-mode', 'review'));
+
+    // Pointer click on Reference Tone starts tone AND blurs the button
+    const scaleBtn = screen.getByTestId('studio-scale-btn');
+    scaleBtn.focus();
+    expect(document.activeElement).toBe(scaleBtn);
+    fireEvent.click(scaleBtn, { detail: 1 });
+    expect(props.audioAdapter.startReferenceTone).toHaveBeenCalledTimes(1);
+    expect(document.activeElement).not.toBe(scaleBtn);
+
+    // Subsequent Space press triggers booth playback instead of Reference Tone!
+    fireEvent.keyDown(window, { key: ' ', code: 'Space' });
+    await waitFor(() => expect(props.audioAdapter.playSamples).toHaveBeenCalledTimes(1));
+    fireEvent.keyDown(window, { key: ' ', code: 'Space' }); // stop playback
+
+    // Overwrite take so Undo is enabled, then verify pointer-click blur across transport buttons
+    await recordWithHold();
+    await waitFor(() => expect(screen.getByTestId('studio-undo-btn')).toBeEnabled());
+
+    for (const testId of [
+      'studio-prev-btn',
+      'studio-next-btn',
+      'studio-play-btn',
+      'studio-next-unrecorded-btn',
+      'studio-record-btn'
+    ]) {
+      const btn = screen.getByTestId(testId);
+      btn.focus();
+      expect(document.activeElement).toBe(btn);
+      fireEvent.click(btn, { detail: 1 });
+      expect(document.activeElement).not.toBe(btn);
+      if (testId === 'studio-record-btn') {
+        fireEvent.click(btn, { detail: 1 });
+        await waitFor(() => expect(screen.getByTestId('studio-screen')).toHaveAttribute('data-phase', 'idle'));
+      }
+    }
+
+    // Navigate back to index 1 and overwrite so Undo & Trash are enabled, then check their pointer blur
+    fireEvent.click(screen.getByTestId('studio-item-1').querySelector('button')!);
+    await recordWithHold();
+    const undoBtn = screen.getByTestId('studio-undo-btn');
+    undoBtn.focus();
+    fireEvent.click(undoBtn, { detail: 1 });
+    expect(document.activeElement).not.toBe(undoBtn);
+    await waitFor(() => expect(bridge.undoLastRetake).toHaveBeenCalled());
+
+    const trashBtn = screen.getByTestId('studio-trash-btn');
+    trashBtn.focus();
+    fireEvent.click(trashBtn, { detail: 1 });
+    expect(document.activeElement).not.toBe(trashBtn);
+    fireEvent.click(await screen.findByTestId('studio-trash-cancel'));
+  });
+});
+
+describe('RecordingStudioScreen — recording pipeline & eye-level warnings', () => {
   it('Hold-to-Record: R down starts (repeat ignored), R up stops, saves into the set folder, 0 ms review', async () => {
     const props = makeProps();
     render(<RecordingStudioScreen {...props} />);
@@ -141,6 +319,41 @@ describe('RecordingStudioScreen — recording pipeline', () => {
     expect(screen.getByTestId('studio-status')).toHaveTextContent('Saved _a_ka_sa.wav');
     expect(screen.queryByTestId('studio-warning-clipping')).not.toBeInTheDocument();
     expect(screen.queryByTestId('studio-warning-cutoff')).not.toBeInTheDocument();
+  });
+
+  it('places hygiene warnings and status at eye level directly between PromptStage and StudioCanvas', async () => {
+    const props = makeProps({ workflow: { autoAdvance: true } });
+    props.audioAdapter.nextTake = makeClippedTake();
+    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => undefined);
+    const { rerender } = render(<RecordingStudioScreen {...props} />);
+    await recordWithHold();
+
+    const promptStage = screen.getByTestId('studio-prompt-stage');
+    const clippingBadge = await screen.findByTestId('studio-warning-clipping');
+    const statusBanner = screen.getByTestId('studio-status');
+    const canvas = screen.getByTestId('studio-canvas');
+    const transport = screen.getByTestId('studio-transport');
+
+    expect(clippingBadge).toHaveTextContent('0 dBFS');
+    // Strictly between PromptStage and StudioCanvas (never below canvas/transport)
+    expect(promptStage.compareDocumentPosition(clippingBadge) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(clippingBadge.compareDocumentPosition(canvas) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(promptStage.compareDocumentPosition(statusBanner) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(statusBanner.compareDocumentPosition(canvas) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(canvas.compareDocumentPosition(transport) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+
+    await new Promise((r) => setTimeout(r, 10));
+    expect(current()).toHaveTextContent('_a_ka_sa');
+    expect(alertSpy).not.toHaveBeenCalled();
+
+    // Quiet take warning also renders at eye level above canvas (with autoAdvance off so cursor stays)
+    const quietProps = makeProps({ audioAdapter: props.audioAdapter });
+    props.audioAdapter.nextTake = makeCleanTake(0.02);
+    rerender(<RecordingStudioScreen {...quietProps} />);
+    await recordWithHold();
+    const quietBadge = await screen.findByTestId('studio-warning-quiet');
+    expect(promptStage.compareDocumentPosition(quietBadge) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(quietBadge.compareDocumentPosition(canvas) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it('passes the set guide audio to the engine when Guide BGM is on', () => {
@@ -195,18 +408,6 @@ describe('RecordingStudioScreen — recording pipeline', () => {
     expect(screen.getByTestId('studio-warning-clipping')).toBeInTheDocument();
   });
 
-  it('shows a non-blocking clipping badge and does NOT auto-advance after a clipped take', async () => {
-    const props = makeProps({ workflow: { autoAdvance: true } });
-    props.audioAdapter.nextTake = makeClippedTake();
-    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => undefined);
-    render(<RecordingStudioScreen {...props} />);
-    await recordWithHold();
-    expect(await screen.findByTestId('studio-warning-clipping')).toHaveTextContent('0 dBFS');
-    await new Promise((r) => setTimeout(r, 10));
-    expect(current()).toHaveTextContent('_a_ka_sa');
-    expect(alertSpy).not.toHaveBeenCalled();
-  });
-
   it('shows an early-cutoff badge for chopped takes', async () => {
     const props = makeProps();
     props.audioAdapter.nextTake = makeCutoffTake();
@@ -254,7 +455,7 @@ describe('RecordingStudioScreen — recording pipeline', () => {
   });
 });
 
-describe('RecordingStudioScreen — playback, tone, take management', () => {
+describe('RecordingStudioScreen — playback, tone, Open In menu, take management', () => {
   it('Space plays an already-recorded take loaded from disk, Space again stops it', async () => {
     const props = makeProps({ activeSet: makeSet({ lastCursorIndex: 1 }) });
     render(<RecordingStudioScreen {...props} />);
@@ -363,36 +564,79 @@ describe('RecordingStudioScreen — playback, tone, take management', () => {
     expect(bridge.saveTake.mock.calls[0]![0]).toMatchObject({ relativeDirectory: '' });
   });
 
-  it('handoff + reveal buttons call the shell bridge', async () => {
-    const props = makeProps();
-    render(<RecordingStudioScreen {...props} />);
+  it('Open In ▾ menu + Booth Options ▾ audio settings + sidebar reveal call the right handlers', async () => {
+    const onRevealProjectFolder = vi.fn();
+    const props = makeProps({ onRevealProjectFolder });
+    const { rerender } = render(<RecordingStudioScreen {...props} />);
+
+    // Open In ▾ -> Reveal Voicebank Folder calls onRevealProjectFolder when provided
+    fireEvent.click(screen.getByTestId('studio-open-in-btn'));
+    expect(screen.getByTestId('studio-open-in-menu')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('studio-reveal-folder'));
+    expect(onRevealProjectFolder).toHaveBeenCalledTimes(1);
+
+    // Open In ▾ -> vLabeler & OpenUtau
+    fireEvent.click(screen.getByTestId('studio-open-in-btn'));
     fireEvent.click(screen.getByTestId('studio-open-vlabeler'));
+    fireEvent.click(screen.getByTestId('studio-open-in-btn'));
     fireEvent.click(screen.getByTestId('studio-open-openutau'));
     await waitFor(() => expect(bridge.openInExternalTool).toHaveBeenCalledTimes(2));
     expect(bridge.openInExternalTool).toHaveBeenCalledWith({ tool: 'vlabeler', projectRootPath: '/voicebanks/test' });
+
+    // Fallback when onRevealProjectFolder is omitted reveals current entry via shell bridge
+    rerender(<RecordingStudioScreen {...makeProps()} />);
+    fireEvent.click(screen.getByTestId('studio-open-in-btn'));
+    fireEvent.click(screen.getByTestId('studio-reveal-folder'));
+    expect(bridge.revealInFileManager).toHaveBeenCalledWith('/voicebanks/test/G4/_a_ka_sa.wav');
+
+    // Sidebar per-item reveal button
     fireEvent.click(screen.getByTestId('studio-reveal-1'));
     expect(bridge.revealInFileManager).toHaveBeenCalledWith('/voicebanks/test/G4/_i_ki_shi.wav');
+
+    // Booth Options ▾ -> Audio Settings
+    fireEvent.click(screen.getByTestId('studio-options-btn'));
     fireEvent.click(screen.getByTestId('studio-audio-settings'));
-    expect(props.onOpenAudioSettings).toHaveBeenCalled();
+    expect(props.onOpenAudioSettings).not.toHaveBeenCalled(); // rerendered with fresh makeProps; check fresh props or back btn
     fireEvent.click(screen.getByTestId('studio-back-btn'));
-    expect(props.onBackToProject).toHaveBeenCalled();
+  });
+
+  it('Booth Options ▾ Audio Settings button triggers onOpenAudioSettings and closes popover', () => {
+    const props = makeProps();
+    render(<RecordingStudioScreen {...props} />);
+    fireEvent.click(screen.getByTestId('studio-options-btn'));
+    expect(screen.getByTestId('studio-options-popover')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('studio-audio-settings'));
+    expect(props.onOpenAudioSettings).toHaveBeenCalledTimes(1);
+    expect(screen.queryByTestId('studio-options-popover')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('studio-back-btn'));
+    expect(props.onBackToProject).toHaveBeenCalledTimes(1);
   });
 
   it('shows an error status when the external tool cannot be opened', async () => {
     bridge.openInExternalTool.mockResolvedValueOnce({ ok: false, error: 'not configured' });
     render(<RecordingStudioScreen {...makeProps()} />);
+    fireEvent.click(screen.getByTestId('studio-open-in-btn'));
     fireEvent.click(screen.getByTestId('studio-open-vlabeler'));
     expect(await screen.findByRole('alert')).toHaveTextContent('Could not open vLabeler: not configured');
   });
 });
 
-describe('RecordingStudioScreen — workflow toggles', () => {
-  it('mode switch and workflow toggles patch prefs and react instantly', async () => {
+describe('RecordingStudioScreen — Booth Options ▾ workflow toggles', () => {
+  it('mode switch and grouped workflow toggles inside Booth Options ▾ patch prefs and react instantly', async () => {
     const props = makeProps();
     render(<RecordingStudioScreen {...props} />);
+    expect(screen.getByTestId('studio-mode-badge')).toHaveTextContent('PTT (Hold R)');
+
+    fireEvent.click(screen.getByTestId('studio-options-btn'));
+    const popover = screen.getByTestId('studio-options-popover');
+    expect(popover).toHaveTextContent('Recording Behavior');
+    expect(popover).toHaveTextContent('Canvas Display');
+    expect(screen.getByTestId('studio-mode-toggle')).toHaveAttribute('data-mode', 'hold');
+
     fireEvent.click(screen.getByTestId('studio-mode-toggle'));
     expect(props.onUpdateWorkflow).toHaveBeenCalledWith({ recordMode: 'toggle' });
     expect(screen.getByTestId('studio-mode-toggle')).toHaveAttribute('data-mode', 'toggle');
+    expect(screen.getByTestId('studio-mode-badge')).toHaveTextContent('Toggle R');
 
     // New mode is live for the keyboard immediately.
     fireEvent.keyDown(window, keyR);

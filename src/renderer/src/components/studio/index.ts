@@ -1,10 +1,17 @@
 export { RecordingStudioScreen } from './recording-studio-screen';
 export { StudioCanvas } from './studio-canvas';
 export { PromptStage } from './prompt-stage';
-export { StudioSidebar } from './studio-sidebar';
-export { StudioWorkflowBar, TakeHygieneBadges, TrashTakeDialog } from './studio-workflow-bar';
+export { SIDEBAR_PAGE_SIZE, StudioSidebar } from './studio-sidebar';
+export {
+  BoothOptionsPopover,
+  OpenInPopover,
+  ShortcutsPopover,
+  StudioWorkflowBar,
+  TakeHygieneBadges,
+  TrashTakeDialog
+} from './studio-workflow-bar';
 export { createDefaultStudioAudioAdapter } from './default-audio-adapter';
-export { useStudioHotkeys } from './use-studio-hotkeys';
+export { blurOnPointerClick, isInteractiveTarget, useStudioHotkeys } from './use-studio-hotkeys';
 export { STUDIO_STRINGS_EN } from './studio-strings';
 export type {
   RecordingStudioProps,

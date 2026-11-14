@@ -16,7 +16,7 @@ export function PromptStage({ previous, current, next, index, total, isRecorded 
   return (
     <section
       data-testid="studio-prompt-stage"
-      className="flex flex-col items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-900/60 px-6 py-5 text-center"
+      className="flex shrink-0 flex-col items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900/60 px-5 py-3 text-center"
     >
       <div className="flex w-full items-center justify-between text-xs text-zinc-500">
         <span data-testid="studio-prompt-position">
@@ -35,18 +35,18 @@ export function PromptStage({ previous, current, next, index, total, isRecorded 
       </div>
 
       <div className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-4">
-        <div className="truncate text-right text-lg text-zinc-600" data-testid="studio-prompt-previous" aria-label={t('prompt.previous')}>
+        <div className="truncate text-right text-base text-zinc-600" data-testid="studio-prompt-previous" aria-label={t('prompt.previous')}>
           {previous?.rawPrompt ?? ''}
         </div>
         <div
           data-testid="studio-prompt-current"
           aria-label={t('prompt.current')}
           className="max-w-[60vw] font-semibold break-all text-zinc-50"
-          style={{ fontSize: 'clamp(2.5rem, 6vw, 5rem)', lineHeight: 1.1 }}
+          style={{ fontSize: 'clamp(2rem, 4.2vw, 3.5rem)', lineHeight: 1.1 }}
         >
           {current?.rawPrompt ?? '—'}
         </div>
-        <div className="truncate text-left text-lg text-zinc-600" data-testid="studio-prompt-next" aria-label={t('prompt.next')}>
+        <div className="truncate text-left text-base text-zinc-600" data-testid="studio-prompt-next" aria-label={t('prompt.next')}>
           {next ? next.rawPrompt : current ? t('prompt.endOfList') : ''}
         </div>
       </div>
@@ -54,7 +54,7 @@ export function PromptStage({ previous, current, next, index, total, isRecorded 
       {current?.pronunciationHint ? (
         <div
           data-testid="studio-prompt-hint"
-          className="rounded-lg bg-indigo-500/10 px-4 py-1.5 font-mono text-2xl text-indigo-200"
+          className="rounded-lg bg-indigo-500/10 px-3.5 py-1 font-mono text-xl text-indigo-200"
           title={t('prompt.hint')}
         >
           {current.pronunciationHint}

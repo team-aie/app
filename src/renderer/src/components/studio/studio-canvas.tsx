@@ -36,6 +36,7 @@ export interface StudioCanvasProps {
 
 const ENVELOPE_COLUMNS = 1200;
 const FALLBACK_WIDTH = 960;
+const FALLBACK_HEIGHT = 240;
 
 export function computeReviewVisual(take: StudioTakeBuffer, targetNote: ScaleNote): ReviewVisual {
   const { mins, maxs } = computeMinMaxEnvelope(take.samples, ENVELOPE_COLUMNS);
@@ -56,9 +57,10 @@ export function computeReviewVisual(take: StudioTakeBuffer, targetNote: ScaleNot
  */
 export function StudioCanvas(props: StudioCanvasProps) {
   const t = useStudioT();
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const readoutRef = useRef<HTMLSpanElement>(null);
-  const height = props.height ?? 320;
+  const explicitHeight = props.height;
 
   const review = useMemo(
     () => (props.take && props.take.samples.length > 0 ? computeReviewVisual(props.take, props.targetNote) : null),
@@ -91,8 +93,8 @@ export function StudioCanvas(props: StudioCanvasProps) {
     [t]
   );
 
-  const latest = useRef({ props, review, zoomGain, otoMarkers, labels, height });
-  latest.current = { props, review, zoomGain, otoMarkers, labels, height };
+  const latest = useRef({ props, review, zoomGain, otoMarkers, labels, explicitHeight });
+  latest.current = { props, review, zoomGain, otoMarkers, labels, explicitHeight };
 
   const ctxRef = useRef<CanvasRenderingContext2D | null | undefined>(undefined);
 
@@ -107,14 +109,14 @@ export function StudioCanvas(props: StudioCanvasProps) {
       }
     }
     const ctx = ctxRef.current;
-    const { props: p, review: r, zoomGain: g, otoMarkers: m, labels: l, height: h } = latest.current;
+    const { props: p, review: r, zoomGain: g, otoMarkers: m, labels: l, explicitHeight: h } = latest.current;
     if (readoutRef.current) {
       readoutRef.current.textContent = p.isLive ? formatPitchReadout(p.feed, l.noPitch) : '';
     }
     if (!ctx) return;
     const dpr = typeof window !== 'undefined' && window.devicePixelRatio > 0 ? window.devicePixelRatio : 1;
-    const cssWidth = canvas.clientWidth || FALLBACK_WIDTH;
-    const cssHeight = canvas.clientHeight || h;
+    const cssWidth = canvas.clientWidth || wrapperRef.current?.clientWidth || FALLBACK_WIDTH;
+    const cssHeight = canvas.clientHeight || wrapperRef.current?.clientHeight || h || FALLBACK_HEIGHT;
     const pxW = Math.round(cssWidth * dpr);
     const pxH = Math.round(cssHeight * dpr);
     if (canvas.width !== pxW || canvas.height !== pxH) {
@@ -168,16 +170,21 @@ export function StudioCanvas(props: StudioCanvasProps) {
   // Redraw on container resize.
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas || typeof ResizeObserver === 'undefined') return;
+    const wrapper = wrapperRef.current;
+    if ((!canvas && !wrapper) || typeof ResizeObserver === 'undefined') return;
     const ro = new ResizeObserver(() => draw.current());
-    ro.observe(canvas);
+    if (wrapper) ro.observe(wrapper);
+    if (canvas) ro.observe(canvas);
     return () => ro.disconnect();
   }, []);
 
   const mode = props.isLive ? 'live' : review ? 'review' : 'empty';
 
   return (
-    <div className="relative w-full overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950">
+    <div
+      ref={wrapperRef}
+      className="relative min-h-[160px] w-full flex-1 overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950"
+    >
       <canvas
         ref={canvasRef}
         data-testid="studio-canvas"
@@ -185,8 +192,8 @@ export function StudioCanvas(props: StudioCanvasProps) {
         data-oto-markers={props.showOtoGrid ? otoMarkers.length : 0}
         aria-label={`${t('canvas.waveform')} · ${t('canvas.spectrogram')} · ${t('canvas.pitchCurve')}`}
         role="img"
-        className="block w-full"
-        style={{ height }}
+        className={explicitHeight !== undefined ? 'block w-full' : 'block h-full w-full'}
+        style={explicitHeight !== undefined ? { height: explicitHeight } : undefined}
       />
       <span
         ref={readoutRef}
