@@ -1,10 +1,10 @@
 {
-  "linkStart": "Link Start",
+  "linkStart": "Vocal Booth",
   "welcomeTitle": "Welcome to the booth",
   "welcomeSubtitle": "Record a ready-to-sing OpenUtau & vLabeler voicebank, one prompt at a time.",
   "continue": {
     "eyebrow": "Continue Last Session",
-    "button": "Link Start / Continue",
+    "button": "Resume Session",
     "lastOpened": "Last opened {{time}}",
     "activeSet": "Active set",
     "scale": "Scale",
@@ -18,13 +18,13 @@
   },
   "actions": {
     "create": "Create New Singer Project",
-    "createDescription": "Pick an empty folder and aie scaffolds aie.project.json, character.txt, and character.yaml.",
+    "createDescription": "Pick an empty folder and choose which UTAU / OpenUtau singer files to include alongside aie.project.json.",
     "open": "Open Existing Folder",
     "openDescription": "Open an aie project, migrate a v0.x aie.config.json, or adopt a raw OREMO voicebank folder."
   },
   "create": {
     "title": "Create New Singer Project",
-    "description": "Your singer folder stays a 100% standard UTAU voicebank — aie only adds aie.project.json.",
+    "description": "Your singer folder stays a 100% standard voicebank — aie saves aie.project.json and only the metadata files you select.",
     "singerName": "Singer Name",
     "singerNamePlaceholder": "e.g. Kasane Teto",
     "author": "Author",
@@ -33,7 +33,17 @@
     "folderPlaceholder": "No folder selected",
     "pickFolder": "Choose Folder…",
     "pickFolderTitle": "Choose a folder for the new singer",
-    "turnkeyNote": "Creates aie.project.json plus UTF-8 character.txt and character.yaml.",
+    "singerFiles": {
+      "title": "Voicebank Metadata Files",
+      "hint": "aie.project.json is always saved for your workspace. Choose which voicebank metadata files to include:",
+      "characterTxt": "character.txt",
+      "characterTxtHint": "Classic UTAU & vLabeler singer card (name, author, icon)",
+      "characterYaml": "character.yaml",
+      "characterYamlHint": "OpenUtau UTF-8 config & multi-pitch subbanks",
+      "prefixMap": "prefix.map",
+      "prefixMapHint": "Classic UTAU pitch-to-subfolder routing map"
+    },
+    "turnkeyNote": "Saves aie.project.json plus whichever UTF-8 singer metadata files you enable above.",
     "submit": "Create Project",
     "creating": "Creating…",
     "nameRequired": "Enter a singer name",

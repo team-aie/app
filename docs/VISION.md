@@ -29,7 +29,7 @@ Open-source vocal synthesis in 2026 runs on a specialist triad:
    - Zero-mouse ergonomics: **Hold-to-Record (`PTT`)** and **Toggle** modes (`R` record, `Space` play, `S` reference tone, arrows/`N` navigate), window-`blur` safety, **Auto-Listen-Back**, **1-Step Undo Retake**, DC-offset removal, and non-blocking clipping (`0 dBFS`) / early-cutoff warnings.
 2. **Pillar 2 — Zero-Friction "Turnkey Singer" Folder**:
    - Writes plain `.wav` files and UTF-8 metadata directly into `<projectRoot>`.
-   - Automatically maintains root `character.txt` + UTF-8 `character.yaml` (`text_file_encoding: utf-8`, `default_phonemizer`, `subbanks`) + `prefix.map`.
+   - Provides individual checkboxes (`SingerFileSelection`) for root `character.txt`, UTF-8 `character.yaml` (`text_file_encoding: utf-8`, `default_phonemizer`, `subbanks`), and `prefix.map` alongside `aie.project.json`—enabled by default for turnkey use and individually toggleable on project creation or in the Project Workspace.
    - Supports subfolder sets (`G4/` with optional `_G4` alias suffixing in copied `oto.ini`) and root-folder sets (for monopitch or ARPAsing base banks).
    - Supports `OREMO-comment.txt` (`<id>\t<hint>`) plus inline pronunciation guides for built-in reclists (`delta_eng_ver5` X-SAMPA hints).
 3. **Pillar 3 — Whole-Voicebank Multi-Pitch Management & AI Runway**:

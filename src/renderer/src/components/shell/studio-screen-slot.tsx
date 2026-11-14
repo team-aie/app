@@ -6,6 +6,7 @@ import type {
   AppSettings,
   ParsedRecordingListBundle,
   RecordingSetConfig,
+  ScaleNote,
   StudioWorkflowPrefs
 } from '@shared/types';
 import type { StudioAudioAdapter } from '@renderer/components/studio';
@@ -23,6 +24,8 @@ export interface StudioScreenProps {
   settings: AppSettings;
   onUpdateWorkflow: (patch: Partial<StudioWorkflowPrefs>) => void;
   onCursorChange?: (index: number) => void;
+  onChangeScale?: (nextScale: ScaleNote) => void;
+  onRevealProjectFolder?: () => void;
   onBackToProject: () => void;
   onOpenAudioSettings: () => void;
   audioAdapter?: StudioAudioAdapter;

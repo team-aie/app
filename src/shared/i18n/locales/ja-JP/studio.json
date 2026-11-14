@@ -3,6 +3,19 @@
   "backToProject": "プロジェクトに戻る",
   "loading": "録音リストを読み込み中…",
   "loadFailed": "録音リストを読み込めませんでした：{{error}}",
+  "header": {
+    "boothOptions": "ブース設定",
+    "behaviorGroup": "収録の動作",
+    "displayGroup": "キャンバス表示",
+    "openIn": "外部ツールで開く",
+    "revealFolder": "音源フォルダを表示",
+    "revealFolderHint": "Finder / エクスプローラーで .wav と oto.ini ファイルを表示",
+    "openVLabelerHint": "vLabeler で原音設定 (oto.ini) のタイミングを確認・編集",
+    "openOpenUtauHint": "この音源を使って OpenUtau で歌唱テスト",
+    "targetPitch": "目標音階",
+    "targetPitchHint": "参照音とライブチューナーの目標音階を切り替え",
+    "shortcuts": "ショートカット"
+  },
   "transport": {
     "record": "録音",
     "recording": "録音中…",
@@ -79,7 +92,10 @@
     "revealWav": "Finder / エクスプローラーで表示",
     "duration": "{{seconds}} 秒",
     "collapse": "サイドバーを折りたたむ",
-    "expand": "サイドバーを展開"
+    "expand": "サイドバーを展開",
+    "pageIndicator": "ページ {{page}} / {{totalPages}}",
+    "prevPage": "前のページ",
+    "nextPage": "次のページ"
   },
   "pitch": {
     "target": "目標",

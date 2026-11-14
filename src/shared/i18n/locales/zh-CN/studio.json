@@ -3,6 +3,19 @@
   "backToProject": "返回项目",
   "loading": "正在加载录音表…",
   "loadFailed": "无法加载录音表：{{error}}",
+  "header": {
+    "boothOptions": "录音棚选项",
+    "behaviorGroup": "录制行为",
+    "displayGroup": "画布显示",
+    "openIn": "外部工具打开",
+    "revealFolder": "显示声库文件夹",
+    "revealFolderHint": "在访达 / 资源管理器中查看 .wav 与 oto.ini 文件",
+    "openVLabelerHint": "在 vLabeler 中检查并编辑原音设定 (oto.ini) 时间参数",
+    "openOpenUtauHint": "在 OpenUtau 中使用此声库试唱测试",
+    "targetPitch": "目标音高",
+    "targetPitchHint": "切换参考音与实时音高检测的目标音高",
+    "shortcuts": "快捷键"
+  },
   "transport": {
     "record": "录制",
     "recording": "录制中…",
@@ -79,7 +92,10 @@
     "revealWav": "在访达 / 资源管理器中显示",
     "duration": "{{seconds}} 秒",
     "collapse": "收起侧边栏",
-    "expand": "展开侧边栏"
+    "expand": "展开侧边栏",
+    "pageIndicator": "第 {{page}} / {{totalPages}} 页",
+    "prevPage": "上一页",
+    "nextPage": "下一页"
   },
   "pitch": {
     "target": "目标",

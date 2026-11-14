@@ -36,7 +36,7 @@ Non-interactive shells in macOS sandboxes do **not** source `~/.zshrc`. Always i
    - **Never** use `window.alert()` or `window.confirm()` anywhere in the UI (use Radix dialogs or non-blocking status badges/toasts).
    - **Never** add native C++ or Rust Node addons (`node-gyp`). Keep 100% pure TypeScript + WebAudio `AudioWorklet`.
 2. **Locked Decisions (`docs/BLUEPRINT.md`)**:
-   - **Screen 1**: Merged **Welcome & Project Hub** (preserves *"Link Start"* identity alongside 1-click *Continue Last Session*, *Create/Open Project*, and *Recent Projects*).
+   - **Screen 1**: Merged **Welcome & Project Hub** (clean *Vocal Booth* studio header + 1-click *Resume Session* hero card, *Create/Open Project* with individual checkboxes for `character.txt`, `character.yaml`, and `prefix.map`, and *Recent Projects*).
    - **Diagnostics**: **100% offline / zero external cloud accounts** (`electron-log` v5 rotated logs + 1-click *Export Diagnostic Zip* via `fflate` + 5-click version badge DevTools unlock). Do **not** add `@sentry/electron`.
    - **macOS Target**: **Apple Silicon (`arm64`) only** (plus Windows `x64` NSIS and Linux `x64` AppImage/deb).
    - **i18n**: Static bundled `i18next` JSON namespaces across `en-US`, `zh-CN`, and `ja-JP` (**all 3 locales must have 100% complete translations**—never leave English placeholders in `ja-JP` or `zh-CN`).

@@ -76,6 +76,8 @@ export interface RecordingStudioProps {
   settings: AppSettings;
   onUpdateWorkflow: (patch: Partial<StudioWorkflowPrefs>) => void;
   onCursorChange?: (index: number) => void;
+  onChangeScale?: (nextScale: ScaleNote) => void;
+  onRevealProjectFolder?: () => void;
   onBackToProject: () => void;
   onOpenAudioSettings: () => void;
   /** Optional external engine (`StudioAudioEngine`); defaults to a built-in WebAudio adapter. */

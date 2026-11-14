@@ -47,7 +47,14 @@ const ALLOWED_IDENTICAL_KEYS = new Set([
   'common:language.short.ja-JP',
   'common:units.progress',
   'common:units.percent',
+  'hub:create.singerFiles.characterTxt',
+  'hub:create.singerFiles.characterYaml',
+  'hub:create.singerFiles.prefixMap',
   'hub:recent.progress',
+  'project:singerFiles.characterTxt',
+  'project:singerFiles.characterYaml',
+  'project:singerFiles.prefixMap',
+  'project:editor.scaleWithHz',
   'project:editor.builtinMeta',
   'project:editor.encodingOptions.utf-8',
   'project:editor.encodingOptions.utf-16le',
@@ -151,14 +158,14 @@ describe('3-locale strict i18n parity (en-US, zh-CN, ja-JP)', () => {
     expect(resolveLocale('en-GB')).toBe('en-US');
 
     const i18n = createI18n({ locale: 'en-US' });
-    expect(i18n.t('hub:linkStart')).toBe('Link Start');
+    expect(i18n.t('hub:linkStart')).toBe('Vocal Booth');
 
     await i18n.changeLanguage('ja-JP');
-    expect(i18n.t('hub:linkStart')).toBe('リンク・スタート');
+    expect(i18n.t('hub:linkStart')).toBe('ボーカルブース');
     expect(i18n.t('project:sets.progress', { recorded: 142, total: 365 })).toBe('142 / 365 収録済み');
 
     await i18n.changeLanguage('zh-CN');
-    expect(i18n.t('hub:linkStart')).toBe('连接开始');
+    expect(i18n.t('hub:linkStart')).toBe('人声录音棚');
     expect(i18n.t('project:sets.progress', { recorded: 142, total: 365 })).toBe('已录制 142 / 365');
   });
 });

@@ -40,6 +40,18 @@ export interface RecordingSetConfig {
   updatedAt: string;
 }
 
+export interface SingerFileSelection {
+  characterTxt: boolean;
+  characterYaml: boolean;
+  prefixMap: boolean;
+}
+
+export const DEFAULT_SINGER_FILES: SingerFileSelection = {
+  characterTxt: true,
+  characterYaml: true,
+  prefixMap: true
+};
+
 export interface AieProjectManifest {
   schemaVersion: 1;
   id: string;
@@ -47,6 +59,7 @@ export interface AieProjectManifest {
   rootPath: string;
   author?: string;
   defaultPhonemizer?: string;
+  singerFiles?: SingerFileSelection;
   sets: RecordingSetConfig[];
   activeSetId?: string;
   createdAt: string;

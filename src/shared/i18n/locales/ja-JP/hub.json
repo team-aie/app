@@ -1,10 +1,10 @@
 {
-  "linkStart": "リンク・スタート",
+  "linkStart": "ボーカルブース",
   "welcomeTitle": "録音ブースへようこそ",
   "welcomeSubtitle": "1 つずつ収録して、すぐに歌える OpenUtau & vLabeler 音源を作りましょう。",
   "continue": {
     "eyebrow": "前回のセッションを再開",
-    "button": "リンク・スタート / 再開",
+    "button": "セッションを再開",
     "lastOpened": "最終オープン：{{time}}",
     "activeSet": "現在の録音セット",
     "scale": "音階",
@@ -18,13 +18,13 @@
   },
   "actions": {
     "create": "新しい歌手プロジェクトを作成",
-    "createDescription": "空のフォルダを選ぶと、aie が aie.project.json・character.txt・character.yaml を自動生成します。",
+    "createDescription": "空のフォルダを選び、aie.project.json と一緒に生成する UTAU / OpenUtau 音源ファイルを選択します。",
     "open": "既存のフォルダを開く",
     "openDescription": "aie プロジェクトを開く、v0.x の aie.config.json を移行する、または OREMO で収録した音源フォルダを取り込みます。"
   },
   "create": {
     "title": "新しい歌手プロジェクトを作成",
-    "description": "歌手フォルダは 100% 標準の UTAU 音源のまま — aie が追加するのは aie.project.json だけです。",
+    "description": "歌手フォルダは 100% 標準の音源フォルダのまま保たれます — aie は aie.project.json と選択したメタデータファイルのみを保存します。",
     "singerName": "歌手名",
     "singerNamePlaceholder": "例：重音テト",
     "author": "作者",
@@ -33,7 +33,17 @@
     "folderPlaceholder": "フォルダが選択されていません",
     "pickFolder": "フォルダを選択…",
     "pickFolderTitle": "新しい歌手のフォルダを選択",
-    "turnkeyNote": "aie.project.json と UTF-8 の character.txt・character.yaml を作成します。",
+    "singerFiles": {
+      "title": "音源メタデータファイル",
+      "hint": "ワークスペース用に aie.project.json は常に保存されます。含める音源メタデータファイルを選択してください：",
+      "characterTxt": "character.txt",
+      "characterTxtHint": "従来の UTAU・vLabeler 向け音源情報カード（名前・作者・アイコン）",
+      "characterYaml": "character.yaml",
+      "characterYamlHint": "OpenUtau 向け UTF-8 設定・多音階サブバンク定義",
+      "prefixMap": "prefix.map",
+      "prefixMapHint": "従来の UTAU 向け音階別サブフォルダ割り当てマップ"
+    },
+    "turnkeyNote": "aie.project.json と、上で選択した UTF-8 音源メタデータファイルを保存します。",
     "submit": "プロジェクトを作成",
     "creating": "作成中…",
     "nameRequired": "歌手名を入力してください",

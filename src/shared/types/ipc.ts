@@ -3,7 +3,8 @@ import type {
   AieProjectManifest,
   RecentProjectSummary,
   RecordingSetConfig,
-  SetProgressSummary
+  SetProgressSummary,
+  SingerFileSelection
 } from './project';
 import type {
   AppSettings,
@@ -34,6 +35,7 @@ export interface AieBridgeApi {
       name: string;
       rootPath: string;
       author?: string;
+      singerFiles?: SingerFileSelection;
     }): Promise<AieProjectManifest>;
     openProject(rootPath: string): Promise<AieProjectManifest>;
     saveProject(manifest: AieProjectManifest): Promise<AieProjectManifest>;

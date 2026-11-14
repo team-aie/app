@@ -2,7 +2,7 @@
 
 ## Locked Decisions Summary
 - **Stack**: Electron 35+ · `electron-vite` · React 19 · TypeScript (Strict) · Tailwind CSS v4 + Radix UI · WebAudio `AudioWorklet` + `wavefile` + `pitchy` · Zustand · `i18next` · Vitest + Playwright (`_electron`).
-- **Screen 1 UX**: Unified **Welcome & Project Hub** (merging `WelcomePage` + `OpenProjectPage`, preserving *"Link Start"* branding alongside 1-click *Continue Last Session*, *Create/Open Project*, and *Recent Projects*).
+- **Screen 1 UX**: Unified **Welcome & Project Hub** (merging `WelcomePage` + `OpenProjectPage`, pairing a clean *"Vocal Booth"* studio badge with 1-click *Resume Session*, *Create/Open Project*, and *Recent Projects*).
 - **Diagnostics & DevOps**: **100% Offline Diagnostics** (`electron-log` v5 rotated logs + Audio Telemetry Ring Buffer + 1-click *Export Diagnostic Zip* via `fflate` + 5-click Version badge DevTools toggle). Side-by-side `aie` Stable (`com.team-aie.app`) and `aie Beta` (`com.team-aie.app.beta`) support.
 - **License Attribution**: Separated into **Tab 1 ("Built-in Reclists")** driven by `resources/reclists/<id>/manifest.json` (real creator credits, zero fake GPL labels), **Tab 2 ("Open-Source Libraries")** driven by `out/oss-licenses.json` (`rollup-plugin-license`), and **Chromium Notices** (`LICENSES.chromium.html`).
 - **i18n**: Static bundled namespaces (`common`, `hub`, `project`, `studio`, `settings`) across `en-US`, `zh-CN`, and `ja-JP` (100% parity enforced by unit tests) + CSS `:lang(ja)` / `:lang(zh-CN)` CJK font selection.
@@ -13,8 +13,8 @@
 ## Screen Architecture
 
 ### Screen 1: Welcome & Project Hub
-- *"Link Start"* header + **Continue Last Session** hero card (jumps straight into Screen 3 at exact last item cursor).
-- **Create New Project** (folder picker + singer name -> creates `aie.project.json` + starter `character.txt` / `character.yaml`).
+- **Vocal Booth** studio header + **Continue Last Session** (*Resume Session*) hero card (jumps straight into Screen 3 at exact last item cursor).
+- **Create New Project** (folder picker + singer name + individual checkboxes for `character.txt`, `character.yaml`, and `prefix.map` -> saves `aie.project.json` plus only the selected singer metadata files).
 - **Open Existing Folder** (loads `aie.project.json`, auto-migrates `v0.x` `aie.config.json`, or adopts an existing OREMO folder).
 - **Recent Projects** list with search, progress badge, *Reveal in Finder/Explorer*, and missing-folder handling.
 - Global top-right controls: Language (`EN` / `简` / `日`), Theme (`System` / `Light` / `Dark`), Audio/App Settings modal, About/Licenses modal, and non-blocking Update pill.
@@ -26,7 +26,7 @@
   - Chromatic scale selector (`C2`–`B5`) + inline **Audition Pitch** button.
   - Reclist selector: 4 built-in reclists or custom `.txt` + optional `OREMO-comment.txt` + charset selector (`auto`, `utf-8`, `utf-16le`, `utf-16be`, `shift_jis`, `gb18030`).
   - Guide audio mode: None, **Built-in Pitched Metronome** (`BPM`, `leadInBeats`, `moraCount`), or custom audio file (`.wav`/`.mp3`).
-  - Turnkey companion generation toggle: copies/converts `oto.ini` (with optional `_Pitch` alias suffixing), `presamp.ini`, `mkototemp.ini`, and syncs root `character.txt` + `character.yaml` (`text_file_encoding: utf-8`, `subbanks`) + `prefix.map`.
+  - Turnkey companion generation toggle: copies/converts `oto.ini` (with optional `_Pitch` alias suffixing), `presamp.ini`, `mkototemp.ini`, and syncs whichever root metadata files (`character.txt`, UTF-8 `character.yaml` `subbanks`, `prefix.map`) are enabled in the project's `singerFiles` selection.
 - **Ecosystem Handoff Bar**: *Reveal in Finder/Explorer*, *Open in vLabeler*, *Open in OpenUtau*.
 - **Slide-Over Metadata & Pronunciation Drawer**: Tabs for `Reclist`, `oto.ini`, `character.yaml`, and `Creator README / Phoneme Guide`.
 - **Safe Set Removal**: Radix dialog with unchecked-by-default option to move `.wav` files to OS Trash (`shell.trashItem`).

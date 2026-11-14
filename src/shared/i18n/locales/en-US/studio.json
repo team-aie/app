@@ -3,6 +3,19 @@
   "backToProject": "Back to Project",
   "loading": "Loading recording list…",
   "loadFailed": "Could not load the recording list: {{error}}",
+  "header": {
+    "boothOptions": "Booth Options",
+    "behaviorGroup": "Recording Behavior",
+    "displayGroup": "Canvas Display",
+    "openIn": "Open In",
+    "revealFolder": "Reveal Voicebank Folder",
+    "revealFolderHint": "Show .wav and oto.ini files in Finder / Explorer",
+    "openVLabelerHint": "Inspect & edit oto.ini timing in vLabeler",
+    "openOpenUtauHint": "Test singing with this voicebank in OpenUtau",
+    "targetPitch": "Target Pitch",
+    "targetPitchHint": "Switch target pitch for reference tone & live tuner",
+    "shortcuts": "Shortcuts"
+  },
   "transport": {
     "record": "Record",
     "recording": "Recording…",
@@ -79,7 +92,10 @@
     "revealWav": "Reveal in Finder / Explorer",
     "duration": "{{seconds}} s",
     "collapse": "Collapse sidebar",
-    "expand": "Expand sidebar"
+    "expand": "Expand sidebar",
+    "pageIndicator": "Page {{page}} / {{totalPages}}",
+    "prevPage": "Previous page",
+    "nextPage": "Next page"
   },
   "pitch": {
     "target": "Target",

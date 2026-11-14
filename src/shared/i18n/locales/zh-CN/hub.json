@@ -1,10 +1,10 @@
 {
-  "linkStart": "连接开始",
+  "linkStart": "人声录音棚",
   "welcomeTitle": "欢迎来到录音棚",
   "welcomeSubtitle": "逐句录制，打造可直接演唱的 OpenUtau & vLabeler 音源。",
   "continue": {
     "eyebrow": "继续上次会话",
-    "button": "连接开始 / 继续",
+    "button": "继续录制",
     "lastOpened": "上次打开于 {{time}}",
     "activeSet": "当前录音组",
     "scale": "音阶",
@@ -18,13 +18,13 @@
   },
   "actions": {
     "create": "新建歌手项目",
-    "createDescription": "选择一个空文件夹，aie 将自动生成 aie.project.json、character.txt 和 character.yaml。",
+    "createDescription": "选择一个空文件夹，按需勾选要与 aie.project.json 一并生成的 UTAU / OpenUtau 歌手元数据文件。",
     "open": "打开已有文件夹",
     "openDescription": "打开 aie 项目、迁移 v0.x 版的 aie.config.json，或导入原始 OREMO 声库文件夹。"
   },
   "create": {
     "title": "新建歌手项目",
-    "description": "您的歌手文件夹始终是 100% 标准的 UTAU 音源 — aie 只会额外添加 aie.project.json。",
+    "description": "您的歌手文件夹始终是 100% 标准的声库目录 — aie 仅保存 aie.project.json 与您勾选的元数据文件。",
     "singerName": "歌手名称",
     "singerNamePlaceholder": "例如：重音テト",
     "author": "作者",
@@ -33,7 +33,17 @@
     "folderPlaceholder": "未选择文件夹",
     "pickFolder": "选择文件夹…",
     "pickFolderTitle": "为新歌手选择文件夹",
-    "turnkeyNote": "将创建 aie.project.json 以及 UTF-8 编码的 character.txt 和 character.yaml。",
+    "singerFiles": {
+      "title": "声库元数据文件",
+      "hint": "工作区始终会保存 aie.project.json。请选择要一并生成的声库元数据文件：",
+      "characterTxt": "character.txt",
+      "characterTxtHint": "经典 UTAU 与 vLabeler 歌手信息卡（名称、作者、图标）",
+      "characterYaml": "character.yaml",
+      "characterYamlHint": "OpenUtau UTF-8 配置与多音阶子音库定义",
+      "prefixMap": "prefix.map",
+      "prefixMapHint": "经典 UTAU 音阶到子文件夹路由映射表"
+    },
+    "turnkeyNote": "将保存 aie.project.json，并按上方勾选生成对应的 UTF-8 歌手元数据文件。",
     "submit": "创建项目",
     "creating": "正在创建…",
     "nameRequired": "请输入歌手名称",
