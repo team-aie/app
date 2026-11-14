@@ -3,6 +3,8 @@ import { cleanup, fireEvent, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   type UseStudioHotkeysOptions,
+  blurOnPointerClick,
+  isInteractiveTarget,
   isTypingTarget,
   resolveHotkeyAction,
   useStudioHotkeys
@@ -43,7 +45,7 @@ afterEach(() => {
   document.body.innerHTML = '';
 });
 
-describe('resolveHotkeyAction / isTypingTarget', () => {
+describe('resolveHotkeyAction / isTypingTarget / isInteractiveTarget', () => {
   it('maps booth keys (case-insensitive, layout-aware)', () => {
     expect(resolveHotkeyAction({ key: 'R', code: 'KeyR' })).toBe('record');
     expect(resolveHotkeyAction({ key: 'ㄱ', code: 'KeyR' })).toBe('record');
@@ -68,6 +70,47 @@ describe('resolveHotkeyAction / isTypingTarget', () => {
     expect(isTypingTarget(editable)).toBe(true);
     expect(isTypingTarget(document.createElement('button'))).toBe(false);
     expect(isTypingTarget(window)).toBe(false);
+  });
+
+  it('detects interactive controls (tags, ARIA roles, and nested children)', () => {
+    for (const tag of ['button', 'select', 'a', 'summary'] as const) {
+      expect(isInteractiveTarget(document.createElement(tag))).toBe(true);
+    }
+    for (const role of [
+      'button',
+      'switch',
+      'menuitem',
+      'menuitemcheckbox',
+      'menuitemradio',
+      'option',
+      'radio',
+      'checkbox',
+      'combobox',
+      'listbox'
+    ]) {
+      const el = document.createElement('div');
+      el.setAttribute('role', role);
+      expect(isInteractiveTarget(el)).toBe(true);
+    }
+    const btn = document.createElement('button');
+    const nestedSpan = document.createElement('span');
+    btn.appendChild(nestedSpan);
+    expect(isInteractiveTarget(nestedSpan)).toBe(true);
+    expect(isInteractiveTarget(document.createElement('div'))).toBe(false);
+    expect(isInteractiveTarget(window)).toBe(false);
+  });
+
+  it('blurOnPointerClick blurs only on pointer clicks (detail > 0), keeping keyboard focus (detail === 0)', () => {
+    const btn = document.createElement('button');
+    document.body.appendChild(btn);
+    btn.focus();
+    expect(document.activeElement).toBe(btn);
+
+    blurOnPointerClick({ detail: 0, currentTarget: btn });
+    expect(document.activeElement).toBe(btn);
+
+    blurOnPointerClick({ detail: 1, currentTarget: btn });
+    expect(document.activeElement).not.toBe(btn);
   });
 });
 
@@ -192,12 +235,38 @@ describe('useStudioHotkeys — S reference tone', () => {
   });
 });
 
-describe('useStudioHotkeys — transport & navigation', () => {
-  it('Space toggles playback (repeat ignored) and prevents page scroll', () => {
+describe('useStudioHotkeys — transport, focus safety & navigation', () => {
+  it('Space toggles playback (repeat ignored) and prevents page scroll when no control is focused', () => {
     const { options } = setup();
     const notPrevented = fireEvent.keyDown(window, { key: ' ', code: 'Space' });
     expect(notPrevented).toBe(false);
     fireEvent.keyDown(window, { key: ' ', code: 'Space', repeat: true });
+    expect(options.onTogglePlayback).toHaveBeenCalledTimes(1);
+  });
+
+  it('does NOT hijack Space or Enter when focus is on a button or ARIA interactive control', () => {
+    const { options } = setup();
+    const btn = document.createElement('button');
+    document.body.appendChild(btn);
+    btn.focus();
+
+    // Dispatched on focused button
+    const downNotPrevented = fireEvent.keyDown(btn, { key: ' ', code: 'Space' });
+    const upNotPrevented = fireEvent.keyUp(btn, { key: ' ', code: 'Space' });
+    const enterNotPrevented = fireEvent.keyDown(btn, { key: 'Enter', code: 'Enter' });
+    expect(downNotPrevented).toBe(true);
+    expect(upNotPrevented).toBe(true);
+    expect(enterNotPrevented).toBe(true);
+
+    // Dispatched on window while document.activeElement is still the button
+    const winDownNotPrevented = fireEvent.keyDown(window, { key: ' ', code: 'Space' });
+    expect(winDownNotPrevented).toBe(true);
+    expect(options.onTogglePlayback).not.toHaveBeenCalled();
+
+    // Once blurred, Space controls booth playback again
+    btn.blur();
+    const afterBlur = fireEvent.keyDown(window, { key: ' ', code: 'Space' });
+    expect(afterBlur).toBe(false);
     expect(options.onTogglePlayback).toHaveBeenCalledTimes(1);
   });
 

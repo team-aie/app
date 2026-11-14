@@ -3,6 +3,9 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { filterEntries, formatSeconds } from './studio-math';
 import { useStudioT } from './studio-strings';
 import type { SidebarFilter } from './types';
+import { blurOnPointerClick } from './use-studio-hotkeys';
+
+export const SIDEBAR_PAGE_SIZE = 30;
 
 export interface StudioSidebarProps {
   entries: ReclistEntry[];
@@ -15,12 +18,17 @@ export interface StudioSidebarProps {
   navigationLocked: boolean;
 }
 
-/** Collapsible, searchable, filterable item sidebar with progress counter. */
+/** Collapsible, searchable, filterable, paginated item sidebar with progress counter. */
 export function StudioSidebar(props: StudioSidebarProps) {
   const t = useStudioT();
   const [collapsed, setCollapsed] = useState(false);
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<SidebarFilter>('all');
+  const [page, setPage] = useState(() => {
+    const initialVisible = filterEntries(props.entries, '', 'all', props.recorded);
+    const pos = initialVisible.findIndex((entry) => entry.index === props.cursor);
+    return pos >= 0 ? Math.floor(pos / SIDEBAR_PAGE_SIZE) : 0;
+  });
   const activeRef = useRef<HTMLLIElement>(null);
 
   const visible = useMemo(
@@ -34,9 +42,39 @@ export function StudioSidebar(props: StudioSidebarProps) {
   const total = props.entries.length;
   const percent = total === 0 ? 0 : Math.round((recordedCount / total) * 100);
 
+  const totalPages = Math.max(1, Math.ceil(visible.length / SIDEBAR_PAGE_SIZE));
+  const safePage = Math.min(Math.max(0, page), totalPages - 1);
+  const pagedVisible = useMemo(
+    () => visible.slice(safePage * SIDEBAR_PAGE_SIZE, (safePage + 1) * SIDEBAR_PAGE_SIZE),
+    [visible, safePage]
+  );
+
+  // Sync sidebar page to the page containing `cursor` whenever `cursor` or the list changes.
+  const latestFilterState = useRef({
+    entries: props.entries,
+    query,
+    filter,
+    recorded: props.recorded
+  });
+  latestFilterState.current = {
+    entries: props.entries,
+    query,
+    filter,
+    recorded: props.recorded
+  };
+
+  useEffect(() => {
+    const { entries, query: q, filter: f, recorded } = latestFilterState.current;
+    const currentVisible = filterEntries(entries, q, f, recorded);
+    const pos = currentVisible.findIndex((entry) => entry.index === props.cursor);
+    if (pos >= 0) {
+      setPage(Math.floor(pos / SIDEBAR_PAGE_SIZE));
+    }
+  }, [props.cursor, props.entries]);
+
   useEffect(() => {
     activeRef.current?.scrollIntoView?.({ block: 'nearest' });
-  }, [props.cursor, collapsed]);
+  }, [props.cursor, collapsed, safePage]);
 
   const progress = (
     <div className="flex flex-col gap-1">
@@ -51,10 +89,17 @@ export function StudioSidebar(props: StudioSidebarProps) {
 
   if (collapsed) {
     return (
-      <aside data-testid="studio-sidebar" data-collapsed="true" className="flex w-10 flex-col items-center gap-3 border-r border-zinc-800 py-3">
+      <aside
+        data-testid="studio-sidebar"
+        data-collapsed="true"
+        className="flex h-full min-h-0 w-10 shrink-0 flex-col items-center gap-3 border-r border-zinc-800 py-3"
+      >
         <button
           type="button"
-          onClick={() => setCollapsed(false)}
+          onClick={(e) => {
+            blurOnPointerClick(e);
+            setCollapsed(false);
+          }}
           aria-label={t('sidebar.expand')}
           title={t('sidebar.expand')}
           className="rounded p-1 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100"
@@ -73,12 +118,19 @@ export function StudioSidebar(props: StudioSidebarProps) {
   ];
 
   return (
-    <aside data-testid="studio-sidebar" data-collapsed="false" className="flex w-72 shrink-0 flex-col gap-3 border-r border-zinc-800 p-3">
+    <aside
+      data-testid="studio-sidebar"
+      data-collapsed="false"
+      className="flex h-full min-h-0 w-72 shrink-0 flex-col gap-2.5 border-r border-zinc-800 p-3"
+    >
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-semibold text-zinc-200">{t('sidebar.title')}</h2>
         <button
           type="button"
-          onClick={() => setCollapsed(true)}
+          onClick={(e) => {
+            blurOnPointerClick(e);
+            setCollapsed(true);
+          }}
           aria-label={t('sidebar.collapse')}
           title={t('sidebar.collapse')}
           className="rounded p-1 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100"
@@ -91,7 +143,10 @@ export function StudioSidebar(props: StudioSidebarProps) {
         type="search"
         data-testid="studio-search"
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={(e) => {
+          setQuery(e.target.value);
+          setPage(0);
+        }}
         placeholder={t('sidebar.searchPlaceholder')}
         className="rounded-md border border-zinc-700 bg-zinc-950 px-2 py-1 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-indigo-400 focus:outline-none"
       />
@@ -103,7 +158,11 @@ export function StudioSidebar(props: StudioSidebarProps) {
             role="radio"
             aria-checked={filter === f.id}
             data-testid={`studio-filter-${f.id}`}
-            onClick={() => setFilter(f.id)}
+            onClick={(e) => {
+              blurOnPointerClick(e);
+              setFilter(f.id);
+              setPage(0);
+            }}
             className={
               filter === f.id
                 ? 'rounded-full bg-indigo-500 px-2.5 py-0.5 text-xs text-white'
@@ -114,11 +173,11 @@ export function StudioSidebar(props: StudioSidebarProps) {
           </button>
         ))}
       </div>
-      <ul data-testid="studio-item-list" className="-mx-1 flex-1 overflow-y-auto">
-        {visible.length === 0 ? (
+      <ul data-testid="studio-item-list" className="-mx-1 min-h-0 flex-1 overflow-y-auto">
+        {pagedVisible.length === 0 ? (
           <li className="px-2 py-4 text-center text-xs text-zinc-500">{t('sidebar.noResults')}</li>
         ) : (
-          visible.map((entry) => {
+          pagedVisible.map((entry) => {
             const isActive = entry.index === props.cursor;
             const isRecorded = props.recorded.has(entry.fileName);
             const duration = props.durations.get(entry.fileName);
@@ -133,7 +192,10 @@ export function StudioSidebar(props: StudioSidebarProps) {
                 <button
                   type="button"
                   disabled={props.navigationLocked}
-                  onClick={() => props.onSelect(entry.index)}
+                  onClick={(e) => {
+                    blurOnPointerClick(e);
+                    props.onSelect(entry.index);
+                  }}
                   aria-current={isActive ? 'true' : undefined}
                   className="flex min-w-0 flex-1 items-center gap-2 text-left disabled:cursor-not-allowed"
                 >
@@ -150,7 +212,10 @@ export function StudioSidebar(props: StudioSidebarProps) {
                 {isRecorded ? (
                   <button
                     type="button"
-                    onClick={() => props.onReveal(entry)}
+                    onClick={(e) => {
+                      blurOnPointerClick(e);
+                      props.onReveal(entry);
+                    }}
                     aria-label={t('sidebar.revealWav')}
                     title={t('sidebar.revealWav')}
                     data-testid={`studio-reveal-${entry.index}`}
@@ -164,6 +229,42 @@ export function StudioSidebar(props: StudioSidebarProps) {
           })
         )}
       </ul>
+      <div
+        data-testid="studio-pagination"
+        className="flex shrink-0 items-center justify-between border-t border-zinc-800/80 pt-2 text-xs text-zinc-400"
+      >
+        <button
+          type="button"
+          data-testid="studio-page-prev"
+          disabled={safePage <= 0}
+          aria-label={t('sidebar.prevPage')}
+          title={t('sidebar.prevPage')}
+          onClick={(e) => {
+            blurOnPointerClick(e);
+            setPage(Math.max(0, safePage - 1));
+          }}
+          className="rounded border border-zinc-800 bg-zinc-900 px-2 py-1 text-zinc-300 hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          ◀
+        </button>
+        <span data-testid="studio-page-indicator" className="tabular-nums">
+          {t('sidebar.pageIndicator', { page: safePage + 1, totalPages })}
+        </span>
+        <button
+          type="button"
+          data-testid="studio-page-next"
+          disabled={safePage >= totalPages - 1}
+          aria-label={t('sidebar.nextPage')}
+          title={t('sidebar.nextPage')}
+          onClick={(e) => {
+            blurOnPointerClick(e);
+            setPage(Math.min(totalPages - 1, safePage + 1));
+          }}
+          className="rounded border border-zinc-800 bg-zinc-900 px-2 py-1 text-zinc-300 hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          ▶
+        </button>
+      </div>
     </aside>
   );
 }

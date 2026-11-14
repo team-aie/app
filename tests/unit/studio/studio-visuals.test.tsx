@@ -5,7 +5,7 @@ import { cleanup, render, screen } from '@testing-library/react';
 import i18next from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import { afterEach, describe, expect, it } from 'vitest';
-import { PromptStage } from '@renderer/components/studio';
+import { PromptStage, StudioCanvas } from '@renderer/components/studio';
 import { LiveVisualFeed } from '@renderer/components/studio/live-visual-feed';
 import {
   type StudioDrawContext,
@@ -311,5 +311,52 @@ describe('PromptStage + i18n integration', () => {
     expect(screen.getByTestId('studio-prompt-next')).toHaveTextContent('End of list');
     expect(screen.getByTestId('studio-prompt-previous')).toHaveTextContent('_u_ku_su');
     expect(screen.queryByTestId('studio-prompt-hint')).not.toBeInTheDocument();
+  });
+});
+
+describe('StudioCanvas — viewport flex sizing vs explicit height', () => {
+  it('uses dynamic h-full w-full with 240px jsdom fallback when height prop is omitted, and honors explicit height when passed', () => {
+    const origGetContext = HTMLCanvasElement.prototype.getContext;
+    const { ctx } = mockContext();
+    (ctx as unknown as { setTransform: () => void }).setTransform = () => undefined;
+    HTMLCanvasElement.prototype.getContext = (() => ctx) as unknown as HTMLCanvasElement['getContext'];
+
+    try {
+      const feed = new LiveVisualFeed();
+      const { rerender } = render(
+        <StudioCanvas
+          isLive={false}
+          feed={feed}
+          take={null}
+          targetNote="G4"
+          otoEntries={[]}
+          showOtoGrid={true}
+          autoZoomQuietTakes={false}
+          playback={null}
+        />
+      );
+      const canvas = screen.getByTestId('studio-canvas') as HTMLCanvasElement;
+      expect(canvas.className).toContain('h-full');
+      expect(canvas.style.height).toBe('');
+      expect(canvas.height).toBe(240);
+
+      rerender(
+        <StudioCanvas
+          isLive={false}
+          feed={feed}
+          take={null}
+          targetNote="G4"
+          otoEntries={[]}
+          showOtoGrid={true}
+          autoZoomQuietTakes={false}
+          playback={null}
+          height={300}
+        />
+      );
+      expect(canvas.style.height).toBe('300px');
+      expect(canvas.height).toBe(300);
+    } finally {
+      HTMLCanvasElement.prototype.getContext = origGetContext;
+    }
   });
 });

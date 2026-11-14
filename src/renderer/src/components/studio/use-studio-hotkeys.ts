@@ -61,13 +61,44 @@ export function isTypingTarget(target: EventTarget | null): boolean {
   const el = target as HTMLElement;
   const tag = el.tagName.toLowerCase();
   if (tag === 'input' || tag === 'textarea' || tag === 'select') return true;
-  return el.isContentEditable === true || el.getAttribute?.('contenteditable') === 'true';
+  if (el.isContentEditable === true || el.getAttribute?.('contenteditable') === 'true') return true;
+  return typeof el.closest === 'function' && el.closest('[contenteditable="true"]') !== null;
 }
 
-function isButtonTarget(target: EventTarget | null): boolean {
-  if (!target || typeof (target as Element).tagName !== 'string') return false;
-  const el = target as HTMLElement;
-  return el.tagName.toLowerCase() === 'button' || el.getAttribute?.('role') === 'switch';
+const INTERACTIVE_CONTROL_SELECTOR = [
+  'button',
+  'select',
+  'a',
+  'summary',
+  '[role="button"]',
+  '[role="switch"]',
+  '[role="menuitem"]',
+  '[role="menuitemcheckbox"]',
+  '[role="menuitemradio"]',
+  '[role="option"]',
+  '[role="radio"]',
+  '[role="checkbox"]',
+  '[role="combobox"]',
+  '[role="listbox"]'
+].join(', ');
+
+/**
+ * True when focus is on or inside an interactive control that natively activates on `Space`/`Enter`.
+ */
+export function isInteractiveTarget(target: EventTarget | null): boolean {
+  if (!target || typeof (target as Element).closest !== 'function') return false;
+  return (target as Element).closest(INTERACTIVE_CONTROL_SELECTOR) !== null;
+}
+
+/**
+ * Blurs a button when clicked with a pointer (`event.detail > 0`) so subsequent `Space`
+ * presses control booth playback instead of re-clicking the last-clicked button, while
+ * preserving focus on keyboard activation (`event.detail === 0`).
+ */
+export function blurOnPointerClick(event: { detail: number; currentTarget: HTMLElement }): void {
+  if (event.detail > 0) {
+    event.currentTarget.blur();
+  }
 }
 
 /**
@@ -127,15 +158,29 @@ export function useStudioHotkeys(options: UseStudioHotkeysOptions): void {
     const onKeyDown = (event: KeyboardEvent) => {
       const opts = latest.current;
       if (!opts.enabled) return;
+      if (event.defaultPrevented) return;
       if (event.isComposing || event.metaKey || event.ctrlKey || event.altKey) return;
-      if (isTypingTarget(event.target)) return;
+      if (isTypingTarget(event.target) || isTypingTarget(doc.activeElement)) return;
+
+      const focusedInteractive =
+        isInteractiveTarget(event.target) || isInteractiveTarget(doc.activeElement);
+      if (
+        focusedInteractive &&
+        (event.key === 'Enter' || event.code === 'Enter' || event.code === 'NumpadEnter')
+      ) {
+        return;
+      }
+
       const action = resolveHotkeyAction(event);
       if (!action) return;
 
-      // Prevent page scrolling / native button activation for booth keys.
+      // Never hijack Space when focus is on or inside an interactive button/menu control.
+      if (action === 'play' && focusedInteractive) {
+        return;
+      }
+
+      // Prevent page scrolling for booth transport & navigation keys.
       if (action === 'play' || action === 'previous' || action === 'next' || action === 'trash') {
-        event.preventDefault();
-      } else if (isButtonTarget(event.target)) {
         event.preventDefault();
       }
 
@@ -211,11 +256,6 @@ export function useStudioHotkeys(options: UseStudioHotkeysOptions): void {
 
     const onKeyUp = (event: KeyboardEvent) => {
       const action = resolveHotkeyAction(event);
-      if (action === 'play' && isButtonTarget(event.target) && latest.current.enabled) {
-        // Native buttons activate on Space keyup; the hotkey already handled it.
-        event.preventDefault();
-        return;
-      }
       // Releases are honored regardless of focus target so a hold can never get stuck.
       if (action === 'record' && recordHeld.current) {
         recordHeld.current = false;

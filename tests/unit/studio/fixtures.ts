@@ -106,6 +106,19 @@ export function makeEntries(): ReclistEntry[] {
   ];
 }
 
+export function makeManyEntries(count: number): ReclistEntry[] {
+  return Array.from({ length: count }, (_, index) => {
+    const stem = `prompt_${String(index + 1).padStart(3, '0')}`;
+    return {
+      index,
+      rawPrompt: stem,
+      fileStem: stem,
+      fileName: `${stem}.wav`,
+      syllables: []
+    };
+  });
+}
+
 export function makeSet(overrides: Partial<RecordingSetConfig> = {}): RecordingSetConfig {
   return {
     id: 'set-g4',
@@ -260,7 +273,15 @@ export function uninstallMockBridge(): void {
   delete (window as unknown as { aie?: AieBridgeApi }).aie;
 }
 
-/** jsdom has no canvas backend; return `null` so the renderer skips drawing quietly. */
+/** jsdom lacks canvas backend & ResizeObserver (used by StudioCanvas + Radix Popover). */
 export function stubCanvas(): void {
+  if (!('ResizeObserver' in globalThis)) {
+    class ResizeObserverStub {
+      observe(): void {}
+      unobserve(): void {}
+      disconnect(): void {}
+    }
+    (globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver = ResizeObserverStub;
+  }
   HTMLCanvasElement.prototype.getContext = vi.fn(() => null) as unknown as HTMLCanvasElement['getContext'];
 }
