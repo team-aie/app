@@ -39,7 +39,7 @@ function createMainWindow(openDevTools: boolean, windowIcon?: NativeImage): Brow
     minHeight: 660,
     title: 'aie',
     backgroundColor: '#0b0d12',
-    ...(windowIcon && (process.platform !== 'darwin' || !app.isPackaged) ? { icon: windowIcon } : {}),
+    ...(windowIcon && process.platform !== 'darwin' ? { icon: windowIcon } : {}),
     webPreferences: {
       preload: path.join(import.meta.dirname, '../preload/index.mjs'),
       contextIsolation: true,
@@ -127,7 +127,13 @@ if (!app.requestSingleInstanceLock()) {
     });
 
     const windowIcon = resolveAppIcon();
-    if (process.platform === 'darwin' && !app.isPackaged && windowIcon) {
+    if (
+      process.platform === 'darwin' &&
+      !app.isPackaged &&
+      !process.env['CI'] &&
+      !process.env['AIE_USER_DATA_DIR'] &&
+      windowIcon
+    ) {
       try {
         app.dock?.setIcon(windowIcon);
       } catch {

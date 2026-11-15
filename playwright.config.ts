@@ -6,5 +6,5 @@ export default defineConfig({
   retries: process.env['CI'] ? 1 : 0,
   fullyParallel: false,
   workers: 1,
-  reporter: 'list'
+  reporter: process.env['CI'] ? [['list'], ['github']] : 'list'
 });

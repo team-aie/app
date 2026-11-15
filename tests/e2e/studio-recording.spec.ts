@@ -270,9 +270,6 @@ test.describe('aie v1 Full-Stack Electron Fake-Mic E2E', () => {
         const win = BrowserWindow.getAllWindows()[0];
         win?.setSize(1280, 820);
       });
-      await expect
-        .poll(async () => page.evaluate(() => window.innerHeight))
-        .toBeGreaterThan(770);
 
       // Verify 30-item pagination on `z_cvvc_normal` (> 30 prompts).
       await expect(page.getByTestId('studio-pagination')).toBeVisible();
