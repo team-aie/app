@@ -16,6 +16,9 @@ jobs:
       version: ${{ steps.meta.outputs.version }}
       prerelease: ${{ steps.meta.outputs.prerelease }}
       config: ${{ steps.meta.outputs.config }}
+      mac_signed: ${{ steps.meta.outputs.mac_signed }}
+    env:
+      HAS_MAC_SIGNING: ${{ (secrets.MAC_CSC_LINK != '' || secrets.CSC_LINK != '') && secrets.APPLE_ID != '' && (secrets.APPLE_APP_SPECIFIC_PASSWORD != '' || secrets.APPLE_ID_PASSWORD != '') && secrets.APPLE_TEAM_ID != '' }}
     steps:
       - id: meta
         run: |
@@ -28,6 +31,11 @@ jobs:
           else
             echo "prerelease=false" >> "$GITHUB_OUTPUT"
             echo "config=electron-builder.yml" >> "$GITHUB_OUTPUT"
+          fi
+          if [[ "${HAS_MAC_SIGNING}" == "true" ]]; then
+            echo "mac_signed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "mac_signed=false" >> "$GITHUB_OUTPUT"
           fi
 
   build:
@@ -44,7 +52,7 @@ jobs:
           - { name: Linux x64 (.AppImage/.deb), os: ubuntu-24.04, flags: '--linux --x64' }
     env:
       # Secrets cannot be tested in `if:`; expose presence as booleans instead.
-      HAS_MAC_SIGNING: ${{ secrets.MAC_CSC_LINK != '' && secrets.APPLE_ID != '' && secrets.APPLE_APP_SPECIFIC_PASSWORD != '' && secrets.APPLE_TEAM_ID != '' }}
+      HAS_MAC_SIGNING: ${{ needs.meta.outputs.mac_signed }}
       HAS_WIN_SIGNING: ${{ secrets.WIN_CSC_LINK != '' }}
     steps:
       - uses: actions/checkout@v5
@@ -73,22 +81,30 @@ jobs:
           npm test
           npm run build
 
-      # ---- macOS: ad-hoc signed (`-`) by default on Apple Silicon ($0); Developer ID + notarized when secrets exist ----
+      # ---- macOS: ad-hoc signed (`-`) without hardenedRuntime by default on Apple Silicon ($0); Developer ID + notarized when secrets exist ----
       - name: Package macOS (ad-hoc signed)
         if: runner.os == 'macOS' && env.HAS_MAC_SIGNING != 'true'
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
-        run: npx electron-builder ${{ matrix.flags }} --publish never --config ${{ needs.meta.outputs.config }} -c.mac.identity=-
+        run: npx electron-builder ${{ matrix.flags }} --publish never --config ${{ needs.meta.outputs.config }} -c.mac.identity=- -c.mac.hardenedRuntime=false
 
       - name: Package macOS (signed + notarized)
         if: runner.os == 'macOS' && env.HAS_MAC_SIGNING == 'true'
+        shell: bash
         env:
-          CSC_LINK: ${{ secrets.MAC_CSC_LINK }}
-          CSC_KEY_PASSWORD: ${{ secrets.MAC_CSC_KEY_PASSWORD }}
+          MAC_CSC_LINK: ${{ secrets.MAC_CSC_LINK }}
+          FALLBACK_CSC_LINK: ${{ secrets.CSC_LINK }}
+          MAC_CSC_KEY_PASSWORD: ${{ secrets.MAC_CSC_KEY_PASSWORD }}
+          FALLBACK_CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          FALLBACK_APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-        run: npx electron-builder ${{ matrix.flags }} --publish never --config ${{ needs.meta.outputs.config }} -c.mac.notarize=true
+        run: |
+          export CSC_LINK="${MAC_CSC_LINK:-$FALLBACK_CSC_LINK}"
+          export CSC_KEY_PASSWORD="${MAC_CSC_KEY_PASSWORD:-$FALLBACK_CSC_KEY_PASSWORD}"
+          export APPLE_APP_SPECIFIC_PASSWORD="${APPLE_APP_SPECIFIC_PASSWORD:-$FALLBACK_APPLE_ID_PASSWORD}"
+          npx electron-builder ${{ matrix.flags }} --publish never --config ${{ needs.meta.outputs.config }} -c.mac.notarize=true
 
       # ---- Windows: unsigned NSIS by default; Authenticode only when a certificate secret exists ----
       - name: Package Windows (unsigned)
@@ -137,6 +153,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PRERELEASE: ${{ needs.meta.outputs.prerelease }}
+          MAC_SIGNED: ${{ needs.meta.outputs.mac_signed }}
         run: |
           shopt -s nullglob
           ASSETS=(dist/*)
@@ -144,19 +161,39 @@ jobs:
             echo "No release assets found in dist/" >&2
             exit 1
           fi
+          APP_BUNDLE="aie.app"
+          if [[ "$PRERELEASE" == "true" ]]; then
+            APP_BUNDLE="aie Beta.app"
+          fi
+          MAC_NOTE=$(cat <<EOF
+          ### macOS (Apple Silicon) First-Launch Note
+          This build is ad-hoc signed and not yet notarized with Apple. After moving **\`${APP_BUNDLE}\`** to \`/Applications\`, if macOS Gatekeeper reports *"is damaged and can't be opened"*, clear the browser quarantine attribute once in Terminal:
+
+          \`\`\`sh
+          xattr -cr "/Applications/${APP_BUNDLE}"
+          \`\`\`
+          EOF
+          )
           if gh release view "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
             gh release upload "${GITHUB_REF_NAME}" "${ASSETS[@]}" --clobber --repo "${GITHUB_REPOSITORY}"
+            EXISTING_BODY=$(gh release view "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" --json body --jq .body || true)
             EDIT_FLAGS=(--title "aie ${GITHUB_REF_NAME}" --draft=false)
             if [[ "$PRERELEASE" == "true" ]]; then
               EDIT_FLAGS+=(--prerelease)
             else
               EDIT_FLAGS+=(--prerelease=false)
             fi
+            if [[ "$MAC_SIGNED" != "true" && "$EXISTING_BODY" != *"xattr -cr"* ]]; then
+              EDIT_FLAGS+=(--notes "$(printf '%s\n\n%s' "$MAC_NOTE" "$EXISTING_BODY")")
+            fi
             gh release edit "${GITHUB_REF_NAME}" "${EDIT_FLAGS[@]}" --repo "${GITHUB_REPOSITORY}"
           else
             CREATE_FLAGS=(--title "aie ${GITHUB_REF_NAME}" --generate-notes --verify-tag)
             if [[ "$PRERELEASE" == "true" ]]; then
               CREATE_FLAGS+=(--prerelease)
+            fi
+            if [[ "$MAC_SIGNED" != "true" ]]; then
+              CREATE_FLAGS+=(--notes "$MAC_NOTE")
             fi
             gh release create "${GITHUB_REF_NAME}" "${ASSETS[@]}" "${CREATE_FLAGS[@]}" --repo "${GITHUB_REPOSITORY}"
           fi

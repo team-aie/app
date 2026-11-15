@@ -1,5 +1,6 @@
+import fs from 'node:fs';
 import path from 'node:path';
-import { app, BrowserWindow, shell } from 'electron';
+import { app, BrowserWindow, nativeImage, shell, type NativeImage } from 'electron';
 import electronUpdater from 'electron-updater';
 import { broadcastUpdateStatus, registerIpc } from './ipc/register-ipc';
 import { createDomainServices } from './ipc/domain-services-adapter';
@@ -11,7 +12,26 @@ import { createUpdater, type AutoUpdaterLike } from './services/updater';
 
 let mainWindow: BrowserWindow | null = null;
 
-function createMainWindow(openDevTools: boolean): BrowserWindow {
+function resolveAppIcon(): NativeImage | undefined {
+  const candidates = [
+    path.join(process.resourcesPath, 'icon.png'),
+    path.join(import.meta.dirname, '../../resources/icon.png'),
+    path.join(import.meta.dirname, '../../build/icon.png')
+  ];
+  for (const candidate of candidates) {
+    try {
+      if (fs.existsSync(candidate)) {
+        const icon = nativeImage.createFromPath(candidate);
+        if (!icon.isEmpty()) return icon;
+      }
+    } catch {
+      // Try next icon candidate.
+    }
+  }
+  return undefined;
+}
+
+function createMainWindow(openDevTools: boolean, windowIcon?: NativeImage): BrowserWindow {
   const win = new BrowserWindow({
     width: 1280,
     height: 820,
@@ -19,6 +39,7 @@ function createMainWindow(openDevTools: boolean): BrowserWindow {
     minHeight: 660,
     title: 'aie',
     backgroundColor: '#0b0d12',
+    ...(windowIcon && (process.platform !== 'darwin' || !app.isPackaged) ? { icon: windowIcon } : {}),
     webPreferences: {
       preload: path.join(import.meta.dirname, '../preload/index.mjs'),
       contextIsolation: true,
@@ -105,11 +126,20 @@ if (!app.requestSingleInstanceLock()) {
       void appState.flush();
     });
 
-    mainWindow = createMainWindow(isDebugLaunch());
+    const windowIcon = resolveAppIcon();
+    if (process.platform === 'darwin' && !app.isPackaged && windowIcon) {
+      try {
+        app.dock?.setIcon(windowIcon);
+      } catch {
+        // Ignore in headless/non-GUI environments where Dock is unavailable.
+      }
+    }
+
+    mainWindow = createMainWindow(isDebugLaunch(), windowIcon);
     if (app.isPackaged) setTimeout(() => void updater.checkForUpdates(), 5000);
 
     app.on('activate', () => {
-      if (BrowserWindow.getAllWindows().length === 0) mainWindow = createMainWindow(isDebugLaunch());
+      if (BrowserWindow.getAllWindows().length === 0) mainWindow = createMainWindow(isDebugLaunch(), windowIcon);
     });
   });
 

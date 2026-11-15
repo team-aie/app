@@ -2,18 +2,21 @@ import { ArrowUpCircle, ChevronRight, Info, Monitor, Moon, SlidersHorizontal, Su
 import { useTranslation } from 'react-i18next';
 import type { LocaleCode, ThemeMode } from '@shared/types';
 import { SUPPORTED_LOCALES } from '@shared/i18n';
+import appIconUrl from '@renderer/assets/app-icon.png';
 import { selectActiveSet, useAppStore } from '@renderer/store/use-app-store';
 import { Badge, IconButton, Segmented, cx } from './ui';
 
 function Wordmark() {
   return (
     <div className="flex items-center gap-2 select-none" aria-label="aie">
-      <span
+      <img
+        src={appIconUrl}
+        alt=""
         aria-hidden
-        className="grid size-7 place-items-center rounded-lg bg-gradient-to-br from-accent to-rec text-[13px] font-black tracking-tight text-white shadow-md shadow-accent/30"
-      >
-        ai
-      </span>
+        draggable={false}
+        data-testid="app-header-icon"
+        className="size-7 shrink-0 object-contain"
+      />
       <span className="text-[17px] font-bold tracking-tight text-fg">aie</span>
     </div>
   );

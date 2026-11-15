@@ -86,6 +86,11 @@ test.describe('aie v1 Full-Stack Electron Fake-Mic E2E', () => {
       await expect(page.locator('html')).toHaveAttribute('lang', 'en-US');
       await expect(page.getByText('Vocal Booth')).toBeVisible();
       await expect(page.getByText('Link Start')).toHaveCount(0);
+      await expect(page.getByTestId('app-header-icon')).toBeVisible();
+      const headerIconWidth = await page
+        .getByTestId('app-header-icon')
+        .evaluate((img: HTMLImageElement) => img.naturalWidth);
+      expect(headerIconWidth).toBe(512);
 
       // Stub Electron's native OS folder picker so clicking "Choose Folder" selects `singerRootDir`.
       await firstLaunch.app.evaluate(({ dialog }, targetDir) => {

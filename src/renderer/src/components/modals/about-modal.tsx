@@ -3,6 +3,7 @@ import { ChevronDown, ExternalLink, FileArchive, Loader2, Search } from 'lucide-
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { OssLicenseEntry } from '@shared/types';
+import appIconUrl from '@renderer/assets/app-icon.png';
 import { useAppStore } from '@renderer/store/use-app-store';
 import { Badge, Button, ModalShell, TextInput, cx } from '../shell/ui';
 
@@ -191,12 +192,14 @@ export function AboutModal() {
       <div className="flex flex-col gap-6">
         <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-line bg-raised/40 p-4">
           <div className="flex items-center gap-3">
-            <span
+            <img
+              src={appIconUrl}
+              alt=""
               aria-hidden
-              className="grid size-11 place-items-center rounded-xl bg-gradient-to-br from-accent to-rec text-base font-black text-white"
-            >
-              ai
-            </span>
+              draggable={false}
+              data-testid="about-app-icon"
+              className="size-11 shrink-0 object-contain"
+            />
             <div className="flex flex-col gap-1">
               <span className="text-lg font-bold tracking-tight text-fg">aie</span>
               <button

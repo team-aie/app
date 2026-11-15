@@ -39,6 +39,7 @@ describe('Screen 1 — Welcome & Project Hub + Top Shell Header', () => {
     renderWithI18n(<App />);
 
     expect(await screen.findByTestId('hub-continue-card')).toBeInTheDocument();
+    expect(screen.getByTestId('app-header-icon')).toHaveAttribute('src');
     expect(screen.getByText('Vocal Booth')).toBeInTheDocument();
     expect(screen.queryByText(/Link Start/i)).not.toBeInTheDocument();
     expect(screen.getByTestId('hub-continue-btn')).toHaveTextContent('Resume Session');

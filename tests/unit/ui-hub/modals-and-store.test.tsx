@@ -106,6 +106,7 @@ describe('Global Modals (About/Diagnostics/Licenses + Audio Settings) & App Stor
     );
 
     const modal = await screen.findByTestId('about-modal');
+    expect(within(modal).getByTestId('about-app-icon')).toHaveAttribute('src');
 
     // Tab 1: Built-in Reclists
     expect(within(modal).getAllByTestId('about-reclist')).toHaveLength(4);
