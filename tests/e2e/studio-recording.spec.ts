@@ -87,10 +87,15 @@ test.describe('aie v1 Full-Stack Electron Fake-Mic E2E', () => {
       await expect(page.getByText('Vocal Booth')).toBeVisible();
       await expect(page.getByText('Link Start')).toHaveCount(0);
       await expect(page.getByTestId('app-header-icon')).toBeVisible();
-      const headerIconWidth = await page
-        .getByTestId('app-header-icon')
-        .evaluate((img: HTMLImageElement) => img.naturalWidth);
-      expect(headerIconWidth).toBe(512);
+      await expect
+        .poll(
+          () =>
+            page
+              .getByTestId('app-header-icon')
+              .evaluate((img: HTMLImageElement) => (img.complete ? img.naturalWidth : 0)),
+          { timeout: 5_000 }
+        )
+        .toBe(512);
 
       // Stub Electron's native OS folder picker so clicking "Choose Folder" selects `singerRootDir`.
       await firstLaunch.app.evaluate(({ dialog }, targetDir) => {
@@ -265,6 +270,9 @@ test.describe('aie v1 Full-Stack Electron Fake-Mic E2E', () => {
         const win = BrowserWindow.getAllWindows()[0];
         win?.setSize(1280, 820);
       });
+      await expect
+        .poll(async () => page.evaluate(() => window.innerHeight))
+        .toBeGreaterThan(770);
 
       // Verify 30-item pagination on `z_cvvc_normal` (> 30 prompts).
       await expect(page.getByTestId('studio-pagination')).toBeVisible();
@@ -342,7 +350,7 @@ test.describe('aie v1 Full-Stack Electron Fake-Mic E2E', () => {
           { timeout: 8_000 }
         )
         .toBe('LIVE_A4');
-      await page.waitForTimeout(450);
+      await page.waitForTimeout(650);
       await page.keyboard.up('KeyR');
 
       // Wait for save + Auto-Listen-Back to finish and return to `idle` review mode.
@@ -421,7 +429,7 @@ test.describe('aie v1 Full-Stack Electron Fake-Mic E2E', () => {
           timeout: 8_000
         })
         .toContain('A4');
-      await page.waitForTimeout(950);
+      await page.waitForTimeout(1250);
       await page.keyboard.up('KeyR');
 
       await expect(studioScreen).toHaveAttribute('data-phase', 'idle', { timeout: 10_000 });
